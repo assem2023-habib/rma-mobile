@@ -1,0 +1,193 @@
+import 'package:get_it/get_it.dart';
+import 'package:dio/dio.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:rma_customer/core/api/dio_client.dart';
+import 'package:rma_customer/core/network/network_info.dart';
+import 'package:rma_customer/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:rma_customer/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:rma_customer/features/auth/domain/repositories/auth_repository.dart';
+import 'package:rma_customer/features/auth/domain/usecases/login_usecase.dart';
+import 'package:rma_customer/features/auth/domain/usecases/register_usecase.dart';
+import 'package:rma_customer/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:rma_customer/features/auth/domain/usecases/get_current_user_usecase.dart';
+import 'package:rma_customer/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:rma_customer/features/profile/data/datasources/profile_remote_datasource.dart';
+import 'package:rma_customer/features/profile/data/repositories/profile_repository_impl.dart';
+import 'package:rma_customer/features/profile/domain/repositories/profile_repository.dart';
+import 'package:rma_customer/features/profile/domain/usecases/update_profile_usecase.dart';
+import 'package:rma_customer/features/profile/domain/usecases/change_password_usecase.dart';
+import 'package:rma_customer/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:rma_customer/features/dashboard/data/datasources/dashboard_remote_datasource.dart';
+import 'package:rma_customer/features/dashboard/data/repositories/dashboard_repository_impl.dart';
+import 'package:rma_customer/features/dashboard/domain/repositories/dashboard_repository.dart';
+import 'package:rma_customer/features/dashboard/domain/usecases/get_dashboard_stats_usecase.dart';
+import 'package:rma_customer/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:rma_customer/features/parcels/data/datasources/parcel_remote_datasource.dart';
+import 'package:rma_customer/features/parcels/data/repositories/parcel_repository_impl.dart';
+import 'package:rma_customer/features/parcels/domain/repositories/parcel_repository.dart';
+import 'package:rma_customer/features/parcels/domain/usecases/get_parcels_usecase.dart';
+import 'package:rma_customer/features/parcels/presentation/bloc/parcels_bloc.dart';
+import 'package:rma_customer/features/new_parcel/data/datasources/new_parcel_remote_datasource.dart';
+import 'package:rma_customer/features/new_parcel/data/repositories/new_parcel_repository_impl.dart';
+import 'package:rma_customer/features/new_parcel/domain/repositories/new_parcel_repository.dart';
+import 'package:rma_customer/features/new_parcel/domain/usecases/create_parcel_usecase.dart';
+import 'package:rma_customer/features/new_parcel/presentation/bloc/new_parcel_bloc.dart';
+import 'package:rma_customer/features/routes/data/datasources/routes_remote_datasource.dart';
+import 'package:rma_customer/features/routes/data/repositories/routes_repository_impl.dart';
+import 'package:rma_customer/features/routes/domain/repositories/routes_repository.dart';
+import 'package:rma_customer/features/routes/domain/usecases/get_routes_usecase.dart';
+import 'package:rma_customer/features/routes/presentation/bloc/routes_bloc.dart';
+import 'package:rma_customer/features/authorizations/data/datasources/authorizations_remote_datasource.dart';
+import 'package:rma_customer/features/authorizations/data/repositories/authorizations_repository_impl.dart';
+import 'package:rma_customer/features/authorizations/domain/repositories/authorizations_repository.dart';
+import 'package:rma_customer/features/authorizations/domain/usecases/get_authorizations_usecase.dart';
+import 'package:rma_customer/features/authorizations/domain/usecases/request_authorization_usecase.dart';
+import 'package:rma_customer/features/authorizations/presentation/bloc/authorizations_bloc.dart';
+import 'package:rma_customer/features/map/data/datasources/map_remote_datasource.dart';
+import 'package:rma_customer/features/map/data/repositories/map_repository_impl.dart';
+import 'package:rma_customer/features/map/domain/repositories/map_repository.dart';
+import 'package:rma_customer/features/map/domain/usecases/get_parcel_location_usecase.dart';
+import 'package:rma_customer/features/map/presentation/bloc/map_bloc.dart';
+
+final sl = GetIt.instance;
+
+Future<void> init() async {
+  //! Features - Dashboard
+  // Bloc
+  sl.registerFactory(() => DashboardBloc(getDashboardStatsUseCase: sl()));
+  // Use cases
+  sl.registerLazySingleton(() => GetDashboardStatsUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<DashboardRepository>(
+    () => DashboardRepositoryImpl(remoteDataSource: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<DashboardRemoteDataSource>(
+    () => DashboardRemoteDataSourceImpl(),
+  );
+
+  //! Features - Parcels
+  // Bloc
+  sl.registerFactory(() => ParcelsBloc(getParcelsUseCase: sl()));
+  // Use cases
+  sl.registerLazySingleton(() => GetParcelsUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<ParcelRepository>(
+    () => ParcelRepositoryImpl(remoteDataSource: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<ParcelRemoteDataSource>(
+    () => ParcelRemoteDataSourceImpl(),
+  );
+
+  //! Features - New Parcel
+  // Bloc
+  sl.registerFactory(() => NewParcelBloc(createParcelUseCase: sl()));
+  // Use cases
+  sl.registerLazySingleton(() => CreateParcelUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<NewParcelRepository>(
+    () => NewParcelRepositoryImpl(remoteDataSource: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<NewParcelRemoteDataSource>(
+    () => NewParcelRemoteDataSourceImpl(),
+  );
+
+  //! Features - Routes
+  // Bloc
+  sl.registerFactory(() => RoutesBloc(getRoutesUseCase: sl()));
+  // Use cases
+  sl.registerLazySingleton(() => GetRoutesUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<RoutesRepository>(
+    () => RoutesRepositoryImpl(remoteDataSource: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<RoutesRemoteDataSource>(
+    () => RoutesRemoteDataSourceImpl(),
+  );
+
+  //! Features - Authorizations
+  // Bloc
+  sl.registerFactory(
+    () => AuthorizationsBloc(
+      getAuthorizationsUseCase: sl(),
+      requestAuthorizationUseCase: sl(),
+    ),
+  );
+  // Use cases
+  sl.registerLazySingleton(() => GetAuthorizationsUseCase(sl()));
+  sl.registerLazySingleton(() => RequestAuthorizationUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<AuthorizationsRepository>(
+    () => AuthorizationsRepositoryImpl(remoteDataSource: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<AuthorizationsRemoteDataSource>(
+    () => AuthorizationsRemoteDataSourceImpl(),
+  );
+
+  //! Features - Map
+  // Bloc
+  sl.registerFactory(() => MapBloc(getParcelLocationUseCase: sl()));
+  // Use cases
+  sl.registerLazySingleton(() => GetParcelLocationUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<MapRepository>(
+    () => MapRepositoryImpl(remoteDataSource: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<MapRemoteDataSource>(
+    () => MapRemoteDataSourceImpl(),
+  );
+
+  //! Features - Auth
+  // Bloc
+  sl.registerFactory(
+    () => AuthBloc(
+      loginUseCase: sl(),
+      registerUseCase: sl(),
+      logoutUseCase: sl(),
+      getCurrentUserUseCase: sl(),
+    ),
+  );
+  // Use cases
+  sl.registerLazySingleton(() => LoginUseCase(sl()));
+  sl.registerLazySingleton(() => RegisterUseCase(sl()));
+  sl.registerLazySingleton(() => LogoutUseCase(sl()));
+  sl.registerLazySingleton(() => GetCurrentUserUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSourceImpl(),
+  );
+
+  //! Features - Profile
+  // Bloc
+  sl.registerFactory(
+    () => ProfileBloc(updateProfileUseCase: sl(), changePasswordUseCase: sl()),
+  );
+  // Use cases
+  sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
+  sl.registerLazySingleton(() => ChangePasswordUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<ProfileRemoteDataSource>(
+    () => ProfileRemoteDataSourceImpl(),
+  );
+
+  //! Core
+  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
+  sl.registerLazySingleton(() => DioClient(sl()));
+
+  //! External
+  sl.registerLazySingleton(() => Dio());
+  sl.registerLazySingleton(() => InternetConnectionChecker());
+}

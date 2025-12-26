@@ -1,0 +1,37 @@
+import '../../domain/entities/route_entity.dart';
+
+class RouteModel extends RouteEntity {
+  const RouteModel({
+    required super.id,
+    required super.name,
+    required super.from,
+    required super.to,
+    required super.status,
+    required super.date,
+    required super.driverName,
+  });
+
+  factory RouteModel.fromJson(Map<String, dynamic> json) {
+    return RouteModel(
+      id: json['id'],
+      name: json['name'],
+      from: json['from'],
+      to: json['to'],
+      status: json['status'],
+      date: DateTime.parse(json['date']),
+      driverName: json['driver_name'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'from': from,
+      'to': to,
+      'status': status,
+      'date': date.toIso8601String(),
+      'driver_name': driverName,
+    };
+  }
+}
