@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../bloc/routes_bloc.dart';
@@ -41,10 +42,11 @@ class _RoutesPageState extends State<RoutesPage> {
               padding: const EdgeInsets.all(AppDimensions.spacing4),
               itemCount: state.routes.length,
               itemBuilder: (context, index) {
+                final route = state.routes[index];
                 return RouteCard(
-                  route: state.routes[index],
+                  route: route,
                   onTap: () {
-                    // TODO: Navigate to route details or map
+                    context.push('/route-detail', extra: route);
                   },
                 );
               },

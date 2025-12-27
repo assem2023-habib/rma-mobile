@@ -7,7 +7,11 @@ import 'package:rma_customer/features/auth/presentation/pages/reset_password_pag
 import 'package:rma_customer/features/dashboard/presentation/pages/dashboard_home_page.dart';
 import 'package:rma_customer/features/parcels/presentation/pages/parcels_page.dart';
 import 'package:rma_customer/features/parcels/presentation/pages/new_parcel_page.dart';
+import 'package:rma_customer/features/parcels/presentation/pages/parcel_detail_page.dart';
 import 'package:rma_customer/features/routes/presentation/pages/routes_page.dart';
+import 'package:rma_customer/features/routes/presentation/pages/route_detail_page.dart';
+import 'package:rma_customer/features/parcels/domain/entities/parcel.dart';
+import 'package:rma_customer/features/routes/domain/entities/route_entity.dart';
 import 'package:rma_customer/features/authorizations/presentation/pages/authorizations_page.dart';
 import 'package:rma_customer/features/authorizations/presentation/pages/request_authorization_page.dart';
 import 'package:rma_customer/features/map/presentation/pages/map_page.dart';
@@ -58,7 +62,21 @@ class AppRouter {
         path: '/new-parcel',
         builder: (context, state) => const NewParcelPage(),
       ),
+      GoRoute(
+        path: '/parcel-detail',
+        builder: (context, state) {
+          final parcel = state.extra as Parcel;
+          return ParcelDetailPage(parcel: parcel);
+        },
+      ),
       GoRoute(path: '/routes', builder: (context, state) => const RoutesPage()),
+      GoRoute(
+        path: '/route-detail',
+        builder: (context, state) {
+          final route = state.extra as RouteEntity;
+          return RouteDetailPage(route: route);
+        },
+      ),
       GoRoute(
         path: '/authorizations',
         builder: (context, state) => const AuthorizationsPage(),
