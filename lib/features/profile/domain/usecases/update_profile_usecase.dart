@@ -9,14 +9,16 @@ class UpdateProfileUseCase {
   UpdateProfileUseCase(this.repository);
 
   Future<Either<Failure, UserEntity>> call({
-    required String name,
-    required String phoneNumber,
-    String? profileImageUrl,
+    required String firstName,
+    required String lastName,
+    required String phone,
+    required int cityId,
   }) async {
     return await repository.updateProfile(
-      name: name,
-      phoneNumber: phoneNumber,
-      profileImageUrl: profileImageUrl,
+      firstName: firstName,
+      lastName: lastName,
+      phone: phone,
+      cityId: cityId,
     );
   }
 }

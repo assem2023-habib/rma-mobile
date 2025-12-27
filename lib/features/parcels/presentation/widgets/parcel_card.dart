@@ -89,7 +89,7 @@ class ParcelCard extends StatelessWidget {
                     text: parcel.receiverName,
                   ),
                   Text(
-                    '${parcel.price.toStringAsFixed(0)} ل.س',
+                    '${parcel.cost.toStringAsFixed(0)} ل.س',
                     style: AppTypography.bodyLarge.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.slate900,

@@ -31,3 +31,39 @@ class AuthError extends AuthState {
   @override
   List<Object?> get props => [message];
 }
+
+class ForgotPasswordSuccess extends AuthState {
+  final String message;
+
+  const ForgotPasswordSuccess({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class NewPasswordSuccess extends AuthState {
+  final String message;
+
+  const NewPasswordSuccess({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class VerifyEmailSuccess extends AuthState {
+  final String message;
+
+  const VerifyEmailSuccess({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ConfirmEmailOtpSuccess extends AuthState {
+  final String message;
+
+  const ConfirmEmailOtpSuccess({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}

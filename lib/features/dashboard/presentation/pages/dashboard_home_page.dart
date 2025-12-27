@@ -9,6 +9,9 @@ import '../bloc/dashboard_bloc.dart';
 import '../bloc/dashboard_state.dart';
 import '../widgets/quick_action_card.dart';
 
+import 'package:rma_customer/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:rma_customer/features/auth/presentation/bloc/auth_state.dart';
+
 class DashboardHomePage extends StatelessWidget {
   const DashboardHomePage({super.key});
 
@@ -77,13 +80,21 @@ class DashboardHomePage extends StatelessWidget {
                                           color: Colors.white,
                                         ),
                                       ),
-                                      Text(
-                                        'مرحباً بك، أحمد',
-                                        style: AppTypography.caption.copyWith(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.8,
-                                          ),
-                                        ),
+                                      BlocBuilder<AuthBloc, AuthState>(
+                                        builder: (context, state) {
+                                          String name = 'أحمد';
+                                          if (state is Authenticated) {
+                                            name = state.user.firstName;
+                                          }
+                                          return Text(
+                                            'مرحباً بك، $name',
+                                            style: AppTypography.caption
+                                                .copyWith(
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.8),
+                                                ),
+                                          );
+                                        },
                                       ),
                                     ],
                                   ),

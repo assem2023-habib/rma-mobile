@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/entities/authorization_entity.dart';
 
 abstract class AuthorizationsEvent extends Equatable {
   const AuthorizationsEvent();
@@ -10,11 +9,35 @@ abstract class AuthorizationsEvent extends Equatable {
 
 class GetAuthorizationsEvent extends AuthorizationsEvent {}
 
-class RequestAuthorizationEvent extends AuthorizationsEvent {
-  final AuthorizationEntity authorization;
+class GetAuthorizationByIdEvent extends AuthorizationsEvent {
+  final int id;
 
-  const RequestAuthorizationEvent(this.authorization);
+  const GetAuthorizationByIdEvent(this.id);
 
   @override
-  List<Object?> get props => [authorization];
+  List<Object?> get props => [id];
+}
+
+class CreateAuthorizationEvent extends AuthorizationsEvent {
+  final int parcelId;
+  final String authorizedUserType;
+  final int? authorizedUserId;
+
+  const CreateAuthorizationEvent({
+    required this.parcelId,
+    required this.authorizedUserType,
+    this.authorizedUserId,
+  });
+
+  @override
+  List<Object?> get props => [parcelId, authorizedUserType, authorizedUserId];
+}
+
+class CancelAuthorizationEvent extends AuthorizationsEvent {
+  final int id;
+
+  const CancelAuthorizationEvent(this.id);
+
+  @override
+  List<Object?> get props => [id];
 }

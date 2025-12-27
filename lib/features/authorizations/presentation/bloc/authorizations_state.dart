@@ -21,9 +21,25 @@ class AuthorizationsLoaded extends AuthorizationsState {
   List<Object?> get props => [authorizations];
 }
 
-class AuthorizationRequesting extends AuthorizationsState {}
+class AuthorizationDetailLoaded extends AuthorizationsState {
+  final AuthorizationEntity authorization;
 
-class AuthorizationRequestSuccess extends AuthorizationsState {}
+  const AuthorizationDetailLoaded(this.authorization);
+
+  @override
+  List<Object?> get props => [authorization];
+}
+
+class AuthorizationActionInProgress extends AuthorizationsState {}
+
+class AuthorizationActionSuccess extends AuthorizationsState {
+  final String message;
+
+  const AuthorizationActionSuccess(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
 
 class AuthorizationsError extends AuthorizationsState {
   final String message;

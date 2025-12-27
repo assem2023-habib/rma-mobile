@@ -17,23 +17,25 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<Either<Failure, UserEntity>> updateProfile({
-    required String name,
-    required String phoneNumber,
-    String? profileImageUrl,
+    required String firstName,
+    required String lastName,
+    required String phone,
+    required int cityId,
   }) async {
     if (await networkInfo.isConnected) {
       try {
         final remoteUser = await remoteDataSource.updateProfile(
-          name: name,
-          phoneNumber: phoneNumber,
-          profileImageUrl: profileImageUrl,
+          firstName: firstName,
+          lastName: lastName,
+          phone: phone,
+          cityId: cityId,
         );
         return Right(remoteUser);
       } on ServerException {
-        return const Left(ServerFailure('Server Error updating profile'));
+        return const Left(ServerFailure('حدث خطأ أثناء تحديث الملف الشخصي'));
       }
     } else {
-      return const Left(NetworkFailure('No Internet Connection'));
+      return const Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));
     }
   }
 

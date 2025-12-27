@@ -2,41 +2,59 @@ import 'package:equatable/equatable.dart';
 import '../../../../core/enums/parcel_status.dart';
 
 class Parcel extends Equatable {
-  final String id;
-  final String trackingNumber;
-  final String senderName;
-  final String receiverName;
+  final int id;
+  final int senderId;
+  final String senderType;
+  final int routeId;
   final String fromCity;
   final String toCity;
-  final ParcelStatus status;
-  final DateTime createdAt;
+  final String receiverName;
+  final String receiverAddress;
+  final String receiverPhone;
   final double weight;
-  final double price;
+  final double cost;
+  final bool isPaid;
+  final ParcelStatus status;
+  final String trackingNumber;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   const Parcel({
     required this.id,
-    required this.trackingNumber,
-    required this.senderName,
-    required this.receiverName,
+    required this.senderId,
+    required this.senderType,
+    required this.routeId,
     required this.fromCity,
     required this.toCity,
-    required this.status,
-    required this.createdAt,
+    required this.receiverName,
+    required this.receiverAddress,
+    required this.receiverPhone,
     required this.weight,
-    required this.price,
+    required this.cost,
+    required this.isPaid,
+    required this.status,
+    required this.trackingNumber,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
     id,
-    trackingNumber,
-    senderName,
-    receiverName,
+    senderId,
+    senderType,
+    routeId,
     fromCity,
     toCity,
-    status,
-    createdAt,
+    receiverName,
+    receiverAddress,
+    receiverPhone,
     weight,
-    price,
+    cost,
+    isPaid,
+    status,
+    trackingNumber,
+    createdAt,
+    updatedAt,
   ];
 }

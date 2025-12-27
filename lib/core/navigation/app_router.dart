@@ -3,7 +3,7 @@ import 'package:rma_customer/features/auth/presentation/pages/login_page.dart';
 import 'package:rma_customer/features/auth/presentation/pages/register_page.dart';
 import 'package:rma_customer/features/dashboard/presentation/pages/dashboard_home_page.dart';
 import 'package:rma_customer/features/parcels/presentation/pages/parcels_page.dart';
-import 'package:rma_customer/features/new_parcel/presentation/pages/new_parcel_page.dart';
+import 'package:rma_customer/features/parcels/presentation/pages/new_parcel_page.dart';
 import 'package:rma_customer/features/routes/presentation/pages/routes_page.dart';
 import 'package:rma_customer/features/authorizations/presentation/pages/authorizations_page.dart';
 import 'package:rma_customer/features/authorizations/presentation/pages/request_authorization_page.dart';

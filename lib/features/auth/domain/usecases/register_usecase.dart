@@ -9,11 +9,26 @@ class RegisterUseCase {
   RegisterUseCase(this.repository);
 
   Future<Either<Failure, UserEntity>> call({
-    required String name,
+    required String firstName,
+    required String lastName,
     required String email,
     required String password,
-    required String phoneNumber,
+    required String passwordConfirmation,
+    required String phone,
+    required String birthday,
+    required int cityId,
+    required String nationalNumber,
   }) async {
-    return await repository.register(name, email, password, phoneNumber);
+    return await repository.register(
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      password: password,
+      passwordConfirmation: passwordConfirmation,
+      phone: phone,
+      birthday: birthday,
+      cityId: cityId,
+      nationalNumber: nationalNumber,
+    );
   }
 }

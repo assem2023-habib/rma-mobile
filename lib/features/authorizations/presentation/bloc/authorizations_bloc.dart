@@ -1,19 +1,28 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/usecases/get_authorizations_usecase.dart';
-import '../../domain/usecases/request_authorization_usecase.dart';
+import '../../domain/usecases/get_authorization_by_id_usecase.dart';
+import '../../domain/usecases/create_authorization_usecase.dart';
+import '../../domain/usecases/cancel_authorization_usecase.dart';
 import 'authorizations_event.dart';
 import 'authorizations_state.dart';
 
-class AuthorizationsBloc extends Bloc<AuthorizationsEvent, AuthorizationsState> {
+class AuthorizationsBloc
+    extends Bloc<AuthorizationsEvent, AuthorizationsState> {
   final GetAuthorizationsUseCase getAuthorizationsUseCase;
-  final RequestAuthorizationUseCase requestAuthorizationUseCase;
+  final GetAuthorizationByIdUseCase getAuthorizationByIdUseCase;
+  final CreateAuthorizationUseCase createAuthorizationUseCase;
+  final CancelAuthorizationUseCase cancelAuthorizationUseCase;
 
   AuthorizationsBloc({
     required this.getAuthorizationsUseCase,
-    required this.requestAuthorizationUseCase,
+    required this.getAuthorizationByIdUseCase,
+    required this.createAuthorizationUseCase,
+    required this.cancelAuthorizationUseCase,
   }) : super(AuthorizationsInitial()) {
     on<GetAuthorizationsEvent>(_onGetAuthorizations);
-    on<RequestAuthorizationEvent>(_onRequestAuthorization);
+    on<GetAuthorizationByIdEvent>(_onGetAuthorizationById);
+    on<CreateAuthorizationEvent>(_onCreateAuthorization);
+    on<CancelAuthorizationEvent>(_onCancelAuthorization);
   }
 
   Future<void> _onGetAuthorizations(
@@ -28,15 +37,43 @@ class AuthorizationsBloc extends Bloc<AuthorizationsEvent, AuthorizationsState> 
     );
   }
 
-  Future<void> _onRequestAuthorization(
-    RequestAuthorizationEvent event,
+  Future<void> _onGetAuthorizationById(
+    GetAuthorizationByIdEvent event,
     Emitter<AuthorizationsState> emit,
   ) async {
-    emit(AuthorizationRequesting());
-    final result = await requestAuthorizationUseCase(event.authorization);
+    emit(AuthorizationsLoading());
+    final result = await getAuthorizationByIdUseCase(event.id);
     result.fold(
       (failure) => emit(AuthorizationsError(failure.message)),
-      (_) => emit(AuthorizationRequestSuccess()),
+      (authorization) => emit(AuthorizationDetailLoaded(authorization)),
+    );
+  }
+
+  Future<void> _onCreateAuthorization(
+    CreateAuthorizationEvent event,
+    Emitter<AuthorizationsState> emit,
+  ) async {
+    emit(AuthorizationActionInProgress());
+    final result = await createAuthorizationUseCase(
+      parcelId: event.parcelId,
+      authorizedUserType: event.authorizedUserType,
+      authorizedUserId: event.authorizedUserId,
+    );
+    result.fold(
+      (failure) => emit(AuthorizationsError(failure.message)),
+      (authorization) => emit(const AuthorizationActionSuccess('تم إنشاء التخويل بنجاح')),
+    );
+  }
+
+  Future<void> _onCancelAuthorization(
+    CancelAuthorizationEvent event,
+    Emitter<AuthorizationsState> emit,
+  ) async {
+    emit(AuthorizationActionInProgress());
+    final result = await cancelAuthorizationUseCase(event.id);
+    result.fold(
+      (failure) => emit(AuthorizationsError(failure.message)),
+      (_) => emit(const AuthorizationActionSuccess('تم إلغاء التخويل بنجاح')),
     );
   }
 }

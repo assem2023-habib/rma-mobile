@@ -14,19 +14,52 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _passwordConfirmationController = TextEditingController();
+  final _nationalNumberController = TextEditingController();
+  final _birthdayController = TextEditingController();
+  int? _selectedCityId;
   final _formKey = GlobalKey<FormState>();
+
+  // Mock cities for now
+  final List<Map<String, dynamic>> _cities = [
+    {'id': 1, 'name': 'دمشق'},
+    {'id': 2, 'name': 'حلب'},
+    {'id': 3, 'name': 'حمص'},
+    {'id': 4, 'name': 'اللاذقية'},
+    {'id': 5, 'name': 'حماة'},
+  ];
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
+    _passwordConfirmationController.dispose();
+    _nationalNumberController.dispose();
+    _birthdayController.dispose();
     super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(2000),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      locale: const Locale('ar'),
+    );
+    if (picked != null) {
+      setState(() {
+        _birthdayController.text = picked.toIso8601String().split('T')[0];
+      });
+    }
   }
 
   @override
@@ -78,21 +111,52 @@ class _RegisterPageState extends State<RegisterPage> {
                     style: TextStyle(fontSize: 16, color: AppColors.slate600),
                   ),
                   const SizedBox(height: 40),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: 'الاسم الكامل',
-                      prefixIcon: const Icon(Icons.person_outline),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _firstNameController,
+                          decoration: InputDecoration(
+                            labelText: 'الاسم الأول',
+                            prefixIcon: const Icon(Icons.person_outline),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'الاسم الأول مطلوب';
+                            }
+                            if (value.length > 255) {
+                              return 'الاسم طويل جداً';
+                            }
+                            return null;
+                          },
+                        ),
                       ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'يرجى إدخال الاسم الكامل';
-                      }
-                      return null;
-                    },
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _lastNameController,
+                          decoration: InputDecoration(
+                            labelText: 'الاسم الأخير',
+                            prefixIcon: const Icon(Icons.person_outline),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'الاسم الأخير مطلوب';
+                            }
+                            if (value.length > 255) {
+                              return 'الاسم طويل جداً';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
@@ -107,7 +171,12 @@ class _RegisterPageState extends State<RegisterPage> {
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'يرجى إدخال البريد الإلكتروني';
+                        return 'البريد الإلكتروني مطلوب';
+                      }
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
+                        return 'بريد إلكتروني غير صحيح';
                       }
                       return null;
                     },
@@ -125,7 +194,76 @@ class _RegisterPageState extends State<RegisterPage> {
                     keyboardType: TextInputType.phone,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'يرجى إدخال رقم الهاتف';
+                        return 'رقم الهاتف مطلوب';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _nationalNumberController,
+                    decoration: InputDecoration(
+                      labelText: 'الرقم الوطني',
+                      prefixIcon: const Icon(Icons.badge_outlined),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'الرقم الوطني مطلوب';
+                      }
+                      if (value.length != 11 ||
+                          !RegExp(r'^\d{11}$').hasMatch(value)) {
+                        return 'الرقم الوطني يجب أن يكون 11 رقم';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _birthdayController,
+                    readOnly: true,
+                    onTap: () => _selectDate(context),
+                    decoration: InputDecoration(
+                      labelText: 'تاريخ الميلاد',
+                      prefixIcon: const Icon(Icons.calendar_today_outlined),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'تاريخ الميلاد مطلوب';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  DropdownButtonFormField<int>(
+                    initialValue: _selectedCityId,
+                    decoration: InputDecoration(
+                      labelText: 'المدينة',
+                      prefixIcon: const Icon(Icons.location_city_outlined),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    items: _cities.map((city) {
+                      return DropdownMenuItem<int>(
+                        value: city['id'],
+                        child: Text(city['name']),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCityId = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'يرجى اختيار المدينة';
                       }
                       return null;
                     },
@@ -143,10 +281,31 @@ class _RegisterPageState extends State<RegisterPage> {
                     obscureText: true,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'يرجى إدخال كلمة المرور';
+                        return 'كلمة المرور مطلوبة';
                       }
-                      if (value.length < 6) {
-                        return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                      if (value.length < 8) {
+                        return 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _passwordConfirmationController,
+                    decoration: InputDecoration(
+                      labelText: 'تأكيد كلمة المرور',
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    obscureText: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'تأكيد كلمة المرور مطلوب';
+                      }
+                      if (value != _passwordController.text) {
+                        return 'كلمة المرور غير متطابقة';
                       }
                       return null;
                     },
@@ -162,10 +321,16 @@ class _RegisterPageState extends State<RegisterPage> {
                           if (_formKey.currentState!.validate()) {
                             context.read<AuthBloc>().add(
                               RegisterRequested(
-                                name: _nameController.text,
+                                firstName: _firstNameController.text,
+                                lastName: _lastNameController.text,
                                 email: _emailController.text,
-                                phoneNumber: _phoneController.text,
+                                phone: _phoneController.text,
                                 password: _passwordController.text,
+                                passwordConfirmation:
+                                    _passwordConfirmationController.text,
+                                birthday: _birthdayController.text,
+                                cityId: _selectedCityId!,
+                                nationalNumber: _nationalNumberController.text,
                               ),
                             );
                           }

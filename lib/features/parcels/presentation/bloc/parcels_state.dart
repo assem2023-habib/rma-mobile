@@ -20,6 +20,22 @@ class ParcelsLoaded extends ParcelsState {
   List<Object> get props => [parcels];
 }
 
+class ParcelDetailLoaded extends ParcelsState {
+  final Parcel parcel;
+  const ParcelDetailLoaded({required this.parcel});
+
+  @override
+  List<Object> get props => [parcel];
+}
+
+class ParcelActionSuccess extends ParcelsState {
+  final String message;
+  const ParcelActionSuccess({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
 class ParcelsError extends ParcelsState {
   final String message;
   const ParcelsError({required this.message});

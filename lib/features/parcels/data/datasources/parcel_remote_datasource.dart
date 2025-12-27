@@ -3,7 +3,23 @@ import '../models/parcel_model.dart';
 
 abstract class ParcelRemoteDataSource {
   Future<List<ParcelModel>> getParcels();
-  Future<ParcelModel> getParcelById(String id);
+  Future<ParcelModel> getParcelById(int id);
+  Future<ParcelModel> createParcel({
+    required int routeId,
+    required String receiverName,
+    required String receiverAddress,
+    required String receiverPhone,
+    required double weight,
+    required bool isPaid,
+  });
+  Future<ParcelModel> updateParcel({
+    required int id,
+    String? receiverName,
+    String? receiverAddress,
+    String? receiverPhone,
+    double? weight,
+  });
+  Future<void> deleteParcel(int id);
 }
 
 class ParcelRemoteDataSourceImpl implements ParcelRemoteDataSource {
@@ -13,58 +29,128 @@ class ParcelRemoteDataSourceImpl implements ParcelRemoteDataSource {
     await Future.delayed(const Duration(seconds: 1));
     return [
       ParcelModel(
-        id: '1',
-        trackingNumber: 'PKG-2024-001',
-        senderName: 'أحمد محمد',
-        receiverName: 'سارة علي',
+        id: 1,
+        senderId: 1,
+        senderType: 'User',
+        routeId: 1,
         fromCity: 'دمشق',
         toCity: 'حلب',
-        status: ParcelStatus.inTransit,
-        createdAt: DateTime.now().subtract(const Duration(days: 1)),
+        receiverName: 'سارة علي',
+        receiverAddress: 'حلب، شارع النيل',
+        receiverPhone: '+963912345679',
         weight: 2.5,
-        price: 15000,
+        cost: 15000,
+        isPaid: false,
+        status: ParcelStatus.inTransit,
+        trackingNumber: 'PKG-2024-001',
+        createdAt: DateTime.now().subtract(const Duration(days: 1)),
+        updatedAt: DateTime.now().subtract(const Duration(hours: 5)),
       ),
       ParcelModel(
-        id: '2',
-        trackingNumber: 'PKG-2024-002',
-        senderName: 'ياسين محمود',
-        receiverName: 'ليلى حسن',
-        fromCity: 'حمص',
+        id: 2,
+        senderId: 1,
+        senderType: 'User',
+        routeId: 2,
+        fromCity: 'حلب',
         toCity: 'اللاذقية',
-        status: ParcelStatus.delivered,
-        createdAt: DateTime.now().subtract(const Duration(days: 3)),
+        receiverName: 'ليلى حسن',
+        receiverAddress: 'اللاذقية، الكورنيش',
+        receiverPhone: '+963987654321',
         weight: 1.0,
-        price: 8000,
-      ),
-      ParcelModel(
-        id: '3',
-        trackingNumber: 'PKG-2024-003',
-        senderName: 'عمر خالد',
-        receiverName: 'مريم يوسف',
-        fromCity: 'طرطوس',
-        toCity: 'دمشق',
-        status: ParcelStatus.pending,
-        createdAt: DateTime.now(),
-        weight: 5.0,
-        price: 25000,
+        cost: 8000,
+        isPaid: true,
+        status: ParcelStatus.delivered,
+        trackingNumber: 'PKG-2024-002',
+        createdAt: DateTime.now().subtract(const Duration(days: 3)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 1)),
       ),
     ];
   }
 
   @override
-  Future<ParcelModel> getParcelById(String id) async {
+  Future<ParcelModel> getParcelById(int id) async {
     await Future.delayed(const Duration(milliseconds: 500));
     return ParcelModel(
       id: id,
-      trackingNumber: 'PKG-2024-001',
-      senderName: 'أحمد محمد',
-      receiverName: 'سارة علي',
+      senderId: 1,
+      senderType: 'User',
+      routeId: 1,
       fromCity: 'دمشق',
       toCity: 'حلب',
-      status: ParcelStatus.inTransit,
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
+      receiverName: 'سارة علي',
+      receiverAddress: 'حلب، شارع النيل',
+      receiverPhone: '+963912345679',
       weight: 2.5,
-      price: 15000,
+      cost: 15000,
+      isPaid: false,
+      status: ParcelStatus.inTransit,
+      trackingNumber: 'PKG-2024-001',
+      createdAt: DateTime.now().subtract(const Duration(days: 1)),
+      updatedAt: DateTime.now().subtract(const Duration(hours: 5)),
     );
+  }
+
+  @override
+  Future<ParcelModel> createParcel({
+    required int routeId,
+    required String receiverName,
+    required String receiverAddress,
+    required String receiverPhone,
+    required double weight,
+    required bool isPaid,
+  }) async {
+    await Future.delayed(const Duration(seconds: 1));
+    return ParcelModel(
+      id: 3,
+      senderId: 1,
+      senderType: 'User',
+      routeId: routeId,
+      fromCity: 'دمشق', // Mocked city
+      toCity: 'حلب', // Mocked city
+      receiverName: receiverName,
+      receiverAddress: receiverAddress,
+      receiverPhone: receiverPhone,
+      weight: weight,
+      cost: weight * 5000, // Example calculation
+      isPaid: isPaid,
+      status: ParcelStatus.pending,
+      trackingNumber: 'PKG-NEW-001',
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+  }
+
+  @override
+  Future<ParcelModel> updateParcel({
+    required int id,
+    String? receiverName,
+    String? receiverAddress,
+    String? receiverPhone,
+    double? weight,
+  }) async {
+    await Future.delayed(const Duration(seconds: 1));
+    return ParcelModel(
+      id: id,
+      senderId: 1,
+      senderType: 'User',
+      routeId: 1,
+      fromCity: 'دمشق',
+      toCity: 'حلب',
+      receiverName: receiverName ?? 'سارة علي',
+      receiverAddress: receiverAddress ?? 'حلب، شارع النيل',
+      receiverPhone: receiverPhone ?? '+963912345679',
+      weight: weight ?? 2.5,
+      cost: (weight ?? 2.5) * 5000,
+      isPaid: false,
+      status: ParcelStatus.inTransit,
+      trackingNumber: 'PKG-2024-001',
+      createdAt: DateTime.now().subtract(const Duration(days: 1)),
+      updatedAt: DateTime.now(),
+    );
+  }
+
+  @override
+  Future<void> deleteParcel(int id) async {
+    await Future.delayed(const Duration(seconds: 1));
   }
 }

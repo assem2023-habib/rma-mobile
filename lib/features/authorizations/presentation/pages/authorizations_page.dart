@@ -116,6 +116,10 @@ class _AuthorizationsPageState extends State<AuthorizationsPage> {
 
   Widget _buildAuthorizationCard(AuthorizationEntity auth) {
     final statusColor = _getStatusColor(auth.status);
+    final title = auth.parcel?.trackingNumber ?? 'تخويل طرد #${auth.parcelId}';
+    final description = auth.parcel?.receiverName != null
+        ? 'تخويل لاستلام طرد: ${auth.parcel!.receiverName}'
+        : 'كود التخويل: ${auth.authorizedCode}';
 
     return Card(
       margin: const EdgeInsets.only(bottom: AppDimensions.spacing4),
@@ -131,7 +135,7 @@ class _AuthorizationsPageState extends State<AuthorizationsPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(auth.title, style: AppTypography.heading3),
+                Text(title, style: AppTypography.heading3),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
@@ -153,7 +157,7 @@ class _AuthorizationsPageState extends State<AuthorizationsPage> {
             ),
             const SizedBox(height: AppDimensions.spacing2),
             Text(
-              auth.description,
+              description,
               style: AppTypography.bodySmall.copyWith(
                 color: AppColors.slate500,
               ),
@@ -168,7 +172,7 @@ class _AuthorizationsPageState extends State<AuthorizationsPage> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${auth.date.year}-${auth.date.month}-${auth.date.day}',
+                  '${auth.generatedAt.year}-${auth.generatedAt.month}-${auth.generatedAt.day}',
                   style: AppTypography.caption.copyWith(
                     color: AppColors.slate500,
                   ),
@@ -183,10 +187,13 @@ class _AuthorizationsPageState extends State<AuthorizationsPage> {
 
   Color _getStatusColor(String status) {
     switch (status) {
+      case 'completed':
       case 'مكتمل':
         return AppColors.success;
+      case 'pending':
       case 'قيد الانتظار':
         return AppColors.warning;
+      case 'cancelled':
       case 'مرفوض':
         return AppColors.error;
       default:

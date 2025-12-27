@@ -6,10 +6,14 @@ import 'package:rma_customer/core/network/network_info.dart';
 import 'package:rma_customer/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:rma_customer/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:rma_customer/features/auth/domain/repositories/auth_repository.dart';
+import 'package:rma_customer/features/auth/domain/usecases/confirm_email_otp_usecase.dart';
+import 'package:rma_customer/features/auth/domain/usecases/forgot_password_usecase.dart';
 import 'package:rma_customer/features/auth/domain/usecases/login_usecase.dart';
+import 'package:rma_customer/features/auth/domain/usecases/new_password_usecase.dart';
 import 'package:rma_customer/features/auth/domain/usecases/register_usecase.dart';
 import 'package:rma_customer/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:rma_customer/features/auth/domain/usecases/get_current_user_usecase.dart';
+import 'package:rma_customer/features/auth/domain/usecases/verify_email_usecase.dart';
 import 'package:rma_customer/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:rma_customer/features/profile/data/datasources/profile_remote_datasource.dart';
 import 'package:rma_customer/features/profile/data/repositories/profile_repository_impl.dart';
@@ -26,12 +30,12 @@ import 'package:rma_customer/features/parcels/data/datasources/parcel_remote_dat
 import 'package:rma_customer/features/parcels/data/repositories/parcel_repository_impl.dart';
 import 'package:rma_customer/features/parcels/domain/repositories/parcel_repository.dart';
 import 'package:rma_customer/features/parcels/domain/usecases/get_parcels_usecase.dart';
+import 'package:rma_customer/features/parcels/domain/usecases/get_parcel_by_id_usecase.dart';
+import 'package:rma_customer/features/parcels/domain/usecases/create_parcel_usecase.dart'
+    as parcel_create;
+import 'package:rma_customer/features/parcels/domain/usecases/update_parcel_usecase.dart';
+import 'package:rma_customer/features/parcels/domain/usecases/delete_parcel_usecase.dart';
 import 'package:rma_customer/features/parcels/presentation/bloc/parcels_bloc.dart';
-import 'package:rma_customer/features/new_parcel/data/datasources/new_parcel_remote_datasource.dart';
-import 'package:rma_customer/features/new_parcel/data/repositories/new_parcel_repository_impl.dart';
-import 'package:rma_customer/features/new_parcel/domain/repositories/new_parcel_repository.dart';
-import 'package:rma_customer/features/new_parcel/domain/usecases/create_parcel_usecase.dart';
-import 'package:rma_customer/features/new_parcel/presentation/bloc/new_parcel_bloc.dart';
 import 'package:rma_customer/features/routes/data/datasources/routes_remote_datasource.dart';
 import 'package:rma_customer/features/routes/data/repositories/routes_repository_impl.dart';
 import 'package:rma_customer/features/routes/domain/repositories/routes_repository.dart';
@@ -41,7 +45,9 @@ import 'package:rma_customer/features/authorizations/data/datasources/authorizat
 import 'package:rma_customer/features/authorizations/data/repositories/authorizations_repository_impl.dart';
 import 'package:rma_customer/features/authorizations/domain/repositories/authorizations_repository.dart';
 import 'package:rma_customer/features/authorizations/domain/usecases/get_authorizations_usecase.dart';
-import 'package:rma_customer/features/authorizations/domain/usecases/request_authorization_usecase.dart';
+import 'package:rma_customer/features/authorizations/domain/usecases/get_authorization_by_id_usecase.dart';
+import 'package:rma_customer/features/authorizations/domain/usecases/create_authorization_usecase.dart';
+import 'package:rma_customer/features/authorizations/domain/usecases/cancel_authorization_usecase.dart';
 import 'package:rma_customer/features/authorizations/presentation/bloc/authorizations_bloc.dart';
 import 'package:rma_customer/features/map/data/datasources/map_remote_datasource.dart';
 import 'package:rma_customer/features/map/data/repositories/map_repository_impl.dart';
@@ -68,9 +74,21 @@ Future<void> init() async {
 
   //! Features - Parcels
   // Bloc
-  sl.registerFactory(() => ParcelsBloc(getParcelsUseCase: sl()));
+  sl.registerFactory(
+    () => ParcelsBloc(
+      getParcelsUseCase: sl(),
+      getParcelByIdUseCase: sl(),
+      createParcelUseCase: sl(),
+      updateParcelUseCase: sl(),
+      deleteParcelUseCase: sl(),
+    ),
+  );
   // Use cases
   sl.registerLazySingleton(() => GetParcelsUseCase(sl()));
+  sl.registerLazySingleton(() => GetParcelByIdUseCase(sl()));
+  sl.registerLazySingleton(() => parcel_create.CreateParcelUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateParcelUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteParcelUseCase(sl()));
   // Repository
   sl.registerLazySingleton<ParcelRepository>(
     () => ParcelRepositoryImpl(remoteDataSource: sl()),
@@ -78,20 +96,6 @@ Future<void> init() async {
   // Data sources
   sl.registerLazySingleton<ParcelRemoteDataSource>(
     () => ParcelRemoteDataSourceImpl(),
-  );
-
-  //! Features - New Parcel
-  // Bloc
-  sl.registerFactory(() => NewParcelBloc(createParcelUseCase: sl()));
-  // Use cases
-  sl.registerLazySingleton(() => CreateParcelUseCase(sl()));
-  // Repository
-  sl.registerLazySingleton<NewParcelRepository>(
-    () => NewParcelRepositoryImpl(remoteDataSource: sl()),
-  );
-  // Data sources
-  sl.registerLazySingleton<NewParcelRemoteDataSource>(
-    () => NewParcelRemoteDataSourceImpl(),
   );
 
   //! Features - Routes
@@ -113,12 +117,16 @@ Future<void> init() async {
   sl.registerFactory(
     () => AuthorizationsBloc(
       getAuthorizationsUseCase: sl(),
-      requestAuthorizationUseCase: sl(),
+      getAuthorizationByIdUseCase: sl(),
+      createAuthorizationUseCase: sl(),
+      cancelAuthorizationUseCase: sl(),
     ),
   );
   // Use cases
   sl.registerLazySingleton(() => GetAuthorizationsUseCase(sl()));
-  sl.registerLazySingleton(() => RequestAuthorizationUseCase(sl()));
+  sl.registerLazySingleton(() => GetAuthorizationByIdUseCase(sl()));
+  sl.registerLazySingleton(() => CreateAuthorizationUseCase(sl()));
+  sl.registerLazySingleton(() => CancelAuthorizationUseCase(sl()));
   // Repository
   sl.registerLazySingleton<AuthorizationsRepository>(
     () => AuthorizationsRepositoryImpl(remoteDataSource: sl()),
@@ -150,6 +158,10 @@ Future<void> init() async {
       registerUseCase: sl(),
       logoutUseCase: sl(),
       getCurrentUserUseCase: sl(),
+      forgotPasswordUseCase: sl(),
+      newPasswordUseCase: sl(),
+      verifyEmailUseCase: sl(),
+      confirmEmailOtpUseCase: sl(),
     ),
   );
   // Use cases
@@ -157,6 +169,10 @@ Future<void> init() async {
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
   sl.registerLazySingleton(() => GetCurrentUserUseCase(sl()));
+  sl.registerLazySingleton(() => ForgotPasswordUseCase(sl()));
+  sl.registerLazySingleton(() => NewPasswordUseCase(sl()));
+  sl.registerLazySingleton(() => VerifyEmailUseCase(sl()));
+  sl.registerLazySingleton(() => ConfirmEmailOtpUseCase(sl()));
   // Repository
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),

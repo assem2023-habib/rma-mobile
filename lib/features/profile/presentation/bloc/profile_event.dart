@@ -8,18 +8,20 @@ abstract class ProfileEvent extends Equatable {
 }
 
 class UpdateProfileRequested extends ProfileEvent {
-  final String name;
-  final String phoneNumber;
-  final String? profileImageUrl;
+  final String firstName;
+  final String lastName;
+  final String phone;
+  final int cityId;
 
   const UpdateProfileRequested({
-    required this.name,
-    required this.phoneNumber,
-    this.profileImageUrl,
+    required this.firstName,
+    required this.lastName,
+    required this.phone,
+    required this.cityId,
   });
 
   @override
-  List<Object?> get props => [name, phoneNumber, profileImageUrl];
+  List<Object?> get props => [firstName, lastName, phone, cityId];
 }
 
 class ChangePasswordRequested extends ProfileEvent {

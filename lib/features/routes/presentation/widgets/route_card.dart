@@ -62,7 +62,7 @@ class RouteCard extends StatelessWidget {
                   const Icon(Icons.location_on_outlined, size: 16, color: AppColors.slate500),
                   const SizedBox(width: AppDimensions.spacing2),
                   Text(
-                    '${route.from} ➔ ${route.to}',
+                    '${route.fromCity} ➔ ${route.toCity}',
                     style: AppTypography.bodySmall.copyWith(color: AppColors.slate600),
                   ),
                 ],

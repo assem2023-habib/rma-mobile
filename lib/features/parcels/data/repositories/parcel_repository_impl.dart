@@ -20,12 +20,68 @@ class ParcelRepositoryImpl implements ParcelRepository {
   }
 
   @override
-  Future<Either<Failure, Parcel>> getParcelById(String id) async {
+  Future<Either<Failure, Parcel>> getParcelById(int id) async {
     try {
       final remoteParcel = await remoteDataSource.getParcelById(id);
       return Right(remoteParcel);
     } catch (e) {
       return const Left(ServerFailure('فشل تحميل تفاصيل الطرد'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Parcel>> createParcel({
+    required int routeId,
+    required String receiverName,
+    required String receiverAddress,
+    required String receiverPhone,
+    required double weight,
+    required bool isPaid,
+  }) async {
+    try {
+      final remoteParcel = await remoteDataSource.createParcel(
+        routeId: routeId,
+        receiverName: receiverName,
+        receiverAddress: receiverAddress,
+        receiverPhone: receiverPhone,
+        weight: weight,
+        isPaid: isPaid,
+      );
+      return Right(remoteParcel);
+    } catch (e) {
+      return const Left(ServerFailure('فشل إنشاء الطرد'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Parcel>> updateParcel({
+    required int id,
+    String? receiverName,
+    String? receiverAddress,
+    String? receiverPhone,
+    double? weight,
+  }) async {
+    try {
+      final remoteParcel = await remoteDataSource.updateParcel(
+        id: id,
+        receiverName: receiverName,
+        receiverAddress: receiverAddress,
+        receiverPhone: receiverPhone,
+        weight: weight,
+      );
+      return Right(remoteParcel);
+    } catch (e) {
+      return const Left(ServerFailure('فشل تحديث الطرد'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteParcel(int id) async {
+    try {
+      await remoteDataSource.deleteParcel(id);
+      return const Right(null);
+    } catch (e) {
+      return const Left(ServerFailure('فشل حذف الطرد'));
     }
   }
 }

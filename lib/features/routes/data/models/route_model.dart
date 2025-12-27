@@ -4,8 +4,8 @@ class RouteModel extends RouteEntity {
   const RouteModel({
     required super.id,
     required super.name,
-    required super.from,
-    required super.to,
+    required super.fromCity,
+    required super.toCity,
     required super.status,
     required super.date,
     required super.driverName,
@@ -15,8 +15,8 @@ class RouteModel extends RouteEntity {
     return RouteModel(
       id: json['id'],
       name: json['name'],
-      from: json['from'],
-      to: json['to'],
+      fromCity: json['from_city'] ?? json['from'],
+      toCity: json['to_city'] ?? json['to'],
       status: json['status'],
       date: DateTime.parse(json['date']),
       driverName: json['driver_name'],
@@ -27,8 +27,8 @@ class RouteModel extends RouteEntity {
     return {
       'id': id,
       'name': name,
-      'from': from,
-      'to': to,
+      'from_city': fromCity,
+      'to_city': toCity,
       'status': status,
       'date': date.toIso8601String(),
       'driver_name': driverName,

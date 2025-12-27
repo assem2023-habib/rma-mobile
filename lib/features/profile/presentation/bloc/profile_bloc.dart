@@ -22,9 +22,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     emit(ProfileLoading());
     final result = await updateProfileUseCase(
-      name: event.name,
-      phoneNumber: event.phoneNumber,
-      profileImageUrl: event.profileImageUrl,
+      firstName: event.firstName,
+      lastName: event.lastName,
+      phone: event.phone,
+      cityId: event.cityId,
     );
     result.fold(
       (failure) => emit(ProfileError(message: failure.message)),

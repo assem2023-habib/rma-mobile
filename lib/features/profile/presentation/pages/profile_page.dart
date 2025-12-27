@@ -17,26 +17,40 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
+  int? _selectedCityId;
   final _formKey = GlobalKey<FormState>();
   final _passwordFormKey = GlobalKey<FormState>();
+
+  // Mock cities for now (same as register page)
+  final List<Map<String, dynamic>> _cities = [
+    {'id': 1, 'name': 'دمشق'},
+    {'id': 2, 'name': 'حلب'},
+    {'id': 3, 'name': 'حمص'},
+    {'id': 4, 'name': 'اللاذقية'},
+    {'id': 5, 'name': 'حماة'},
+  ];
 
   @override
   void initState() {
     super.initState();
     final authState = context.read<AuthBloc>().state;
     if (authState is Authenticated) {
-      _nameController.text = authState.user.name;
-      _phoneController.text = authState.user.phoneNumber;
+      _firstNameController.text = authState.user.firstName;
+      _lastNameController.text = authState.user.lastName;
+      _phoneController.text = authState.user.phone;
+      _selectedCityId = authState.user.cityId;
     }
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _phoneController.dispose();
     _oldPasswordController.dispose();
     _newPasswordController.dispose();
@@ -151,16 +165,30 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Column(
                   children: [
                     TextFormField(
-                      controller: _nameController,
+                      controller: _firstNameController,
                       decoration: InputDecoration(
-                        labelText: 'الاسم الكامل',
+                        labelText: 'الاسم الأول',
                         prefixIcon: const Icon(Icons.person_outline),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       validator: (value) => value == null || value.isEmpty
-                          ? 'يرجى إدخال الاسم'
+                          ? 'يرجى إدخال الاسم الأول'
+                          : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _lastNameController,
+                      decoration: InputDecoration(
+                        labelText: 'الكنية',
+                        prefixIcon: const Icon(Icons.person_outline),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'يرجى إدخال الكنية'
                           : null,
                     ),
                     const SizedBox(height: 16),
@@ -177,17 +205,44 @@ class _ProfilePageState extends State<ProfilePage> {
                           ? 'يرجى إدخال رقم الهاتف'
                           : null,
                     ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<int>(
+                      initialValue: _selectedCityId,
+                      decoration: InputDecoration(
+                        labelText: 'المدينة',
+                        prefixIcon: const Icon(Icons.location_city),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      items: _cities.map((city) {
+                        return DropdownMenuItem<int>(
+                          value: city['id'],
+                          child: Text(city['name']),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedCityId = value;
+                        });
+                      },
+                      validator: (value) =>
+                          value == null ? 'يرجى اختيار المدينة' : null,
+                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () {
-                  if (_formKey.currentState!.validate()) {
+                  if (_formKey.currentState!.validate() &&
+                      _selectedCityId != null) {
                     context.read<ProfileBloc>().add(
                       UpdateProfileRequested(
-                        name: _nameController.text,
-                        phoneNumber: _phoneController.text,
+                        firstName: _firstNameController.text,
+                        lastName: _lastNameController.text,
+                        phone: _phoneController.text,
+                        cityId: _selectedCityId!,
                       ),
                     );
                   }

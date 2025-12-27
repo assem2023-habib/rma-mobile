@@ -12,19 +12,19 @@ class RoutesRemoteDataSourceImpl implements RoutesRemoteDataSource {
     
     return [
       RouteModel(
-        id: '1',
+        id: 1,
         name: 'مسار بغداد - البصرة',
-        from: 'بغداد',
-        to: 'البصرة',
+        fromCity: 'بغداد',
+        toCity: 'البصرة',
         status: 'نشط',
         date: DateTime.now(),
         driverName: 'محمد علي',
       ),
       RouteModel(
-        id: '2',
+        id: 2,
         name: 'مسار أربيل - بغداد',
-        from: 'أربيل',
-        to: 'بغداد',
+        fromCity: 'أربيل',
+        toCity: 'بغداد',
         status: 'مكتمل',
         date: DateTime.now().subtract(const Duration(days: 1)),
         driverName: 'أحمد جاسم',
