@@ -17,7 +17,7 @@ abstract class AuthorizationsRemoteDataSource {
     int? authorizedCityId,
     String? authorizedBirthday,
   });
-  Future<void> cancelAuthorization(int id, String reason);
+  Future<void> cancelAuthorization(int id);
 }
 
 class AuthorizationsRemoteDataSourceImpl
@@ -129,7 +129,7 @@ class AuthorizationsRemoteDataSourceImpl
   }
 
   @override
-  Future<void> cancelAuthorization(int id, String reason) async {
+  Future<void> cancelAuthorization(int id) async {
     await Future.delayed(const Duration(seconds: 1));
   }
 }
