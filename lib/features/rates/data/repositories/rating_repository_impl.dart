@@ -27,9 +27,9 @@ class RatingRepositoryImpl implements RatingRepository {
       );
       return Right(result);
     } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
+      return Left(ServerFailure(e.message ?? 'حدث خطأ في الخادم'));
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -51,9 +51,9 @@ class RatingRepositoryImpl implements RatingRepository {
       );
       return Right(result);
     } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
+      return Left(ServerFailure(e.message ?? 'حدث خطأ في الخادم'));
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 }

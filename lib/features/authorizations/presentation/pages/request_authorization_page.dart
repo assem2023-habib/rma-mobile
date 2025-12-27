@@ -284,10 +284,12 @@ class _RequestAuthorizationPageState extends State<RequestAuthorizationPage> {
                     ),
                     validator: (v) {
                       if (_selectedUserType == 'guest') {
-                        if (v == null || v.isEmpty)
+                        if (v == null || v.isEmpty) {
                           return 'يرجى إدخال رقم الهاتف';
-                        if (!RegExp(r'^\+?\d+$').hasMatch(v))
+                        }
+                        if (!RegExp(r'^\+?\d+$').hasMatch(v)) {
                           return 'رقم هاتف غير صحيح';
+                        }
                       }
                       return null;
                     },
@@ -308,8 +310,9 @@ class _RequestAuthorizationPageState extends State<RequestAuthorizationPage> {
                     ),
                     validator: (v) {
                       if (_selectedUserType == 'guest') {
-                        if (v == null || v.isEmpty)
+                        if (v == null || v.isEmpty) {
                           return 'يرجى إدخال الرقم الوطني';
+                        }
                         if (v.length != 11 ||
                             !RegExp(r'^\d{11}$').hasMatch(v)) {
                           return 'الرقم الوطني يجب أن يكون 11 رقم';

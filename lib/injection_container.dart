@@ -14,6 +14,8 @@ import 'package:rma_customer/features/auth/domain/usecases/register_usecase.dart
 import 'package:rma_customer/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:rma_customer/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:rma_customer/features/auth/domain/usecases/verify_email_usecase.dart';
+import 'package:rma_customer/features/auth/domain/usecases/send_telegram_otp_usecase.dart';
+import 'package:rma_customer/features/auth/domain/usecases/verify_telegram_otp_usecase.dart';
 import 'package:rma_customer/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:rma_customer/features/profile/data/datasources/profile_remote_datasource.dart';
 import 'package:rma_customer/features/profile/data/repositories/profile_repository_impl.dart';
@@ -54,6 +56,11 @@ import 'package:rma_customer/features/map/data/repositories/map_repository_impl.
 import 'package:rma_customer/features/map/domain/repositories/map_repository.dart';
 import 'package:rma_customer/features/map/domain/usecases/get_parcel_location_usecase.dart';
 import 'package:rma_customer/features/map/presentation/bloc/map_bloc.dart';
+import 'package:rma_customer/features/rates/data/datasources/rating_remote_datasource.dart';
+import 'package:rma_customer/features/rates/data/repositories/rating_repository_impl.dart';
+import 'package:rma_customer/features/rates/domain/repositories/rating_repository.dart';
+import 'package:rma_customer/features/rates/domain/usecases/create_rating_usecase.dart';
+import 'package:rma_customer/features/rates/presentation/bloc/rating_bloc.dart';
 
 final sl = GetIt.instance;
 

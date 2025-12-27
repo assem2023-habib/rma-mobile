@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../../../core/enums/parcel_status.dart';
+import '../../../../core/enums/rating_type.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/badges/status_badge.dart';
+import '../../../rates/presentation/widgets/rating_dialog.dart';
 import '../../domain/entities/parcel.dart';
 
 class ParcelCard extends StatelessWidget {
