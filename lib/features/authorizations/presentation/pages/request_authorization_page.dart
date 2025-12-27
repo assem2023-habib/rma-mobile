@@ -24,10 +24,32 @@ class _RequestAuthorizationPageState extends State<RequestAuthorizationPage> {
   int? _selectedParcelId;
   String _selectedUserType = 'user'; // default to user
   final _authorizedUserIdController = TextEditingController();
+  final _authorizedFirstNameController = TextEditingController();
+  final _authorizedLastNameController = TextEditingController();
+  final _authorizedPhoneController = TextEditingController();
+  final _authorizedNationalNumberController = TextEditingController();
+  final _authorizedAddressController = TextEditingController();
+  final _authorizedBirthdayController = TextEditingController();
+  int? _selectedCityIdForGuest;
+
+  // Mock cities for now
+  final List<Map<String, dynamic>> _cities = [
+    {'id': 1, 'name': 'دمشق'},
+    {'id': 2, 'name': 'حلب'},
+    {'id': 3, 'name': 'حمص'},
+    {'id': 4, 'name': 'اللاذقية'},
+    {'id': 5, 'name': 'حماة'},
+  ];
 
   @override
   void dispose() {
     _authorizedUserIdController.dispose();
+    _authorizedFirstNameController.dispose();
+    _authorizedLastNameController.dispose();
+    _authorizedPhoneController.dispose();
+    _authorizedNationalNumberController.dispose();
+    _authorizedAddressController.dispose();
+    _authorizedBirthdayController.dispose();
     super.dispose();
   }
 
@@ -47,7 +69,30 @@ class _RequestAuthorizationPageState extends State<RequestAuthorizationPage> {
         CreateAuthorizationEvent(
           parcelId: _selectedParcelId!,
           authorizedUserType: _selectedUserType,
-          authorizedUserId: int.tryParse(_authorizedUserIdController.text),
+          authorizedUserId: _selectedUserType == 'user'
+              ? int.tryParse(_authorizedUserIdController.text)
+              : null,
+          authorizedFirstName: _selectedUserType == 'guest'
+              ? _authorizedFirstNameController.text
+              : null,
+          authorizedLastName: _selectedUserType == 'guest'
+              ? _authorizedLastNameController.text
+              : null,
+          authorizedPhone: _selectedUserType == 'guest'
+              ? _authorizedPhoneController.text
+              : null,
+          authorizedNationalNumber: _selectedUserType == 'guest'
+              ? _authorizedNationalNumberController.text
+              : null,
+          authorizedAddress: _selectedUserType == 'guest'
+              ? _authorizedAddressController.text
+              : null,
+          authorizedCityId: _selectedUserType == 'guest'
+              ? _selectedCityIdForGuest
+              : null,
+          authorizedBirthday: _selectedUserType == 'guest'
+              ? _authorizedBirthdayController.text
+              : null,
         ),
       );
     }
@@ -161,7 +206,182 @@ class _RequestAuthorizationPageState extends State<RequestAuthorizationPage> {
                     controller: _authorizedUserIdController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      hintText: 'أدخل رقم معرف المستخدم (اختياري)',
+                      hintText: 'أدخل رقم معرف المستخدم',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusMd,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    validator: (v) =>
+                        (_selectedUserType == 'user' &&
+                            (v == null || v.isEmpty))
+                        ? 'يرجى إدخال معرف المستخدم'
+                        : null,
+                  ),
+                ] else ...[
+                  const SizedBox(height: AppDimensions.spacing6),
+                  const Text(
+                    'بيانات الضيف المخول',
+                    style: AppTypography.heading3,
+                  ),
+                  const SizedBox(height: AppDimensions.spacing2),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _authorizedFirstNameController,
+                          decoration: InputDecoration(
+                            hintText: 'الاسم الأول',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppDimensions.radiusMd,
+                              ),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          validator: (v) =>
+                              (_selectedUserType == 'guest' &&
+                                  (v == null || v.isEmpty))
+                              ? 'يرجى إدخال الاسم الأول'
+                              : null,
+                        ),
+                      ),
+                      const SizedBox(width: AppDimensions.spacing2),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _authorizedLastNameController,
+                          decoration: InputDecoration(
+                            hintText: 'الاسم الأخير',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppDimensions.radiusMd,
+                              ),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppDimensions.spacing3),
+                  TextFormField(
+                    controller: _authorizedPhoneController,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      hintText: 'رقم هاتف الشخص المخول',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusMd,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    validator: (v) {
+                      if (_selectedUserType == 'guest') {
+                        if (v == null || v.isEmpty)
+                          return 'يرجى إدخال رقم الهاتف';
+                        if (!RegExp(r'^\+?\d+$').hasMatch(v))
+                          return 'رقم هاتف غير صحيح';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: AppDimensions.spacing3),
+                  TextFormField(
+                    controller: _authorizedNationalNumberController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      hintText: 'الرقم الوطني للشخص المخول',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusMd,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    validator: (v) {
+                      if (_selectedUserType == 'guest') {
+                        if (v == null || v.isEmpty)
+                          return 'يرجى إدخال الرقم الوطني';
+                        if (v.length != 11 ||
+                            !RegExp(r'^\d{11}$').hasMatch(v)) {
+                          return 'الرقم الوطني يجب أن يكون 11 رقم';
+                        }
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: AppDimensions.spacing3),
+                  TextFormField(
+                    controller: _authorizedAddressController,
+                    decoration: InputDecoration(
+                      hintText: 'عنوان الشخص المخول (اختياري)',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusMd,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: AppDimensions.spacing3),
+                  DropdownButtonFormField<int>(
+                    initialValue: _selectedCityIdForGuest,
+                    decoration: InputDecoration(
+                      hintText: 'المدينة (اختياري)',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusMd,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    items: _cities.map((city) {
+                      return DropdownMenuItem<int>(
+                        value: city['id'],
+                        child: Text(city['name']),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCityIdForGuest = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: AppDimensions.spacing3),
+                  TextFormField(
+                    controller: _authorizedBirthdayController,
+                    readOnly: true,
+                    onTap: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now().subtract(
+                          const Duration(days: 365 * 18),
+                        ),
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime.now(),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          _authorizedBirthdayController.text = picked
+                              .toString()
+                              .split(' ')
+                              .first;
+                        });
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'تاريخ الميلاد (اختياري)',
+                      suffixIcon: const Icon(Icons.calendar_today),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(
                           AppDimensions.radiusMd,

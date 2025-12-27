@@ -100,6 +100,20 @@ class ConfirmEmailOtpRequested extends AuthEvent {
   List<Object?> get props => [email, otpCode];
 }
 
-class LogoutRequested extends AuthEvent {}
+class SendTelegramOtpRequested extends AuthEvent {
+  final int chatId;
+  const SendTelegramOtpRequested({required this.chatId});
+  @override
+  List<Object?> get props => [chatId];
+}
+
+class VerifyTelegramOtpRequested extends AuthEvent {
+  final int chatId;
+  final String otp;
+  const VerifyTelegramOtpRequested({required this.chatId, required this.otp});
+  @override
+  List<Object?> get props => [chatId, otp];
+}
 
 class AuthCheckRequested extends AuthEvent {}
+class LogoutRequested extends AuthEvent {}

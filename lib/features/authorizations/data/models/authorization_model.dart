@@ -1,3 +1,4 @@
+import '../../../../core/enums/authorization_status.dart';
 import '../../domain/entities/authorization_entity.dart';
 
 class AuthorizationModel extends AuthorizationEntity {
@@ -25,7 +26,7 @@ class AuthorizationModel extends AuthorizationEntity {
       authorizedUserId: json['authorized_user_id'],
       authorizedUserType: json['authorized_user_type'],
       authorizedCode: json['authorized_code'],
-      status: json['authorized_status'],
+      status: AuthorizationStatus.fromString(json['authorized_status'] ?? 'Pending'),
       generatedAt: DateTime.parse(json['generated_at']),
       expiredAt: DateTime.parse(json['expired_at']),
       usedAt: json['used_at'] != null ? DateTime.parse(json['used_at']) : null,
@@ -47,7 +48,7 @@ class AuthorizationModel extends AuthorizationEntity {
       'authorized_user_id': authorizedUserId,
       'authorized_user_type': authorizedUserType,
       'authorized_code': authorizedCode,
-      'authorized_status': status,
+      'authorized_status': status.value,
       'generated_at': generatedAt.toIso8601String(),
       'expired_at': expiredAt.toIso8601String(),
       'used_at': usedAt?.toIso8601String(),

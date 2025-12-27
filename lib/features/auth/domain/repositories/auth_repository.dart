@@ -26,4 +26,6 @@ abstract class AuthRepository {
   });
   Future<Either<Failure, void>> verifyEmail(String email, String password);
   Future<Either<Failure, void>> confirmEmailOtp(String email, String otpCode);
+  Future<Either<Failure, void>> sendTelegramOtp(int chatId);
+  Future<Either<Failure, void>> verifyTelegramOtp(int chatId, String otp);
 }

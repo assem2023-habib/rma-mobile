@@ -67,3 +67,17 @@ class ConfirmEmailOtpSuccess extends AuthState {
   @override
   List<Object?> get props => [message];
 }
+
+class TelegramOtpSent extends AuthState {
+  final String message;
+  const TelegramOtpSent({required this.message});
+  @override
+  List<Object?> get props => [message];
+}
+
+class TelegramOtpVerified extends AuthState {
+  final String message;
+  const TelegramOtpVerified({required this.message});
+  @override
+  List<Object?> get props => [message];
+}

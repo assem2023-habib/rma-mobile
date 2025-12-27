@@ -162,6 +162,8 @@ Future<void> init() async {
       newPasswordUseCase: sl(),
       verifyEmailUseCase: sl(),
       confirmEmailOtpUseCase: sl(),
+      sendTelegramOtpUseCase: sl(),
+      verifyTelegramOtpUseCase: sl(),
     ),
   );
   // Use cases
@@ -173,13 +175,15 @@ Future<void> init() async {
   sl.registerLazySingleton(() => NewPasswordUseCase(sl()));
   sl.registerLazySingleton(() => VerifyEmailUseCase(sl()));
   sl.registerLazySingleton(() => ConfirmEmailOtpUseCase(sl()));
+  sl.registerLazySingleton(() => SendTelegramOtpUseCase(sl()));
+  sl.registerLazySingleton(() => VerifyTelegramOtpUseCase(sl()));
   // Repository
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
   // Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(),
+    () => AuthRemoteDataSourceImpl(dioClient: sl()),
   );
 
   //! Features - Profile
@@ -197,6 +201,20 @@ Future<void> init() async {
   // Data sources
   sl.registerLazySingleton<ProfileRemoteDataSource>(
     () => ProfileRemoteDataSourceImpl(),
+  );
+
+  //! Features - Rates
+  // Bloc
+  sl.registerFactory(() => RatingBloc(createRatingUseCase: sl()));
+  // Use cases
+  sl.registerLazySingleton(() => CreateRatingUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<RatingRepository>(
+    () => RatingRepositoryImpl(remoteDataSource: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<RatingRemoteDataSource>(
+    () => RatingRemoteDataSourceImpl(),
   );
 
   //! Core

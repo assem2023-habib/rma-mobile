@@ -36,12 +36,26 @@ class AuthorizationsRepositoryImpl implements AuthorizationsRepository {
     required int parcelId,
     required String authorizedUserType,
     int? authorizedUserId,
+    String? authorizedFirstName,
+    String? authorizedLastName,
+    String? authorizedPhone,
+    String? authorizedNationalNumber,
+    String? authorizedAddress,
+    int? authorizedCityId,
+    String? authorizedBirthday,
   }) async {
     try {
       final remoteData = await remoteDataSource.createAuthorization(
         parcelId: parcelId,
         authorizedUserType: authorizedUserType,
         authorizedUserId: authorizedUserId,
+        authorizedFirstName: authorizedFirstName,
+        authorizedLastName: authorizedLastName,
+        authorizedPhone: authorizedPhone,
+        authorizedNationalNumber: authorizedNationalNumber,
+        authorizedAddress: authorizedAddress,
+        authorizedCityId: authorizedCityId,
+        authorizedBirthday: authorizedBirthday,
       );
       return Right(remoteData);
     } catch (e) {

@@ -165,4 +165,32 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Left(NetworkFailure('No Internet Connection'));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> sendTelegramOtp(int chatId) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.sendTelegramOtp(chatId);
+        return const Right(null);
+      } on ServerException {
+        return const Left(ServerFailure('Server Error during Telegram OTP send'));
+      }
+    } else {
+      return const Left(NetworkFailure('No Internet Connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> verifyTelegramOtp(int chatId, String otp) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.verifyTelegramOtp(chatId, otp);
+        return const Right(null);
+      } on ServerException {
+        return const Left(ServerFailure('Server Error during Telegram OTP verification'));
+      }
+    } else {
+      return const Left(NetworkFailure('No Internet Connection'));
+    }
+  }
 }

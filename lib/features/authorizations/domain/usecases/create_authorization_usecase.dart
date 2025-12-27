@@ -12,11 +12,25 @@ class CreateAuthorizationUseCase {
     required int parcelId,
     required String authorizedUserType,
     int? authorizedUserId,
+    String? authorizedFirstName,
+    String? authorizedLastName,
+    String? authorizedPhone,
+    String? authorizedNationalNumber,
+    String? authorizedAddress,
+    int? authorizedCityId,
+    String? authorizedBirthday,
   }) async {
     return await repository.createAuthorization(
       parcelId: parcelId,
       authorizedUserType: authorizedUserType,
       authorizedUserId: authorizedUserId,
+      authorizedFirstName: authorizedFirstName,
+      authorizedLastName: authorizedLastName,
+      authorizedPhone: authorizedPhone,
+      authorizedNationalNumber: authorizedNationalNumber,
+      authorizedAddress: authorizedAddress,
+      authorizedCityId: authorizedCityId,
+      authorizedBirthday: authorizedBirthday,
     );
   }
 }

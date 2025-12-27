@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rma_customer/core/theme/app_colors.dart';
+import 'package:rma_customer/core/theme/app_typography.dart';
+import 'package:rma_customer/core/widgets/buttons/gradient_button.dart';
 import 'package:rma_customer/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:rma_customer/features/auth/presentation/bloc/auth_event.dart';
 import 'package:rma_customer/features/auth/presentation/bloc/auth_state.dart';
@@ -302,7 +304,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     obscureText: true,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'تأكيد كلمة المرور مطلوب';
+                        return 'يرجى تأكيد كلمة المرور';
                       }
                       if (value != _passwordController.text) {
                         return 'كلمة المرور غير متطابقة';
@@ -313,10 +315,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 32),
                   BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
-                      if (state is AuthLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      return ElevatedButton(
+                      return GradientButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             context.read<AuthBloc>().add(
@@ -335,21 +334,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             );
                           }
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'إنشاء الحساب',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        text: 'إنشاء الحساب',
+                        isLoading: state is AuthLoading,
                       );
                     },
                   ),

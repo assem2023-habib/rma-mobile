@@ -23,7 +23,6 @@ class ParcelCard extends StatelessWidget {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,6 +43,21 @@ class ParcelCard extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const Spacer(),
+                  if (parcel.status == ParcelStatus.delivered)
+                    IconButton(
+                      icon: const Icon(Icons.star_outline, color: Colors.amber),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => RatingDialog(
+                            rateableId: parcel.id,
+                            rateableType: RatingForType.parcel,
+                          ),
+                        );
+                      },
+                      tooltip: 'تقييم الطرد',
+                    ),
                   StatusBadge(
                     label: parcel.status.displayName,
                     color: parcel.status.color,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rma_customer/core/theme/app_colors.dart';
+import 'package:rma_customer/core/widgets/buttons/gradient_button.dart';
 import 'package:rma_customer/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:rma_customer/features/auth/presentation/bloc/auth_event.dart';
 import 'package:rma_customer/features/auth/presentation/bloc/auth_state.dart';
@@ -87,6 +88,14 @@ class _LoginPageState extends State<LoginPage> {
                       if (value == null || value.isEmpty) {
                         return 'يرجى إدخال البريد الإلكتروني';
                       }
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
+                        return 'بريد إلكتروني غير صحيح';
+                      }
+                      if (value.length < 8) {
+                        return 'البريد قصير جداً';
+                      }
                       return null;
                     },
                   ),
@@ -103,18 +112,29 @@ class _LoginPageState extends State<LoginPage> {
                     obscureText: true,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'يرجى إدخال كلمة المرور';
+                        return 'كلمة المرور مطلوبة';
+                      }
+                      if (value.length < 6) {
+                        return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
                       }
                       return null;
                     },
                   ),
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton(
+                      onPressed: () => context.push('/forgot-password'),
+                      child: const Text(
+                        'نسيت كلمة المرور؟',
+                        style: TextStyle(color: AppColors.primaryBlue),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 32),
                   BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
-                      if (state is AuthLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      return ElevatedButton(
+                      return GradientButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             context.read<AuthBloc>().add(
@@ -125,21 +145,8 @@ class _LoginPageState extends State<LoginPage> {
                             );
                           }
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'تسجيل الدخول',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        text: 'تسجيل الدخول',
+                        isLoading: state is AuthLoading,
                       );
                     },
                   ),

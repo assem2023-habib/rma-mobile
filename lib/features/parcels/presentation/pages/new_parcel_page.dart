@@ -57,7 +57,7 @@ class _NewParcelPageState extends State<NewParcelPage> {
           receiverAddress: _receiverAddressController.text,
           receiverPhone: _receiverPhoneController.text,
           weight: double.tryParse(_weightController.text) ?? 0.0,
-          isPaid: false,
+          isPaid: _isPaid,
         ),
       );
     }
@@ -106,8 +106,13 @@ class _NewParcelPageState extends State<NewParcelPage> {
                   controller: _receiverNameController,
                   label: 'اسم المستلم',
                   icon: Icons.person_outline,
-                  validator: (v) =>
-                      v!.isEmpty ? 'يرجى إدخال اسم المستلم' : null,
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return 'اسم المستلم مطلوب';
+                    if (v.length < 2)
+                      return 'الاسم قصير جداً (حرفين على الأقل)';
+                    if (v.length > 250) return 'الاسم طويل جداً';
+                    return null;
+                  },
                 ),
                 const SizedBox(height: AppDimensions.spacing3),
                 _buildTextField(
@@ -115,14 +120,25 @@ class _NewParcelPageState extends State<NewParcelPage> {
                   label: 'رقم هاتف المستلم',
                   icon: Icons.phone_outlined,
                   keyboardType: TextInputType.phone,
-                  validator: (v) => v!.isEmpty ? 'يرجى إدخال رقم الهاتف' : null,
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return 'رقم الهاتف مطلوب';
+                    if (v.length < 6) return 'رقم الهاتف قصير جداً';
+                    if (v.length > 20) return 'رقم الهاتف طويل جداً';
+                    if (!RegExp(r'^\+?\d+$').hasMatch(v))
+                      return 'رقم هاتف غير صحيح';
+                    return null;
+                  },
                 ),
                 const SizedBox(height: AppDimensions.spacing3),
                 _buildTextField(
                   controller: _receiverAddressController,
                   label: 'عنوان المستلم',
                   icon: Icons.location_on_outlined,
-                  validator: (v) => v!.isEmpty ? 'يرجى إدخال العنوان' : null,
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return 'العنوان مطلوب';
+                    if (v.length > 500) return 'العنوان طويل جداً';
+                    return null;
+                  },
                 ),
 
                 const SizedBox(height: AppDimensions.spacing6),
@@ -133,7 +149,26 @@ class _NewParcelPageState extends State<NewParcelPage> {
                   label: 'الوزن (كجم)',
                   icon: Icons.monitor_weight_outlined,
                   keyboardType: TextInputType.number,
-                  validator: (v) => v!.isEmpty ? 'يرجى إدخال الوزن' : null,
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return 'الوزن مطلوب';
+                    final weight = double.tryParse(v);
+                    if (weight == null) return 'الوزن يجب أن يكون رقماً';
+                    if (weight < 0.1)
+                      return 'الوزن يجب أن يكون 0.1 كجم على الأقل';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: AppDimensions.spacing3),
+                SwitchListTile(
+                  title: const Text('هل تم الدفع مسبقاً؟'),
+                  value: _isPaid,
+                  onChanged: (value) {
+                    setState(() {
+                      _isPaid = value;
+                    });
+                  },
+                  secondary: const Icon(Icons.payment_outlined),
+                  contentPadding: EdgeInsets.zero,
                 ),
                 const SizedBox(height: AppDimensions.spacing3),
                 _buildTextField(

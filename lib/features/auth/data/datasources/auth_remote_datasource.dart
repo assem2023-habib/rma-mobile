@@ -1,3 +1,7 @@
+import 'package:dio/dio.dart';
+import '../../../../core/api/api_config.dart';
+import '../../../../core/api/dio_client.dart';
+import '../../../../core/error/exceptions.dart';
 import '../models/user_model.dart';
 
 abstract class AuthRemoteDataSource {
@@ -24,21 +28,31 @@ abstract class AuthRemoteDataSource {
   });
   Future<void> verifyEmail(String email, String password);
   Future<void> confirmEmailOtp(String email, String otpCode);
+  Future<void> sendTelegramOtp(int chatId);
+  Future<void> verifyTelegramOtp(int chatId, String otp);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
+  final DioClient dioClient;
+
+  AuthRemoteDataSourceImpl({required this.dioClient});
+
   @override
   Future<UserModel> login(String email, String password) async {
-    // Simulated API call
-    await Future.delayed(const Duration(seconds: 1));
-    return const UserModel(
-      id: 1,
-      firstName: 'أحمد',
-      lastName: 'محمد',
-      email: 'user@example.com',
-      phone: '0912345678',
-      cityId: 1,
-    );
+    try {
+      final response = await dioClient.post(
+        ApiConfig.login,
+        data: {'email': email, 'password': password},
+      );
+
+      if (response.statusCode == 200) {
+        return UserModel.fromJson(response.data['data']);
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
@@ -53,39 +67,68 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required int cityId,
     required String nationalNumber,
   }) async {
-    // Simulated API call
-    await Future.delayed(const Duration(seconds: 1));
-    return UserModel(
-      id: 2,
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      phone: phone,
-      cityId: cityId,
-    );
+    try {
+      final response = await dioClient.post(
+        ApiConfig.register,
+        data: {
+          'first_name': firstName,
+          'last_name': lastName,
+          'email': email,
+          'password': password,
+          'password_confirmation': passwordConfirmation,
+          'phone': phone,
+          'birthday': birthday,
+          'city_id': cityId,
+          'national_number': nationalNumber,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return UserModel.fromJson(response.data['data']);
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
   Future<void> logout() async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      await dioClient.post(ApiConfig.logout);
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
   Future<UserModel> getCurrentUser() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return const UserModel(
-      id: 1,
-      firstName: 'أحمد',
-      lastName: 'محمد',
-      email: 'user@example.com',
-      phone: '0912345678',
-      cityId: 1,
-    );
+    try {
+      final response = await dioClient.get(ApiConfig.currentUser);
+      if (response.statusCode == 200) {
+        return UserModel.fromJson(response.data['data']);
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
   Future<void> forgotPassword(String email) async {
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final response = await dioClient.post(
+        ApiConfig.forgotPassword,
+        data: {'email': email},
+      );
+      if (response.statusCode != 200) {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
@@ -95,16 +138,81 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String newPassword,
     required String newPasswordConfirmation,
   }) async {
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final response = await dioClient.post(
+        ApiConfig.newPassword,
+        data: {
+          'email': email,
+          'otp_code': otpCode,
+          'new_password': newPassword,
+          'new_password_confirmation': newPasswordConfirmation,
+        },
+      );
+      if (response.statusCode != 200) {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
   Future<void> verifyEmail(String email, String password) async {
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final response = await dioClient.post(
+        ApiConfig.verifyEmail,
+        data: {'email': email, 'password': password},
+      );
+      if (response.statusCode != 200) {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
   Future<void> confirmEmailOtp(String email, String otpCode) async {
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final response = await dioClient.post(
+        ApiConfig.confirmEmailOtp,
+        data: {'email': email, 'otp_code': otpCode},
+      );
+      if (response.statusCode != 200) {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<void> sendTelegramOtp(int chatId) async {
+    try {
+      final response = await dioClient.post(
+        ApiConfig.sendTelegramOtp,
+        data: {'chat_id': chatId},
+      );
+      if (response.statusCode != 200) {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<void> verifyTelegramOtp(int chatId, String otp) async {
+    try {
+      final response = await dioClient.post(
+        ApiConfig.verifyTelegramOtp,
+        data: {'chat_id': chatId, 'otp': otp},
+      );
+      if (response.statusCode != 200) {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 }

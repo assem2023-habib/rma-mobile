@@ -1,6 +1,9 @@
 import 'package:go_router/go_router.dart';
 import 'package:rma_customer/features/auth/presentation/pages/login_page.dart';
 import 'package:rma_customer/features/auth/presentation/pages/register_page.dart';
+import 'package:rma_customer/features/auth/presentation/pages/forgot_password_page.dart';
+import 'package:rma_customer/features/auth/presentation/pages/verify_otp_page.dart';
+import 'package:rma_customer/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:rma_customer/features/dashboard/presentation/pages/dashboard_home_page.dart';
 import 'package:rma_customer/features/parcels/presentation/pages/parcels_page.dart';
 import 'package:rma_customer/features/parcels/presentation/pages/new_parcel_page.dart';
@@ -18,6 +21,30 @@ class AppRouter {
       GoRoute(
         path: '/register',
         builder: (context, state) => const RegisterPage(),
+      ),
+      GoRoute(
+        path: '/forgot-password',
+        builder: (context, state) => const ForgotPasswordPage(),
+      ),
+      GoRoute(
+        path: '/verify-otp',
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+          return VerifyOtpPage(
+            email: data['email'] as String,
+            isTelegram: data['isTelegram'] as bool? ?? false,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/reset-password',
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+          return ResetPasswordPage(
+            email: data['email'] as String,
+            otp: data['otp'] as String,
+          );
+        },
       ),
       GoRoute(
         path: '/',

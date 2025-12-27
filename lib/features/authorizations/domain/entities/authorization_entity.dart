@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../../../core/enums/authorization_status.dart';
 
 class AuthorizationEntity extends Equatable {
   final int id;
@@ -7,7 +8,7 @@ class AuthorizationEntity extends Equatable {
   final int? authorizedUserId;
   final String authorizedUserType;
   final String authorizedCode;
-  final String status;
+  final AuthorizationStatus status;
   final DateTime generatedAt;
   final DateTime expiredAt;
   final DateTime? usedAt;

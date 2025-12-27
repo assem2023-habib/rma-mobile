@@ -22,15 +22,40 @@ class CreateAuthorizationEvent extends AuthorizationsEvent {
   final int parcelId;
   final String authorizedUserType;
   final int? authorizedUserId;
+  final String? authorizedFirstName;
+  final String? authorizedLastName;
+  final String? authorizedPhone;
+  final String? authorizedNationalNumber;
+  final String? authorizedAddress;
+  final int? authorizedCityId;
+  final String? authorizedBirthday;
 
   const CreateAuthorizationEvent({
     required this.parcelId,
     required this.authorizedUserType,
     this.authorizedUserId,
+    this.authorizedFirstName,
+    this.authorizedLastName,
+    this.authorizedPhone,
+    this.authorizedNationalNumber,
+    this.authorizedAddress,
+    this.authorizedCityId,
+    this.authorizedBirthday,
   });
 
   @override
-  List<Object?> get props => [parcelId, authorizedUserType, authorizedUserId];
+  List<Object?> get props => [
+    parcelId,
+    authorizedUserType,
+    authorizedUserId,
+    authorizedFirstName,
+    authorizedLastName,
+    authorizedPhone,
+    authorizedNationalNumber,
+    authorizedAddress,
+    authorizedCityId,
+    authorizedBirthday,
+  ];
 }
 
 class CancelAuthorizationEvent extends AuthorizationsEvent {

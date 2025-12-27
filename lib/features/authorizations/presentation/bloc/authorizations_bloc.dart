@@ -58,10 +58,18 @@ class AuthorizationsBloc
       parcelId: event.parcelId,
       authorizedUserType: event.authorizedUserType,
       authorizedUserId: event.authorizedUserId,
+      authorizedFirstName: event.authorizedFirstName,
+      authorizedLastName: event.authorizedLastName,
+      authorizedPhone: event.authorizedPhone,
+      authorizedNationalNumber: event.authorizedNationalNumber,
+      authorizedAddress: event.authorizedAddress,
+      authorizedCityId: event.authorizedCityId,
+      authorizedBirthday: event.authorizedBirthday,
     );
     result.fold(
       (failure) => emit(AuthorizationsError(failure.message)),
-      (authorization) => emit(const AuthorizationActionSuccess('تم إنشاء التخويل بنجاح')),
+      (authorization) =>
+          emit(const AuthorizationActionSuccess('تم إنشاء التخويل بنجاح')),
     );
   }
 

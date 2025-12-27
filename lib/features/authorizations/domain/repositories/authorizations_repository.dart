@@ -9,6 +9,13 @@ abstract class AuthorizationsRepository {
     required int parcelId,
     required String authorizedUserType,
     int? authorizedUserId,
+    String? authorizedFirstName,
+    String? authorizedLastName,
+    String? authorizedPhone,
+    String? authorizedNationalNumber,
+    String? authorizedAddress,
+    int? authorizedCityId,
+    String? authorizedBirthday,
   });
   Future<Either<Failure, Unit>> cancelAuthorization(int id);
 }

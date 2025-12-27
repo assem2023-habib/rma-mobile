@@ -7,6 +7,8 @@ import '../../domain/usecases/forgot_password_usecase.dart';
 import '../../domain/usecases/new_password_usecase.dart';
 import '../../domain/usecases/verify_email_usecase.dart';
 import '../../domain/usecases/confirm_email_otp_usecase.dart';
+import '../../domain/usecases/send_telegram_otp_usecase.dart';
+import '../../domain/usecases/verify_telegram_otp_usecase.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -19,6 +21,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final NewPasswordUseCase newPasswordUseCase;
   final VerifyEmailUseCase verifyEmailUseCase;
   final ConfirmEmailOtpUseCase confirmEmailOtpUseCase;
+  final SendTelegramOtpUseCase sendTelegramOtpUseCase;
+  final VerifyTelegramOtpUseCase verifyTelegramOtpUseCase;
 
   AuthBloc({
     required this.loginUseCase,
@@ -29,6 +33,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.newPasswordUseCase,
     required this.verifyEmailUseCase,
     required this.confirmEmailOtpUseCase,
+    required this.sendTelegramOtpUseCase,
+    required this.verifyTelegramOtpUseCase,
   }) : super(AuthInitial()) {
     on<AuthCheckRequested>(_onAuthCheckRequested);
     on<LoginRequested>(_onLoginRequested);
@@ -38,6 +44,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<NewPasswordRequested>(_onNewPasswordRequested);
     on<VerifyEmailRequested>(_onVerifyEmailRequested);
     on<ConfirmEmailOtpRequested>(_onConfirmEmailOtpRequested);
+    on<SendTelegramOtpRequested>(_onSendTelegramOtpRequested);
+    on<VerifyTelegramOtpRequested>(_onVerifyTelegramOtpRequested);
+  }
+
+  Future<void> _onSendTelegramOtpRequested(
+    SendTelegramOtpRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    final result = await sendTelegramOtpUseCase(event.chatId);
+    result.fold(
+      (failure) => emit(AuthError(message: failure.message)),
+      (_) => emit(const TelegramOtpSent(message: 'تم إرسال رمز التحقق عبر تيليجرام')),
+    );
+  }
+
+  Future<void> _onVerifyTelegramOtpRequested(
+    VerifyTelegramOtpRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    final result = await verifyTelegramOtpUseCase(event.chatId, event.otp);
+    result.fold(
+      (failure) => emit(AuthError(message: failure.message)),
+      (_) => emit(const TelegramOtpVerified(message: 'تم التحقق من الرمز بنجاح')),
+    );
   }
 
   Future<void> _onAuthCheckRequested(
