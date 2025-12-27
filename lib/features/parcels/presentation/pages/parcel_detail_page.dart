@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -10,6 +11,13 @@ class ParcelDetailPage extends StatelessWidget {
   final Parcel parcel;
 
   const ParcelDetailPage({super.key, required this.parcel});
+
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +49,15 @@ class ParcelDetailPage extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('رقم التتبع', style: AppTypography.caption),
+                            const Text(
+                              'رقم التتبع',
+                              style: AppTypography.caption,
+                            ),
                             Text(
                               parcel.trackingNumber,
-                              style: AppTypography.heading2.copyWith(color: AppColors.primaryBlue),
+                              style: AppTypography.heading2.copyWith(
+                                color: AppColors.primaryBlue,
+                              ),
                             ),
                           ],
                         ),
@@ -70,23 +83,35 @@ class ParcelDetailPage extends StatelessWidget {
                 padding: const EdgeInsets.all(AppDimensions.spacing4),
                 child: Column(
                   children: [
-                    _buildRouteInfo(
-                      from: parcel.fromCity,
-                      to: parcel.toCity,
-                    ),
-                    const Divider(height: AppDimensions.spacing6),
-                    _buildDetailRow(Icons.calendar_today_outlined, 'تاريخ الإنشاء', 
-                      '${parcel.createdAt.day}/${parcel.createdAt.month}/${parcel.createdAt.year}'),
-                    const Divider(height: AppDimensions.spacing6),
-                    _buildDetailRow(Icons.fitness_center_outlined, 'الوزن', '${parcel.weight} كغ'),
-                    const Divider(height: AppDimensions.spacing6),
-                    _buildDetailRow(Icons.payments_outlined, 'التكلفة', '${parcel.cost} ل.س'),
+                    _buildRouteInfo(from: parcel.fromCity, to: parcel.toCity),
                     const Divider(height: AppDimensions.spacing6),
                     _buildDetailRow(
-                      parcel.isPaid ? Icons.check_circle_outline : Icons.pending_outlined,
+                      Icons.calendar_today_outlined,
+                      'تاريخ الإنشاء',
+                      '${parcel.createdAt.day}/${parcel.createdAt.month}/${parcel.createdAt.year}',
+                    ),
+                    const Divider(height: AppDimensions.spacing6),
+                    _buildDetailRow(
+                      Icons.fitness_center_outlined,
+                      'الوزن',
+                      '${parcel.weight} كغ',
+                    ),
+                    const Divider(height: AppDimensions.spacing6),
+                    _buildDetailRow(
+                      Icons.payments_outlined,
+                      'التكلفة',
+                      '${parcel.cost} ل.س',
+                    ),
+                    const Divider(height: AppDimensions.spacing6),
+                    _buildDetailRow(
+                      parcel.isPaid
+                          ? Icons.check_circle_outline
+                          : Icons.pending_outlined,
                       'حالة الدفع',
                       parcel.isPaid ? 'تم الدفع' : 'قيد الانتظار',
-                      valueColor: parcel.isPaid ? AppColors.success : AppColors.error,
+                      valueColor: parcel.isPaid
+                          ? AppColors.success
+                          : AppColors.error,
                     ),
                   ],
                 ),
@@ -102,11 +127,24 @@ class ParcelDetailPage extends StatelessWidget {
                 padding: const EdgeInsets.all(AppDimensions.spacing4),
                 child: Column(
                   children: [
-                    _buildDetailRow(Icons.person_outline, 'الاسم', parcel.receiverName),
+                    _buildDetailRow(
+                      Icons.person_outline,
+                      'الاسم',
+                      parcel.receiverName,
+                    ),
                     const Divider(height: AppDimensions.spacing6),
-                    _buildDetailRow(Icons.phone_outlined, 'الهاتف', parcel.receiverPhone),
+                    _buildDetailRow(
+                      Icons.phone_outlined,
+                      'الهاتف',
+                      parcel.receiverPhone,
+                      onTap: () => _makePhoneCall(parcel.receiverPhone),
+                    ),
                     const Divider(height: AppDimensions.spacing6),
-                    _buildDetailRow(Icons.location_on_outlined, 'العنوان', parcel.receiverAddress),
+                    _buildDetailRow(
+                      Icons.location_on_outlined,
+                      'العنوان',
+                      parcel.receiverAddress,
+                    ),
                   ],
                 ),
               ),
@@ -136,7 +174,12 @@ class ParcelDetailPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('من', style: AppTypography.caption),
-              Text(from, style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                from,
+                style: AppTypography.bodyLarge.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
         ),
@@ -146,7 +189,12 @@ class ParcelDetailPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               const Text('إلى', style: AppTypography.caption),
-              Text(to, style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                to,
+                style: AppTypography.bodyLarge.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
         ),
@@ -154,21 +202,34 @@ class ParcelDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailRow(IconData icon, String label, String value, {Color? valueColor}) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: AppColors.slate500),
-        const SizedBox(width: AppDimensions.spacing3),
-        Text(label, style: AppTypography.bodySmall.copyWith(color: AppColors.slate500)),
-        const Spacer(),
-        Text(
-          value,
-          style: AppTypography.bodyLarge.copyWith(
-            fontWeight: FontWeight.w500,
-            color: valueColor,
+  Widget _buildDetailRow(
+    IconData icon,
+    String label,
+    String value, {
+    Color? valueColor,
+    VoidCallback? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: AppColors.slate500),
+          const SizedBox(width: AppDimensions.spacing3),
+          Text(
+            label,
+            style: AppTypography.bodySmall.copyWith(color: AppColors.slate500),
           ),
-        ),
-      ],
+          const Spacer(),
+          Text(
+            value,
+            style: AppTypography.bodyLarge.copyWith(
+              fontWeight: FontWeight.w500,
+              color:
+                  valueColor ?? (onTap != null ? AppColors.primaryBlue : null),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

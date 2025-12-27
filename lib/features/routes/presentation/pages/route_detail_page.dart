@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -8,6 +9,13 @@ class RouteDetailPage extends StatelessWidget {
   final RouteEntity route;
 
   const RouteDetailPage({super.key, required this.route});
+
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +47,9 @@ class RouteDetailPage extends StatelessWidget {
                       Expanded(
                         child: Text(
                           route.name,
-                          style: AppTypography.heading1.copyWith(color: Colors.white),
+                          style: AppTypography.heading1.copyWith(
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       _buildStatusBadge(route.status),
@@ -51,8 +61,14 @@ class RouteDetailPage extends StatelessWidget {
                       _buildLocationPoint(route.fromCity, 'نقطة الانطلاق'),
                       const Expanded(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: AppDimensions.spacing2),
-                          child: Icon(Icons.arrow_forward, color: Colors.white, size: 24),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppDimensions.spacing2,
+                          ),
+                          child: Icon(
+                            Icons.arrow_forward,
+                            color: Colors.white,
+                            size: 24,
+                          ),
                         ),
                       ),
                       _buildLocationPoint(route.toCity, 'وجهة الوصول'),
@@ -75,10 +91,12 @@ class RouteDetailPage extends StatelessWidget {
                 title: Text(route.driverName, style: AppTypography.bodyLarge),
                 subtitle: const Text('سائق محترف معتمد'),
                 trailing: IconButton(
-                  icon: const Icon(Icons.phone_outlined, color: AppColors.primaryBlue),
-                  onPressed: () {
-                    // TODO: Call driver
-                  },
+                  icon: const Icon(
+                    Icons.phone_outlined,
+                    color: AppColors.primaryBlue,
+                  ),
+                  onPressed: () =>
+                      _makePhoneCall('+963912345678'), // رقم تجريبي
                 ),
               ),
             ),
@@ -92,12 +110,23 @@ class RouteDetailPage extends StatelessWidget {
                 padding: const EdgeInsets.all(AppDimensions.spacing4),
                 child: Column(
                   children: [
-                    _buildInfoRow(Icons.calendar_today_outlined, 'التاريخ', 
-                      '${route.date.day}/${route.date.month}/${route.date.year}'),
+                    _buildInfoRow(
+                      Icons.calendar_today_outlined,
+                      'التاريخ',
+                      '${route.date.day}/${route.date.month}/${route.date.year}',
+                    ),
                     const Divider(height: AppDimensions.spacing6),
-                    _buildInfoRow(Icons.access_time, 'وقت الانطلاق المتوقع', '08:00 صباحاً'),
+                    _buildInfoRow(
+                      Icons.access_time,
+                      'وقت الانطلاق المتوقع',
+                      '08:00 صباحاً',
+                    ),
                     const Divider(height: AppDimensions.spacing6),
-                    _buildInfoRow(Icons.timer_outlined, 'وقت الوصول المتوقع', '02:00 مساءً'),
+                    _buildInfoRow(
+                      Icons.timer_outlined,
+                      'وقت الوصول المتوقع',
+                      '02:00 مساءً',
+                    ),
                   ],
                 ),
               ),
@@ -116,7 +145,9 @@ class RouteDetailPage extends StatelessWidget {
         vertical: AppDimensions.spacing1,
       ),
       decoration: BoxDecoration(
-        color: isActive ? Colors.white.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.1),
+        color: isActive
+            ? Colors.white.withValues(alpha: 0.2)
+            : Colors.black.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
       ),
       child: Text(
@@ -135,7 +166,9 @@ class RouteDetailPage extends StatelessWidget {
       children: [
         Text(
           label,
-          style: AppTypography.caption.copyWith(color: Colors.white.withValues(alpha: 0.7)),
+          style: AppTypography.caption.copyWith(
+            color: Colors.white.withValues(alpha: 0.7),
+          ),
         ),
         Text(
           city,
@@ -153,9 +186,15 @@ class RouteDetailPage extends StatelessWidget {
       children: [
         Icon(icon, size: 20, color: AppColors.slate500),
         const SizedBox(width: AppDimensions.spacing3),
-        Text(label, style: AppTypography.bodySmall.copyWith(color: AppColors.slate500)),
+        Text(
+          label,
+          style: AppTypography.bodySmall.copyWith(color: AppColors.slate500),
+        ),
         const Spacer(),
-        Text(value, style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.w500)),
+        Text(
+          value,
+          style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.w500),
+        ),
       ],
     );
   }
