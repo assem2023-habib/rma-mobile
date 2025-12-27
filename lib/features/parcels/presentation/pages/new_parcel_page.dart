@@ -28,6 +28,7 @@ class _NewParcelPageState extends State<NewParcelPage> {
   final _noteController = TextEditingController();
 
   int? _selectedRouteId;
+  bool _isPaid = false;
 
   @override
   void dispose() {
@@ -108,8 +109,9 @@ class _NewParcelPageState extends State<NewParcelPage> {
                   icon: Icons.person_outline,
                   validator: (v) {
                     if (v == null || v.isEmpty) return 'اسم المستلم مطلوب';
-                    if (v.length < 2)
+                    if (v.length < 2) {
                       return 'الاسم قصير جداً (حرفين على الأقل)';
+                    }
                     if (v.length > 250) return 'الاسم طويل جداً';
                     return null;
                   },
@@ -124,8 +126,9 @@ class _NewParcelPageState extends State<NewParcelPage> {
                     if (v == null || v.isEmpty) return 'رقم الهاتف مطلوب';
                     if (v.length < 6) return 'رقم الهاتف قصير جداً';
                     if (v.length > 20) return 'رقم الهاتف طويل جداً';
-                    if (!RegExp(r'^\+?\d+$').hasMatch(v))
+                    if (!RegExp(r'^\+?\d+$').hasMatch(v)) {
                       return 'رقم هاتف غير صحيح';
+                    }
                     return null;
                   },
                 ),
@@ -153,8 +156,9 @@ class _NewParcelPageState extends State<NewParcelPage> {
                     if (v == null || v.isEmpty) return 'الوزن مطلوب';
                     final weight = double.tryParse(v);
                     if (weight == null) return 'الوزن يجب أن يكون رقماً';
-                    if (weight < 0.1)
+                    if (weight < 0.1) {
                       return 'الوزن يجب أن يكون 0.1 كجم على الأقل';
+                    }
                     return null;
                   },
                 ),
