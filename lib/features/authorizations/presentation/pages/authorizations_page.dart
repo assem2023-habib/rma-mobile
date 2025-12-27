@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/app_dimensions.dart';
+import '../../../../core/enums/authorization_status.dart';
 import '../bloc/authorizations_bloc.dart';
 import '../bloc/authorizations_event.dart';
 import '../bloc/authorizations_state.dart';
@@ -146,7 +147,7 @@ class _AuthorizationsPageState extends State<AuthorizationsPage> {
                     borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
                   ),
                   child: Text(
-                    auth.status,
+                    auth.status.label,
                     style: AppTypography.caption.copyWith(
                       color: statusColor,
                       fontWeight: FontWeight.bold,
@@ -185,18 +186,16 @@ class _AuthorizationsPageState extends State<AuthorizationsPage> {
     );
   }
 
-  Color _getStatusColor(String status) {
+  Color _getStatusColor(AuthorizationStatus status) {
     switch (status) {
-      case 'completed':
-      case 'مكتمل':
+      case AuthorizationStatus.active:
         return AppColors.success;
-      case 'pending':
-      case 'قيد الانتظار':
+      case AuthorizationStatus.pending:
         return AppColors.warning;
-      case 'cancelled':
-      case 'مرفوض':
+      case AuthorizationStatus.cancelled:
+      case AuthorizationStatus.expired:
         return AppColors.error;
-      default:
+      case AuthorizationStatus.used:
         return AppColors.slate500;
     }
   }
