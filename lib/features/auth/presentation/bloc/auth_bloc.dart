@@ -46,6 +46,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ConfirmEmailOtpRequested>(_onConfirmEmailOtpRequested);
     on<SendTelegramOtpRequested>(_onSendTelegramOtpRequested);
     on<VerifyTelegramOtpRequested>(_onVerifyTelegramOtpRequested);
+    on<GuestLoginRequested>(_onGuestLoginRequested);
+  }
+
+  Future<void> _onGuestLoginRequested(
+    GuestLoginRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(GuestAuthenticated());
   }
 
   Future<void> _onSendTelegramOtpRequested(

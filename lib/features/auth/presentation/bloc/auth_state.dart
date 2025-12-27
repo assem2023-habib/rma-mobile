@@ -23,6 +23,8 @@ class Authenticated extends AuthState {
 
 class Unauthenticated extends AuthState {}
 
+class GuestAuthenticated extends AuthState {}
+
 class AuthError extends AuthState {
   final String message;
 

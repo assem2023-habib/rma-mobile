@@ -1,3 +1,6 @@
+import '../../../../core/api/api_config.dart';
+import '../../../../core/api/dio_client.dart';
+import '../../../../core/error/exceptions.dart';
 import 'package:rma_customer/features/auth/data/models/user_model.dart';
 
 abstract class ProfileRemoteDataSource {
@@ -14,6 +17,10 @@ abstract class ProfileRemoteDataSource {
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
+  final DioClient dioClient;
+
+  ProfileRemoteDataSourceImpl({required this.dioClient});
+
   @override
   Future<UserModel> updateProfile({
     required String firstName,
@@ -21,19 +28,24 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     required String phone,
     required int cityId,
   }) async {
-    // Simulated API call
-    await Future.delayed(const Duration(seconds: 1));
-    return UserModel(
-      id: 1,
-      firstName: firstName,
-      lastName: lastName,
-      email: 'user@example.com',
-      userName: 'user123',
-      phone: phone,
-      cityId: cityId,
-      createdAt: DateTime.now().toIso8601String(),
-      updatedAt: DateTime.now().toIso8601String(),
-    );
+    try {
+      final response = await dioClient.put(
+        ApiConfig.currentUser,
+        data: {
+          'first_name': firstName,
+          'last_name': lastName,
+          'phone': phone,
+          'city_id': cityId,
+        },
+      );
+      if (response.statusCode == 200) {
+        return UserModel.fromJson(response.data['data']);
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
@@ -41,7 +53,20 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     required String oldPassword,
     required String newPassword,
   }) async {
-    // Simulated API call
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final response = await dioClient.post(
+        ApiConfig.changePassword,
+        data: {
+          'old_password': oldPassword,
+          'new_password': newPassword,
+          'new_password_confirmation': newPassword,
+        },
+      );
+      if (response.statusCode != 200) {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 }

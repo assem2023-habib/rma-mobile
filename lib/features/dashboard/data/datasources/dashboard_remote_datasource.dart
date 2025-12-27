@@ -1,3 +1,6 @@
+import '../../../../core/api/api_config.dart';
+import '../../../../core/api/dio_client.dart';
+import '../../../../core/error/exceptions.dart';
 import '../models/dashboard_stats_model.dart';
 
 abstract class DashboardRemoteDataSource {
@@ -5,20 +8,21 @@ abstract class DashboardRemoteDataSource {
 }
 
 class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
+  final DioClient dioClient;
+
+  DashboardRemoteDataSourceImpl({required this.dioClient});
+
   @override
   Future<DashboardStatsModel> getDashboardStats() async {
-    // Mocking API call delay
-    await Future.delayed(const Duration(seconds: 1));
-    
-    return const DashboardStatsModel(
-      activeParcels: 12,
-      deliveredParcels: 48,
-      pendingParcels: 5,
-      rating: 4.8,
-      activeParcelsChange: '+3',
-      deliveredParcelsChange: '+8',
-      pendingParcelsChange: '-2',
-      ratingChange: '+0.2',
-    );
+    try {
+      final response = await dioClient.get(ApiConfig.dashboardStats);
+      if (response.statusCode == 200) {
+        return DashboardStatsModel.fromJson(response.data['data']);
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 }

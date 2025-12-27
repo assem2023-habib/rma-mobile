@@ -154,6 +154,25 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      const Text('أو يمكنك الدخول كـ'),
+                      TextButton(
+                        onPressed: () {
+                          context.read<AuthBloc>().add(GuestLoginRequested());
+                        },
+                        child: const Text(
+                          'زائر',
+                          style: TextStyle(
+                            color: AppColors.primaryBlue,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                       const Text('ليس لديك حساب؟'),
                       TextButton(
                         onPressed: () => context.push('/register'),

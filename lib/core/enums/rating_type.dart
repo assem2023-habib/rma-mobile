@@ -5,7 +5,8 @@ enum RatingForType {
   parcel('Parcel', 'الطرد'),
   delivery('Delivery', 'التوصيل'),
   application('Application', 'التطبيق'),
-  chatSession('ChatSession', 'المحادثة');
+  chatSession('ChatSession', 'المحادثة'),
+  driver('Driver', 'السائق');
 
   final String value;
   final String label;

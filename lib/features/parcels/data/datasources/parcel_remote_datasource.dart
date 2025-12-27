@@ -1,4 +1,6 @@
-import '../../../../core/enums/parcel_status.dart';
+import '../../../../core/api/api_config.dart';
+import '../../../../core/api/dio_client.dart';
+import '../../../../core/error/exceptions.dart';
 import '../models/parcel_model.dart';
 
 abstract class ParcelRemoteDataSource {
@@ -23,71 +25,37 @@ abstract class ParcelRemoteDataSource {
 }
 
 class ParcelRemoteDataSourceImpl implements ParcelRemoteDataSource {
+  final DioClient dioClient;
+
+  ParcelRemoteDataSourceImpl({required this.dioClient});
+
   @override
   Future<List<ParcelModel>> getParcels() async {
-    // Mock API call
-    await Future.delayed(const Duration(seconds: 1));
-    return [
-      ParcelModel(
-        id: 1,
-        senderId: 1,
-        senderType: 'User',
-        routeId: 1,
-        fromCity: 'دمشق',
-        toCity: 'حلب',
-        receiverName: 'سارة علي',
-        receiverAddress: 'حلب، شارع النيل',
-        receiverPhone: '+963912345679',
-        weight: 2.5,
-        cost: 15000,
-        isPaid: false,
-        status: ParcelStatus.inTransit,
-        trackingNumber: 'PKG-2024-001',
-        createdAt: DateTime.now().subtract(const Duration(days: 1)),
-        updatedAt: DateTime.now().subtract(const Duration(hours: 5)),
-      ),
-      ParcelModel(
-        id: 2,
-        senderId: 1,
-        senderType: 'User',
-        routeId: 2,
-        fromCity: 'حلب',
-        toCity: 'اللاذقية',
-        receiverName: 'ليلى حسن',
-        receiverAddress: 'اللاذقية، الكورنيش',
-        receiverPhone: '+963987654321',
-        weight: 1.0,
-        cost: 8000,
-        isPaid: true,
-        status: ParcelStatus.delivered,
-        trackingNumber: 'PKG-2024-002',
-        createdAt: DateTime.now().subtract(const Duration(days: 3)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-    ];
+    try {
+      final response = await dioClient.get(ApiConfig.parcels);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data']['parcels'];
+        return data.map((json) => ParcelModel.fromJson(json)).toList();
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
   Future<ParcelModel> getParcelById(int id) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return ParcelModel(
-      id: id,
-      senderId: 1,
-      senderType: 'User',
-      routeId: 1,
-      fromCity: 'دمشق',
-      toCity: 'حلب',
-      receiverName: 'سارة علي',
-      receiverAddress: 'حلب، شارع النيل',
-      receiverPhone: '+963912345679',
-      weight: 2.5,
-      cost: 15000,
-      isPaid: false,
-      status: ParcelStatus.inTransit,
-      trackingNumber: 'PKG-2024-001',
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-      updatedAt: DateTime.now().subtract(const Duration(hours: 5)),
-    );
+    try {
+      final response = await dioClient.get('${ApiConfig.parcels}/$id');
+      if (response.statusCode == 200) {
+        return ParcelModel.fromJson(response.data['data']['parcel']);
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
@@ -99,25 +67,26 @@ class ParcelRemoteDataSourceImpl implements ParcelRemoteDataSource {
     required double weight,
     required bool isPaid,
   }) async {
-    await Future.delayed(const Duration(seconds: 1));
-    return ParcelModel(
-      id: 3,
-      senderId: 1,
-      senderType: 'User',
-      routeId: routeId,
-      fromCity: 'دمشق', // Mocked city
-      toCity: 'حلب', // Mocked city
-      receiverName: receiverName,
-      receiverAddress: receiverAddress,
-      receiverPhone: receiverPhone,
-      weight: weight,
-      cost: weight * 5000, // Example calculation
-      isPaid: isPaid,
-      status: ParcelStatus.pending,
-      trackingNumber: 'PKG-NEW-001',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
+    try {
+      final response = await dioClient.post(
+        ApiConfig.parcels,
+        data: {
+          'route_id': routeId,
+          'reciver_name': receiverName,
+          'reciver_address': receiverAddress,
+          'reciver_phone': receiverPhone,
+          'weight': weight,
+          'is_paid': isPaid ? 1 : 0,
+        },
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return ParcelModel.fromJson(response.data['data']['parcel']);
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
@@ -128,29 +97,35 @@ class ParcelRemoteDataSourceImpl implements ParcelRemoteDataSource {
     String? receiverPhone,
     double? weight,
   }) async {
-    await Future.delayed(const Duration(seconds: 1));
-    return ParcelModel(
-      id: id,
-      senderId: 1,
-      senderType: 'User',
-      routeId: 1,
-      fromCity: 'دمشق',
-      toCity: 'حلب',
-      receiverName: receiverName ?? 'سارة علي',
-      receiverAddress: receiverAddress ?? 'حلب، شارع النيل',
-      receiverPhone: receiverPhone ?? '+963912345679',
-      weight: weight ?? 2.5,
-      cost: (weight ?? 2.5) * 5000,
-      isPaid: false,
-      status: ParcelStatus.inTransit,
-      trackingNumber: 'PKG-2024-001',
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-      updatedAt: DateTime.now(),
-    );
+    try {
+      final response = await dioClient.put(
+        '${ApiConfig.parcels}/$id',
+        data: {
+          if (receiverName != null) 'reciver_name': receiverName,
+          if (receiverAddress != null) 'reciver_address': receiverAddress,
+          if (receiverPhone != null) 'reciver_phone': receiverPhone,
+          if (weight != null) 'weight': weight,
+        },
+      );
+      if (response.statusCode == 200) {
+        return ParcelModel.fromJson(response.data['data']['parcel']);
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
   Future<void> deleteParcel(int id) async {
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final response = await dioClient.delete('${ApiConfig.parcels}/$id');
+      if (response.statusCode != 200) {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 }

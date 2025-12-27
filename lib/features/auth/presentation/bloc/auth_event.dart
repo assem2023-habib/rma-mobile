@@ -117,3 +117,4 @@ class VerifyTelegramOtpRequested extends AuthEvent {
 
 class AuthCheckRequested extends AuthEvent {}
 class LogoutRequested extends AuthEvent {}
+class GuestLoginRequested extends AuthEvent {}

@@ -1,5 +1,6 @@
-import 'dart:async';
-import '../../../../core/enums/authorization_status.dart';
+import '../../../../core/api/api_config.dart';
+import '../../../../core/api/dio_client.dart';
+import '../../../../core/error/exceptions.dart';
 import '../models/authorization_model.dart';
 
 abstract class AuthorizationsRemoteDataSource {
@@ -22,75 +23,37 @@ abstract class AuthorizationsRemoteDataSource {
 
 class AuthorizationsRemoteDataSourceImpl
     implements AuthorizationsRemoteDataSource {
+  final DioClient dioClient;
+
+  AuthorizationsRemoteDataSourceImpl({required this.dioClient});
+
   @override
   Future<List<AuthorizationModel>> getAuthorizations() async {
-    await Future.delayed(const Duration(seconds: 1));
-    return [
-      AuthorizationModel(
-        id: 1,
-        userId: 1,
-        parcelId: 1,
-        authorizedUserId: 2,
-        authorizedUserType: 'user',
-        authorizedCode: 'AUTH_123456',
-        status: AuthorizationStatus.active,
-        generatedAt: DateTime.now().subtract(const Duration(days: 2)),
-        expiredAt: DateTime.now().add(const Duration(days: 5)),
-        parcel: const AuthorizationParcelInfoModel(
-          id: 1,
-          trackingNumber: 'PKG-2024-001',
-          receiverName: 'سارة علي',
-        ),
-        authorizedUser: const AuthorizedUserInfoModel(
-          id: 2,
-          userName: 'ahmad_hassan',
-          firstName: 'أحمد',
-          lastName: 'حسن',
-        ),
-      ),
-      AuthorizationModel(
-        id: 2,
-        userId: 1,
-        parcelId: 2,
-        authorizedUserType: 'guest',
-        authorizedCode: 'AUTH_654321',
-        status: AuthorizationStatus.pending,
-        generatedAt: DateTime.now().subtract(const Duration(hours: 3)),
-        expiredAt: DateTime.now().add(const Duration(days: 7)),
-        parcel: const AuthorizationParcelInfoModel(
-          id: 2,
-          trackingNumber: 'PKG-2024-002',
-          receiverName: 'ليلى حسن',
-        ),
-      ),
-    ];
+    try {
+      final response = await dioClient.get(ApiConfig.authorizations);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        return data.map((json) => AuthorizationModel.fromJson(json)).toList();
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
   Future<AuthorizationModel> getAuthorizationById(int id) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return AuthorizationModel(
-      id: id,
-      userId: 1,
-      parcelId: 1,
-      authorizedUserId: 2,
-      authorizedUserType: 'user',
-      authorizedCode: 'AUTH_123456',
-      status: AuthorizationStatus.active,
-      generatedAt: DateTime.now().subtract(const Duration(days: 2)),
-      expiredAt: DateTime.now().add(const Duration(days: 5)),
-      parcel: const AuthorizationParcelInfoModel(
-        id: 1,
-        trackingNumber: 'PKG-2024-001',
-        receiverName: 'سارة علي',
-      ),
-      authorizedUser: const AuthorizedUserInfoModel(
-        id: 2,
-        userName: 'ahmad_hassan',
-        firstName: 'أحمد',
-        lastName: 'حسن',
-      ),
-    );
+    try {
+      final response = await dioClient.get('${ApiConfig.authorizations}/$id');
+      if (response.statusCode == 200) {
+        return AuthorizationModel.fromJson(response.data['data']);
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
@@ -106,30 +69,52 @@ class AuthorizationsRemoteDataSourceImpl
     int? authorizedCityId,
     String? authorizedBirthday,
   }) async {
-    await Future.delayed(const Duration(seconds: 1));
-    return AuthorizationModel(
-      id: 3,
-      userId: 1,
-      parcelId: parcelId,
-      authorizedUserId: authorizedUserId,
-      authorizedUserType: authorizedUserType,
-      authorizedCode: 'NEW_CODE_123',
-      status: AuthorizationStatus.active,
-      generatedAt: DateTime.now(),
-      expiredAt: DateTime.now().add(const Duration(days: 7)),
-      authorizedUser: authorizedUserType == 'guest'
-          ? AuthorizedUserInfoModel(
-              id: 0,
-              userName: '$authorizedFirstName $authorizedLastName',
-              firstName: authorizedFirstName ?? 'guest',
-              lastName: authorizedLastName ?? '',
-            )
-          : null,
-    );
+    try {
+      final Map<String, dynamic> requestData = {'parcel_id': parcelId};
+
+      if (authorizedUserType.toLowerCase() == 'user') {
+        requestData['authorized_user_id'] = authorizedUserId;
+      } else {
+        requestData['authorized_guest'] = [
+          {
+            'first_name': authorizedFirstName,
+            'last_name': authorizedLastName,
+            'phone': authorizedPhone,
+            'address': authorizedAddress,
+            'national_number': authorizedNationalNumber,
+            'city_id': authorizedCityId,
+            'birthday': authorizedBirthday,
+          },
+        ];
+      }
+
+      final response = await dioClient.post(
+        ApiConfig.authorizations,
+        data: requestData,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return AuthorizationModel.fromJson(
+          response.data['data']['authorization'],
+        );
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
   Future<void> cancelAuthorization(int id) async {
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final response = await dioClient.delete(
+        '${ApiConfig.authorizations}/$id',
+      );
+      if (response.statusCode != 200) {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 }

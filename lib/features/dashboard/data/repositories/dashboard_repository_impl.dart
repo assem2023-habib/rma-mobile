@@ -4,18 +4,29 @@ import 'package:rma_customer/features/dashboard/domain/entities/dashboard_stats.
 import 'package:rma_customer/features/dashboard/domain/repositories/dashboard_repository.dart';
 import 'package:rma_customer/features/dashboard/data/datasources/dashboard_remote_datasource.dart';
 
+import 'package:rma_customer/core/error/exceptions.dart';
+import 'package:rma_customer/core/network/network_info.dart';
+
 class DashboardRepositoryImpl implements DashboardRepository {
   final DashboardRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
 
-  DashboardRepositoryImpl({required this.remoteDataSource});
+  DashboardRepositoryImpl({
+    required this.remoteDataSource,
+    required this.networkInfo,
+  });
 
   @override
   Future<Either<Failure, DashboardStats>> getDashboardStats() async {
-    try {
-      final stats = await remoteDataSource.getDashboardStats();
-      return Right(stats);
-    } catch (e) {
-      return const Left(ServerFailure());
+    if (await networkInfo.isConnected) {
+      try {
+        final stats = await remoteDataSource.getDashboardStats();
+        return Right(stats);
+      } on ServerException {
+        return const Left(ServerFailure('Server Error during dashboard stats fetch'));
+      }
+    } else {
+      return const Left(NetworkFailure('No Internet Connection'));
     }
   }
 }

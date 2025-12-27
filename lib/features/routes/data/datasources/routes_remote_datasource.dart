@@ -1,34 +1,30 @@
+import '../../../../core/api/api_config.dart';
+import '../../../../core/api/dio_client.dart';
+import '../../../../core/error/exceptions.dart';
 import '../models/route_model.dart';
 
 abstract class RoutesRemoteDataSource {
-  Future<List<RouteModel>> getRoutes();
+  Future<List<RouteModel>> getRoutes({String? day});
 }
 
 class RoutesRemoteDataSourceImpl implements RoutesRemoteDataSource {
+  final DioClient dioClient;
+
+  RoutesRemoteDataSourceImpl({required this.dioClient});
+
   @override
-  Future<List<RouteModel>> getRoutes() async {
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
-    
-    return [
-      RouteModel(
-        id: 1,
-        name: 'مسار بغداد - البصرة',
-        fromCity: 'بغداد',
-        toCity: 'البصرة',
-        status: 'نشط',
-        date: DateTime.now(),
-        driverName: 'محمد علي',
-      ),
-      RouteModel(
-        id: 2,
-        name: 'مسار أربيل - بغداد',
-        fromCity: 'أربيل',
-        toCity: 'بغداد',
-        status: 'مكتمل',
-        date: DateTime.now().subtract(const Duration(days: 1)),
-        driverName: 'أحمد جاسم',
-      ),
-    ];
+  Future<List<RouteModel>> getRoutes({String? day}) async {
+    try {
+      final url = day != null ? '${ApiConfig.routes}/$day' : ApiConfig.routes;
+      final response = await dioClient.get(url);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data']['routes'];
+        return data.map((json) => RouteModel.fromJson(json)).toList();
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
   }
 }

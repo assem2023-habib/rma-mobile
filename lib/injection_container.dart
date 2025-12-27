@@ -61,6 +61,18 @@ import 'package:rma_customer/features/rates/data/repositories/rating_repository_
 import 'package:rma_customer/features/rates/domain/repositories/rating_repository.dart';
 import 'package:rma_customer/features/rates/domain/usecases/create_rating_usecase.dart';
 import 'package:rma_customer/features/rates/presentation/bloc/rating_bloc.dart';
+import 'package:rma_customer/features/common/data/datasources/common_remote_datasource.dart';
+import 'package:rma_customer/features/common/data/repositories/common_repository_impl.dart';
+import 'package:rma_customer/features/common/domain/repositories/common_repository.dart';
+import 'package:rma_customer/features/common/domain/usecases/get_countries_usecase.dart';
+import 'package:rma_customer/features/common/domain/usecases/get_cities_usecase.dart';
+import 'package:rma_customer/features/common/presentation/bloc/common_bloc.dart';
+import 'package:rma_customer/features/appointments/data/datasources/appointment_remote_datasource.dart';
+import 'package:rma_customer/features/appointments/data/repositories/appointment_repository_impl.dart';
+import 'package:rma_customer/features/appointments/domain/repositories/appointment_repository.dart';
+import 'package:rma_customer/features/appointments/domain/usecases/get_available_appointments_usecase.dart';
+import 'package:rma_customer/features/appointments/domain/usecases/book_appointment_usecase.dart';
+import 'package:rma_customer/features/appointments/presentation/bloc/appointment_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -72,11 +84,11 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetDashboardStatsUseCase(sl()));
   // Repository
   sl.registerLazySingleton<DashboardRepository>(
-    () => DashboardRepositoryImpl(remoteDataSource: sl()),
+    () => DashboardRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
   // Data sources
   sl.registerLazySingleton<DashboardRemoteDataSource>(
-    () => DashboardRemoteDataSourceImpl(),
+    () => DashboardRemoteDataSourceImpl(dioClient: sl()),
   );
 
   //! Features - Parcels
@@ -98,11 +110,11 @@ Future<void> init() async {
   sl.registerLazySingleton(() => DeleteParcelUseCase(sl()));
   // Repository
   sl.registerLazySingleton<ParcelRepository>(
-    () => ParcelRepositoryImpl(remoteDataSource: sl()),
+    () => ParcelRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
   // Data sources
   sl.registerLazySingleton<ParcelRemoteDataSource>(
-    () => ParcelRemoteDataSourceImpl(),
+    () => ParcelRemoteDataSourceImpl(dioClient: sl()),
   );
 
   //! Features - Routes
@@ -112,11 +124,11 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetRoutesUseCase(sl()));
   // Repository
   sl.registerLazySingleton<RoutesRepository>(
-    () => RoutesRepositoryImpl(remoteDataSource: sl()),
+    () => RoutesRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
   // Data sources
   sl.registerLazySingleton<RoutesRemoteDataSource>(
-    () => RoutesRemoteDataSourceImpl(),
+    () => RoutesRemoteDataSourceImpl(dioClient: sl()),
   );
 
   //! Features - Authorizations
@@ -136,11 +148,12 @@ Future<void> init() async {
   sl.registerLazySingleton(() => CancelAuthorizationUseCase(sl()));
   // Repository
   sl.registerLazySingleton<AuthorizationsRepository>(
-    () => AuthorizationsRepositoryImpl(remoteDataSource: sl()),
+    () =>
+        AuthorizationsRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
   // Data sources
   sl.registerLazySingleton<AuthorizationsRemoteDataSource>(
-    () => AuthorizationsRemoteDataSourceImpl(),
+    () => AuthorizationsRemoteDataSourceImpl(dioClient: sl()),
   );
 
   //! Features - Map
@@ -150,11 +163,11 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetParcelLocationUseCase(sl()));
   // Repository
   sl.registerLazySingleton<MapRepository>(
-    () => MapRepositoryImpl(remoteDataSource: sl()),
+    () => MapRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
   // Data sources
   sl.registerLazySingleton<MapRemoteDataSource>(
-    () => MapRemoteDataSourceImpl(),
+    () => MapRemoteDataSourceImpl(dioClient: sl()),
   );
 
   //! Features - Auth
@@ -207,7 +220,7 @@ Future<void> init() async {
   );
   // Data sources
   sl.registerLazySingleton<ProfileRemoteDataSource>(
-    () => ProfileRemoteDataSourceImpl(),
+    () => ProfileRemoteDataSourceImpl(dioClient: sl()),
   );
 
   //! Features - Rates
@@ -217,11 +230,48 @@ Future<void> init() async {
   sl.registerLazySingleton(() => CreateRatingUseCase(sl()));
   // Repository
   sl.registerLazySingleton<RatingRepository>(
-    () => RatingRepositoryImpl(remoteDataSource: sl()),
+    () => RatingRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
   // Data sources
   sl.registerLazySingleton<RatingRemoteDataSource>(
-    () => RatingRemoteDataSourceImpl(),
+    () => RatingRemoteDataSourceImpl(dioClient: sl()),
+  );
+
+  //! Features - Common
+  // Bloc
+  sl.registerFactory(
+    () => CommonBloc(getCountriesUseCase: sl(), getCitiesUseCase: sl()),
+  );
+  // Use cases
+  sl.registerLazySingleton(() => GetCountriesUseCase(sl()));
+  sl.registerLazySingleton(() => GetCitiesUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<CommonRepository>(
+    () => CommonRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<CommonRemoteDataSource>(
+    () => CommonRemoteDataSourceImpl(dioClient: sl()),
+  );
+
+  //! Features - Appointments
+  // Bloc
+  sl.registerFactory(
+    () => AppointmentBloc(
+      getAvailableAppointmentsUseCase: sl(),
+      bookAppointmentUseCase: sl(),
+    ),
+  );
+  // Use cases
+  sl.registerLazySingleton(() => GetAvailableAppointmentsUseCase(sl()));
+  sl.registerLazySingleton(() => BookAppointmentUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<AppointmentRepository>(
+    () => AppointmentRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<AppointmentRemoteDataSource>(
+    () => AppointmentRemoteDataSourceImpl(dioClient: sl()),
   );
 
   //! Core
