@@ -1,16 +1,81 @@
-# rma_customer
+# RMA Customer App 📦
 
-A new Flutter project.
+[![Flutter](https://img.shields.io/badge/Flutter-3.10.0-02569B?logo=flutter)](https://flutter.dev)
+[![Clean Architecture](https://img.shields.io/badge/Architecture-Clean_Architecture-green)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+[![BLoC State Management](https://img.shields.io/badge/State_Management-BLoC-blue)](https://bloclibrary.dev)
 
-## Getting Started
+تطبيق **RMA Customer** هو الحل المتكامل لإدارة الشحنات والطرود، مصمم ليوفر للمستخدمين تجربة سلسة في تتبع شحناتهم، إدارة التخويلات، وحجز المواعيد.
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## 🚀 المميزات الرئيسية (Features)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **تتبع حي (Live Tracking):** متابعة موقع الطرود على الخريطة لحظة بلحظة.
+- **إدارة الطرود:** إنشاء شحنات جديدة، عرض التفاصيل، ومعرفة التكلفة والوزن.
+- **التخويلات (Authorizations):** إدارة صلاحيات استلام الطرود للضيوف والمفوضين.
+- **المسارات (Routes):** استعراض المسارات المتاحة يومياً مع تفاصيل السائقين.
+- **نظام المواعيد:** حجز مواعيد لاستلام أو تسليم الطرود من الفروع.
+- **نظام التقييم:** تقييم الفروع والطرود لتحسين جودة الخدمة.
+- **دخول الضيوف (Guest Access):** إمكانية تصفح الخدمات الأساسية دون الحاجة لتسجيل حساب.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+## 🛠 التقنيات المستخدمة (Tech Stack)
+
+| التقنية | الاستخدام |
+|---------|-----------|
+| **Flutter** | إطار العمل الأساسي لبناء التطبيق |
+| **BLoC / Hydrated BLoC** | إدارة حالة التطبيق (State Management) |
+| **Clean Architecture** | هيكلة المشروع لضمان القابلية للتوسع والاختبار |
+| **Dio** | التعامل مع طلبات الـ API |
+| **GetIt** | حقن التبعيات (Dependency Injection) |
+| **GoRouter** | إدارة التنقل بين الشاشات |
+| **Flutter Map** | عرض الخرائط وتتبع الشحنات |
+| **url_launcher** | الاتصال الهاتفي المباشر بالسائقين |
+
+---
+
+## 🏗 هيكلية المشروع (Architecture)
+
+نعتمد في هذا المشروع على **Clean Architecture** لضمان فصل المهام (Separation of Concerns):
+
+1. **Core:** يحتوي على الثيمات، الألوان، الإعدادات العامة، والتعامل مع الشبكة.
+2. **Features:** ينقسم كل قسم (مثل Auth, Parcels, Routes) إلى:
+   - **Data:** المستودعات (Repositories) ومصادر البيانات (Data Sources).
+   - **Domain:** الكيانات (Entities) وحالات الاستخدام (Use Cases).
+   - **Presentation:** واجهات المستخدم (UI) وإدارة الحالة (BLoC).
+
+---
+
+## 📦 كيفية التشغيل (Getting Started)
+
+1. تأكد من تثبيت Flutter (SDK 3.10.0+).
+2. قم بتحميل المستودع:
+   ```bash
+   git clone https://github.com/assem2023-habib/rma-mobile.git
+   ```
+3. تثبيت المكتبات:
+   ```bash
+   flutter pub get
+   ```
+4. تشغيل التطبيق:
+   ```bash
+   flutter run
+   ```
+
+---
+
+## 📄 توثيق الـ API
+
+يمكنك العثور على التوثيق الكامل للـ Endpoints المستخدمة في ملف [FLUTTER_API_DOCUMENTATION.md](./FLUTTER_API_DOCUMENTATION.md).
+
+---
+
+## 🤝 المساهمة
+
+نرحب بمساهماتكم لتطوير التطبيق! يرجى فتح Issue أو تقديم Pull Request.
+
+---
+
+### 📝 ملاحظات المطور
+تم بناء هذا التطبيق مع مراعاة أفضل ممارسات الأداء (Performance) وتجربة المستخدم (UX)، مع دعم كامل للغة العربية.
