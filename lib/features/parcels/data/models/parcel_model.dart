@@ -72,8 +72,9 @@ class ParcelModel extends Parcel {
         return ParcelStatus.inTransit;
       case 'delivered':
         return ParcelStatus.delivered;
+      case 'canceled':
       case 'cancelled':
-        return ParcelStatus.cancelled;
+        return ParcelStatus.canceled;
       case 'returned':
         return ParcelStatus.returned;
       default:
