@@ -64,9 +64,9 @@ class BranchModel extends BranchEntity {
   factory BranchModel.fromJson(Map<String, dynamic> json) {
     return BranchModel(
       id: json['id'],
-      branchName: json['branch_name'],
+      branchName: json['branch_name'] ?? '',
       cityId: json['city_id'],
-      address: json['address'],
+      address: json['address'] ?? '',
       latitude: json['latitude'] is String
           ? double.tryParse(json['latitude']) ?? 0.0
           : (json['latitude'] as num?)?.toDouble() ?? 0.0,

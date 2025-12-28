@@ -37,7 +37,7 @@ class RouteEntity extends Equatable {
 class BranchEntity extends Equatable {
   final int id;
   final String branchName;
-  final int cityId;
+  final int? cityId;
   final String address;
   final double latitude;
   final double longitude;
@@ -45,7 +45,7 @@ class BranchEntity extends Equatable {
   const BranchEntity({
     required this.id,
     required this.branchName,
-    required this.cityId,
+    this.cityId,
     required this.address,
     required this.latitude,
     required this.longitude,
