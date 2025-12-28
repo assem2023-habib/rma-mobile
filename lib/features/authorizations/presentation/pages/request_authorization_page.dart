@@ -147,8 +147,13 @@ class _RequestAuthorizationPageState extends State<RequestAuthorizationPage> {
                     if (state is ParcelsLoading) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (state is ParcelsLoaded) {
+                      // Check if the pre-selected parcel exists in the list
+                      final parcelExists =
+                          _selectedParcelId != null &&
+                          state.parcels.any((p) => p.id == _selectedParcelId);
+
                       return DropdownButtonFormField<int>(
-                        initialValue: _selectedParcelId,
+                        value: parcelExists ? _selectedParcelId : null,
                         decoration: InputDecoration(
                           hintText: 'اختر الطرد المراد تخويله',
                           border: OutlineInputBorder(

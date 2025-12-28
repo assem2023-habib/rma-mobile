@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/parcels_bloc.dart';
+import '../bloc/parcels_event.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimensions.dart';
@@ -188,10 +191,15 @@ class ParcelDetailPage extends StatelessWidget {
                     ),
                     const SizedBox(height: AppDimensions.spacing4),
                     OutlinedButton.icon(
-                      onPressed: () => context.push(
-                        '/request-authorization',
-                        extra: parcel.id,
-                      ),
+                      onPressed: () {
+                        // Ensure Parcels are loaded in the bloc before navigating
+                        // so that the dropdown can find the parcelId
+                        context.read<ParcelsBloc>().add(GetParcelsEvent());
+                        context.push(
+                          '/request-authorization',
+                          extra: parcel.id,
+                        );
+                      },
                       icon: const Icon(Icons.add_moderator_outlined),
                       label: const Text('إنشاء تخويل جديد'),
                       style: OutlinedButton.styleFrom(
