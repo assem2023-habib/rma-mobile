@@ -33,12 +33,16 @@ class ParcelModel extends Parcel {
       receiverAddress: json['reciver_address'],
       receiverPhone: json['reciver_phone'],
       weight: (json['weight'] as num).toDouble(),
-      cost: (json['cost'] as num).toDouble(),
+      cost: (json['cost'] ?? 0.0 as num).toDouble(),
       isPaid: json['is_paid'] == 1 || json['is_paid'] == true,
       status: _parseStatus(json['parcel_status']),
       trackingNumber: json['tracking_number'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'])
+          : DateTime.now(),
     );
   }
 
@@ -56,29 +60,28 @@ class ParcelModel extends Parcel {
       'weight': weight,
       'cost': cost,
       'is_paid': isPaid ? 1 : 0,
-      'parcel_status': status.name,
+      'parcel_status': status.value,
       'tracking_number': trackingNumber,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
   }
 
-  static ParcelStatus _parseStatus(String status) {
-    switch (status) {
-      case 'pending':
+  static ParcelStatus _parseStatus(String? status) {
+    if (status == null) return ParcelStatus.pending;
+    return ParcelStatus.values.firstWhere(
+      (e) => e.value.toLowerCase() == status.toLowerCase(),
+      orElse: () {
+        // Fallback for underscore cases
+        if (status.toLowerCase() == 'in_transit') return ParcelStatus.inTransit;
+        if (status.toLowerCase() == 'out_for_delivery') {
+          return ParcelStatus.outForDelivery;
+        }
+        if (status.toLowerCase() == 'ready_for_pickup') {
+          return ParcelStatus.readyForPickup;
+        }
         return ParcelStatus.pending;
-      case 'inTransit':
-      case 'in_transit':
-        return ParcelStatus.inTransit;
-      case 'delivered':
-        return ParcelStatus.delivered;
-      case 'canceled':
-      case 'cancelled':
-        return ParcelStatus.canceled;
-      case 'returned':
-        return ParcelStatus.returned;
-      default:
-        return ParcelStatus.pending;
-    }
+      },
+    );
   }
 }

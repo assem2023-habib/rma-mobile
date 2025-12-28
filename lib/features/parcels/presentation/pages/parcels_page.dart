@@ -20,7 +20,7 @@ class _ParcelsPageState extends State<ParcelsPage> {
   @override
   void initState() {
     super.initState();
-    context.read<ParcelsBloc>().add(GetParcelsEvent());
+    context.read<ParcelsBloc>().add(const GetParcelsEvent());
   }
 
   @override
@@ -89,7 +89,7 @@ class _ParcelsPageState extends State<ParcelsPage> {
                       return ParcelCard(
                         parcel: parcel,
                         onTap: () {
-                          context.push('/parcel-detail', extra: parcel);
+                          context.push('/parcels/${parcel.id}', extra: parcel);
                         },
                       );
                     },

@@ -6,6 +6,9 @@ import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/cards/stats_card.dart';
 import '../../../../core/widgets/backgrounds/shiny_background.dart';
+import '../../../parcels/presentation/bloc/parcels_bloc.dart';
+import '../../../parcels/presentation/bloc/parcels_event.dart';
+import '../../../parcels/presentation/bloc/parcels_state.dart';
 import '../bloc/dashboard_bloc.dart';
 import '../bloc/dashboard_state.dart';
 import '../widgets/quick_action_card.dart';
@@ -14,8 +17,20 @@ import 'package:rma_customer/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:rma_customer/features/auth/presentation/bloc/auth_state.dart';
 import '../../../../core/widgets/guest_prompt_bottom_sheet.dart';
 
-class DashboardHomePage extends StatelessWidget {
+class DashboardHomePage extends StatefulWidget {
   const DashboardHomePage({super.key});
+
+  @override
+  State<DashboardHomePage> createState() => _DashboardHomePageState();
+}
+
+class _DashboardHomePageState extends State<DashboardHomePage> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<DashboardBloc>().add(GetDashboardStatsEvent());
+    context.read<ParcelsBloc>().add(const GetParcelsEvent());
+  }
 
   Widget _buildGuestDashboardPlaceholder(BuildContext context) {
     return Column(
@@ -476,87 +491,137 @@ class DashboardHomePage extends StatelessWidget {
                     ),
                   ),
 
-                  // Recent Parcels List (Placeholder)
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppDimensions.spacing4,
-                          vertical: AppDimensions.spacing2,
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.all(AppDimensions.spacing4),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(
-                              AppDimensions.radiusXl,
+                  // Recent Parcels List
+                  BlocBuilder<ParcelsBloc, ParcelsState>(
+                    builder: (context, parcelState) {
+                      if (parcelState is ParcelsLoading) {
+                        return const SliverToBoxAdapter(
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(AppDimensions.spacing4),
+                              child: CircularProgressIndicator(),
                             ),
-                            border: Border.all(color: AppColors.border),
                           ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 48,
-                                height: 48,
-                                decoration: BoxDecoration(
-                                  color: AppColors.backgroundSecondary,
-                                  borderRadius: BorderRadius.circular(
-                                    AppDimensions.radiusLg,
-                                  ),
-                                ),
-                                child: const Icon(
-                                  Icons.inventory_2,
-                                  color: AppColors.primary,
-                                ),
+                        );
+                      }
+
+                      if (parcelState is ParcelsError) {
+                        return SliverToBoxAdapter(
+                          child: Center(child: Text(parcelState.message)),
+                        );
+                      }
+
+                      if (parcelState is ParcelsLoaded) {
+                        final recentParcels = parcelState.parcels
+                            .take(5)
+                            .toList();
+
+                        if (recentParcels.isEmpty) {
+                          return const SliverToBoxAdapter(
+                            child: Center(child: Text('لا يوجد طرود حالياً')),
+                          );
+                        }
+
+                        return SliverList(
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
+                            final parcel = recentParcels[index];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppDimensions.spacing4,
+                                vertical: AppDimensions.spacing2,
                               ),
-                              const SizedBox(width: AppDimensions.spacing4),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'PKG-2024-00152$index',
-                                      style: AppTypography.bodyLarge.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      'دمشق ← حلب',
-                                      style: AppTypography.caption.copyWith(
-                                        color: AppColors.textMuted,
-                                      ),
-                                    ),
-                                  ],
+                              child: GestureDetector(
+                                onTap: () => context.push(
+                                  '/parcels/${parcel.id}',
+                                  extra: parcel,
                                 ),
-                              ),
-                              Flexible(
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
+                                  padding: const EdgeInsets.all(
+                                    AppDimensions.spacing4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: AppColors.successBg,
+                                    color: Colors.white,
                                     borderRadius: BorderRadius.circular(
-                                      AppDimensions.radiusFull,
+                                      AppDimensions.radiusXl,
                                     ),
+                                    border: Border.all(color: AppColors.border),
                                   ),
-                                  child: Text(
-                                    'في الطريق',
-                                    style: AppTypography.caption.copyWith(
-                                      color: AppColors.success,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 48,
+                                        height: 48,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.backgroundSecondary,
+                                          borderRadius: BorderRadius.circular(
+                                            AppDimensions.radiusLg,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.inventory_2,
+                                          color: parcel.status.color,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: AppDimensions.spacing4,
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              parcel.trackingNumber,
+                                              style: AppTypography.bodyLarge
+                                                  .copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                            ),
+                                            Text(
+                                              '${parcel.fromCity} ← ${parcel.toCity}',
+                                              style: AppTypography.caption
+                                                  .copyWith(
+                                                    color: AppColors.textMuted,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: parcel.status.color.withValues(
+                                            alpha: 0.1,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            AppDimensions.radiusFull,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          parcel.status.label,
+                                          style: AppTypography.caption.copyWith(
+                                            color: parcel.status.color,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }, childCount: 3),
+                            );
+                          }, childCount: recentParcels.length),
+                        );
+                      }
+
+                      return const SliverToBoxAdapter(child: SizedBox.shrink());
+                    },
                   ),
 
                   const SliverToBoxAdapter(
