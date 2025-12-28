@@ -61,15 +61,9 @@ class _MapPageState extends State<MapPage> {
       ),
       body: BlocConsumer<MapBloc, MapState>(
         listener: (context, state) {
-          if (state is MapLoaded) {
-            _mapController.move(
-              LatLng(
-                state.parcelLocation.latitude,
-                state.parcelLocation.longitude,
-              ),
-              15.0,
-            );
-          }
+          // No need to call _mapController.move here for the initial load
+          // as initialCenter in MapOptions handles it.
+          // This avoids LateInitializationError.
         },
         builder: (context, state) {
           if (state is MapLoading) {
