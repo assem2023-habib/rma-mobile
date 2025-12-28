@@ -246,6 +246,7 @@ class _NewParcelPageState extends State<NewParcelPage> {
                 borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
               ),
             ),
+            isExpanded: true,
             items: state.routes.map((route) {
               final fromName =
                   route.fromBranch?.branchName ?? 'الفرع ${route.fromBranchId}';
@@ -253,7 +254,10 @@ class _NewParcelPageState extends State<NewParcelPage> {
                   route.toBranch?.branchName ?? 'الفرع ${route.toBranchId}';
               return DropdownMenuItem<int>(
                 value: route.id,
-                child: Text('من $fromName إلى $toName'),
+                child: Text(
+                  'من $fromName إلى $toName',
+                  overflow: TextOverflow.ellipsis,
+                ),
               );
             }).toList(),
             onChanged: (value) {

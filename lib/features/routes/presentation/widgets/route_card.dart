@@ -68,12 +68,15 @@ class RouteCard extends StatelessWidget {
                     color: AppColors.slate500,
                   ),
                   const SizedBox(width: AppDimensions.spacing2),
-                  Text(
-                    route.fromBranch != null && route.toBranch != null
-                        ? '${route.fromBranch!.branchName} ➔ ${route.toBranch!.branchName}'
-                        : 'من الفرع ${route.fromBranchId} ➔ إلى الفرع ${route.toBranchId}',
-                    style: AppTypography.bodySmall.copyWith(
-                      color: AppColors.slate600,
+                  Expanded(
+                    child: Text(
+                      route.fromBranch != null && route.toBranch != null
+                          ? '${route.fromBranch!.branchName} ➔ ${route.toBranch!.branchName}'
+                          : 'من الفرع ${route.fromBranchId} ➔ إلى الفرع ${route.toBranchId}',
+                      style: AppTypography.bodySmall.copyWith(
+                        color: AppColors.slate600,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
