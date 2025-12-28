@@ -8,6 +8,8 @@ class RouteModel extends RouteEntity {
     required super.isActive,
     required super.distancePerKilo,
     required super.days,
+    super.fromBranch,
+    super.toBranch,
   });
 
   factory RouteModel.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,12 @@ class RouteModel extends RouteEntity {
               ?.map((d) => RouteDayModel.fromJson(d))
               .toList() ??
           [],
+      fromBranch: json['from_branch'] != null
+          ? BranchModel.fromJson(json['from_branch'])
+          : null,
+      toBranch: json['to_branch'] != null
+          ? BranchModel.fromJson(json['to_branch'])
+          : null,
     );
   }
 
@@ -35,6 +43,43 @@ class RouteModel extends RouteEntity {
       'is_active': isActive ? 1 : 0,
       'distance_per_kilo': distancePerKilo.toString(),
       'days': days.map((d) => (d as RouteDayModel).toJson()).toList(),
+      'from_branch': fromBranch != null
+          ? (fromBranch as BranchModel).toJson()
+          : null,
+      'to_branch': toBranch != null ? (toBranch as BranchModel).toJson() : null,
+    };
+  }
+}
+
+class BranchModel extends BranchEntity {
+  const BranchModel({
+    required super.id,
+    required super.branchName,
+    required super.cityId,
+    required super.address,
+    required super.latitude,
+    required super.longitude,
+  });
+
+  factory BranchModel.fromJson(Map<String, dynamic> json) {
+    return BranchModel(
+      id: json['id'],
+      branchName: json['branch_name'],
+      cityId: json['city_id'],
+      address: json['address'],
+      latitude: (json['latitude'] as num).toDouble(),
+      longitude: (json['longitude'] as num).toDouble(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'branch_name': branchName,
+      'city_id': cityId,
+      'address': address,
+      'latitude': latitude,
+      'longitude': longitude,
     };
   }
 }

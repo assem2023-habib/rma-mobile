@@ -9,7 +9,7 @@ class AppTheme {
     // =========================
     // Color Scheme
     // =========================
-    colorScheme: ColorScheme.light(
+    colorScheme: const ColorScheme.light(
       primary: AppColors.primary,
       secondary: AppColors.primaryLight,
       surface: AppColors.backgroundCard,

@@ -46,7 +46,9 @@ class RouteCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'مسار رقم ${route.fromBranchId} - ${route.toBranchId}',
+                      route.fromBranch != null && route.toBranch != null
+                          ? '${route.fromBranch!.branchName} - ${route.toBranch!.branchName}'
+                          : 'مسار رقم ${route.fromBranchId} - ${route.toBranchId}',
                       style: AppTypography.heading3.copyWith(
                         color: isActive
                             ? AppColors.primaryBlue
@@ -67,7 +69,9 @@ class RouteCard extends StatelessWidget {
                   ),
                   const SizedBox(width: AppDimensions.spacing2),
                   Text(
-                    'من الفرع ${route.fromBranchId} ➔ إلى الفرع ${route.toBranchId}',
+                    route.fromBranch != null && route.toBranch != null
+                        ? '${route.fromBranch!.branchName} ➔ ${route.toBranch!.branchName}'
+                        : 'من الفرع ${route.fromBranchId} ➔ إلى الفرع ${route.toBranchId}',
                     style: AppTypography.bodySmall.copyWith(
                       color: AppColors.slate600,
                     ),

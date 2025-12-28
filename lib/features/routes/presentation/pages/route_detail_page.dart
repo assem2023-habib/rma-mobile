@@ -46,7 +46,9 @@ class RouteDetailPage extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          'مسار ${route.fromBranchId} - ${route.toBranchId}',
+                          route.fromBranch != null && route.toBranch != null
+                              ? '${route.fromBranch!.branchName} - ${route.toBranch!.branchName}'
+                              : 'مسار ${route.fromBranchId} - ${route.toBranchId}',
                           style: AppTypography.heading1.copyWith(
                             color: Colors.white,
                           ),
@@ -59,7 +61,8 @@ class RouteDetailPage extends StatelessWidget {
                   Row(
                     children: [
                       _buildLocationPoint(
-                        'الفرع ${route.fromBranchId}',
+                        route.fromBranch?.branchName ??
+                            'الفرع ${route.fromBranchId}',
                         'نقطة الانطلاق',
                       ),
                       const Expanded(
@@ -75,7 +78,8 @@ class RouteDetailPage extends StatelessWidget {
                         ),
                       ),
                       _buildLocationPoint(
-                        'الفرع ${route.toBranchId}',
+                        route.toBranch?.branchName ??
+                            'الفرع ${route.toBranchId}',
                         'وجهة الوصول',
                       ),
                     ],
@@ -84,6 +88,17 @@ class RouteDetailPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppDimensions.spacing6),
+
+            // Branch Details Section
+            if (route.fromBranch != null || route.toBranch != null) ...[
+              const Text('تفاصيل الأفرع', style: AppTypography.heading3),
+              const SizedBox(height: AppDimensions.spacing3),
+              if (route.fromBranch != null)
+                _buildBranchCard('فرع الانطلاق', route.fromBranch!),
+              if (route.toBranch != null)
+                _buildBranchCard('فرع الوصول', route.toBranch!),
+              const SizedBox(height: AppDimensions.spacing6),
+            ],
 
             // Route Days Section
             const Text('أيام العمل والمواعيد', style: AppTypography.heading3),
@@ -183,6 +198,48 @@ class RouteDetailPage extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildBranchCard(String title, BranchEntity branch) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: AppDimensions.spacing3),
+      child: Padding(
+        padding: const EdgeInsets.all(AppDimensions.spacing4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: AppTypography.bodySmall.copyWith(
+                color: AppColors.primaryBlue,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: AppDimensions.spacing2),
+            Text(branch.branchName, style: AppTypography.heading3),
+            const SizedBox(height: AppDimensions.spacing1),
+            Row(
+              children: [
+                const Icon(
+                  Icons.location_on,
+                  size: 16,
+                  color: AppColors.slate500,
+                ),
+                const SizedBox(width: AppDimensions.spacing2),
+                Expanded(
+                  child: Text(
+                    branch.address,
+                    style: AppTypography.bodySmall.copyWith(
+                      color: AppColors.slate600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 

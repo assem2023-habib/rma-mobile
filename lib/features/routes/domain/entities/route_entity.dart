@@ -7,6 +7,8 @@ class RouteEntity extends Equatable {
   final bool isActive;
   final num distancePerKilo;
   final List<RouteDayEntity> days;
+  final BranchEntity? fromBranch;
+  final BranchEntity? toBranch;
 
   const RouteEntity({
     required this.id,
@@ -15,6 +17,8 @@ class RouteEntity extends Equatable {
     required this.isActive,
     required this.distancePerKilo,
     required this.days,
+    this.fromBranch,
+    this.toBranch,
   });
 
   @override
@@ -25,6 +29,36 @@ class RouteEntity extends Equatable {
     isActive,
     distancePerKilo,
     days,
+    fromBranch,
+    toBranch,
+  ];
+}
+
+class BranchEntity extends Equatable {
+  final int id;
+  final String branchName;
+  final int cityId;
+  final String address;
+  final double latitude;
+  final double longitude;
+
+  const BranchEntity({
+    required this.id,
+    required this.branchName,
+    required this.cityId,
+    required this.address,
+    required this.latitude,
+    required this.longitude,
+  });
+
+  @override
+  List<Object?> get props => [
+    id,
+    branchName,
+    cityId,
+    address,
+    latitude,
+    longitude,
   ];
 }
 
