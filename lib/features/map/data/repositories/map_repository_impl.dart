@@ -22,8 +22,8 @@ class MapRepositoryImpl implements MapRepository {
       try {
         final remoteData = await remoteDataSource.getParcelLocation(parcelId);
         return Right(remoteData);
-      } on ServerException {
-        return const Left(ServerFailure('حدث خطأ أثناء جلب موقع الطرد'));
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message ?? 'حدث خطأ أثناء جلب موقع الطرد'));
       }
     } else {
       return const Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));

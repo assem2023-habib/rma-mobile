@@ -11,11 +11,11 @@ class ParcelLocationModel extends ParcelLocation {
 
   factory ParcelLocationModel.fromJson(Map<String, dynamic> json) {
     return ParcelLocationModel(
-      parcelId: json['parcelId'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
-      status: json['status'],
-      lastUpdated: json['lastUpdated'],
+      parcelId: json['tracking_number'] ?? '',
+      latitude: (json['latitude'] as num).toDouble(),
+      longitude: (json['longitude'] as num).toDouble(),
+      status: json['status'] ?? '',
+      lastUpdated: json['current_location'] ?? '',
     );
   }
 
