@@ -162,10 +162,7 @@ class DashboardHomePage extends StatelessWidget {
                     background: Container(
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [
-                            AppColors.primary,
-                            AppColors.primaryDark,
-                          ],
+                          colors: [AppColors.primary, AppColors.primaryDark],
                           begin: Alignment.topRight,
                           end: Alignment.bottomLeft,
                         ),
@@ -174,398 +171,402 @@ class DashboardHomePage extends StatelessWidget {
                           bottomRight: Radius.circular(AppDimensions.radius3xl),
                         ),
                       ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppDimensions.spacing4,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 40),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.2,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppDimensions.spacing4,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 40),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          AppDimensions.radiusXl,
+                                        ),
                                       ),
-                                      borderRadius: BorderRadius.circular(
-                                        AppDimensions.radiusXl,
+                                      child: const Icon(
+                                        Icons.local_shipping,
+                                        color: Colors.white,
                                       ),
                                     ),
+                                    const SizedBox(
+                                      width: AppDimensions.spacing3,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'شحن سريع',
+                                          style: AppTypography.heading3
+                                              .copyWith(color: Colors.white),
+                                        ),
+                                        BlocBuilder<AuthBloc, AuthState>(
+                                          builder: (context, state) {
+                                            String name = 'أحمد';
+                                            if (state is Authenticated) {
+                                              name = state.user.firstName;
+                                            } else if (state
+                                                is GuestAuthenticated) {
+                                              name = 'ضيف';
+                                            }
+                                            return Text(
+                                              'مرحباً بك، $name',
+                                              style: AppTypography.caption
+                                                  .copyWith(
+                                                    color: Colors.white
+                                                        .withValues(alpha: 0.8),
+                                                  ),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    final authState = context
+                                        .read<AuthBloc>()
+                                        .state;
+                                    if (authState is GuestAuthenticated) {
+                                      GuestPromptBottomSheet.show(
+                                        context,
+                                        'الملف الشخصي',
+                                      );
+                                    } else {
+                                      context.push('/profile');
+                                    }
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: Colors.white.withValues(
+                                      alpha: 0.2,
+                                    ),
                                     child: const Icon(
-                                      Icons.local_shipping,
+                                      Icons.person_outline,
                                       color: Colors.white,
                                     ),
                                   ),
-                                  const SizedBox(width: AppDimensions.spacing3),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'شحن سريع',
-                                        style: AppTypography.heading3.copyWith(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      BlocBuilder<AuthBloc, AuthState>(
-                                        builder: (context, state) {
-                                          String name = 'أحمد';
-                                          if (state is Authenticated) {
-                                            name = state.user.firstName;
-                                          } else if (state
-                                              is GuestAuthenticated) {
-                                            name = 'ضيف';
-                                          }
-                                          return Text(
-                                            'مرحباً بك، $name',
-                                            style: AppTypography.caption
-                                                .copyWith(
-                                                  color: Colors.white
-                                                      .withValues(alpha: 0.8),
-                                                ),
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  final authState = context
-                                      .read<AuthBloc>()
-                                      .state;
-                                  if (authState is GuestAuthenticated) {
-                                    GuestPromptBottomSheet.show(
-                                      context,
-                                      'الملف الشخصي',
-                                    );
-                                  } else {
-                                    context.push('/profile');
-                                  }
-                                },
-                                child: CircleAvatar(
-                                  radius: 20,
-                                  backgroundColor: Colors.white.withValues(
-                                    alpha: 0.2,
-                                  ),
-                                  child: const Icon(
-                                    Icons.person_outline,
-                                    color: Colors.white,
-                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              if (state is DashboardLoading)
-                const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              else if (state is DashboardError)
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, authState) {
-                    if (authState is GuestAuthenticated) {
-                      return SliverToBoxAdapter(
-                        child: _buildGuestDashboardPlaceholder(context),
-                      );
-                    }
-                    return SliverFillRemaining(
-                      child: Center(child: Text(state.message)),
-                    );
-                  },
-                )
-              else if (state is DashboardLoaded) ...[
-                // Quick Actions
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppDimensions.spacing6,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AppDimensions.spacing4,
-                          ),
-                          child: Text(
-                            'إجراءات سريعة',
-                            style: AppTypography.heading3,
-                          ),
-                        ),
-                        const SizedBox(height: AppDimensions.spacing4),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppDimensions.spacing4,
-                          ),
-                          child: Row(
-                            children: [
-                              QuickActionCard(
-                                title: 'طرد جديد',
-                                description: 'إرسال طرد جديد الآن',
-                                icon: Icons.add_box_outlined,
-                                gradient: const [
-                                  AppColors.primary,
-                                  AppColors.primaryDark,
-                                ],
-                                onTap: () {
-                                  final authState = context
-                                      .read<AuthBloc>()
-                                      .state;
-                                  if (authState is GuestAuthenticated) {
-                                    GuestPromptBottomSheet.show(
-                                      context,
-                                      'إرسال طرد',
-                                    );
-                                  } else {
-                                    context.push('/new-parcel');
-                                  }
-                                },
-                              ),
-                              const SizedBox(width: AppDimensions.spacing3),
-                              QuickActionCard(
-                                title: 'تتبع الشحنات',
-                                description: 'عرض موقع شحناتك',
-                                icon: Icons.map_outlined,
-                                gradient: const [
-                                  AppColors.primaryLight,
-                                  AppColors.info,
-                                ],
-                                onTap: () => context.push('/map/RMA-99001'),
-                              ),
-                              const SizedBox(width: AppDimensions.spacing3),
-                              QuickActionCard(
-                                title: 'التخويلات',
-                                description: 'إدارة تخويلات الاستلام',
-                                icon: Icons.security_outlined,
-                                gradient: const [
-                                  AppColors.primarySoft,
-                                  AppColors.primary,
-                                ],
-                                onTap: () {
-                                  final authState = context
-                                      .read<AuthBloc>()
-                                      .state;
-                                  if (authState is GuestAuthenticated) {
-                                    GuestPromptBottomSheet.show(
-                                      context,
-                                      'التخويلات',
-                                    );
-                                  } else {
-                                    context.push('/authorizations');
-                                  }
-                                },
-                              ),
-                              const SizedBox(width: AppDimensions.spacing3),
-                              QuickActionCard(
-                                title: 'المسارات',
-                                description: 'عرض المسارات المتاحة',
-                                icon: Icons.route_outlined,
-                                gradient: const [
-                                  AppColors.warning,
-                                  AppColors.warning,
-                                ],
-                                onTap: () => context.push('/routes'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Stats Grid
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.spacing4,
-                  ),
-                  sliver: SliverGrid(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: MediaQuery.of(context).size.width > 600
-                          ? 4
-                          : 2,
-                      mainAxisSpacing: AppDimensions.spacing3,
-                      crossAxisSpacing: AppDimensions.spacing3,
-                      childAspectRatio: MediaQuery.of(context).size.width > 600
-                          ? 1.5
-                          : 1.0,
-                    ),
-                    delegate: SliverChildListDelegate([
-                      StatsCard(
-                        title: 'إجمالي الطرود',
-                        value: state.stats.totalParcels.toString(),
-                        change:
-                            '${state.stats.parcelsByStatus['Pending'] ?? 0} قيد الانتظار',
-                        icon: Icons.inventory_2_outlined,
-                        iconGradient: const [
-                          AppColors.primary,
-                          AppColors.primaryDark,
-                        ],
-                      ),
-                      StatsCard(
-                        title: 'تم التوصيل',
-                        value: (state.stats.parcelsByStatus['Delivered'] ?? 0)
-                            .toString(),
-                        change: 'من إجمالي الشحنات',
-                        icon: Icons.check_circle_outline,
-                        iconGradient: const [AppColors.success, AppColors.info],
-                      ),
-                      StatsCard(
-                        title: 'الفروع',
-                        value: state.stats.branchesCount.toString(),
-                        change: 'فرعاً في خدمتكم',
-                        icon: Icons.storefront_outlined,
-                        iconGradient: const [
-                          AppColors.warning,
-                          AppColors.warning,
-                        ],
-                      ),
-                      StatsCard(
-                        title: 'تغطيتنا',
-                        value: state.stats.citiesCount.toString(),
-                        change: 'مدينة حول العالم',
-                        icon: Icons.public_outlined,
-                        iconGradient: const [
-                          AppColors.primarySoft,
-                          AppColors.primary,
-                        ],
-                      ),
-                    ]),
-                  ),
-                ),
-
-                // Recent Parcels Header
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppDimensions.spacing4,
-                      AppDimensions.spacing8,
-                      AppDimensions.spacing4,
-                      AppDimensions.spacing4,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'الطرود الأخيرة',
-                          style: AppTypography.heading3,
-                        ),
-                        TextButton(
-                          onPressed: () => context.push('/parcels'),
-                          child: const Text('عرض الكل'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Recent Parcels List (Placeholder)
-                SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppDimensions.spacing4,
-                        vertical: AppDimensions.spacing2,
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.all(AppDimensions.spacing4),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(
-                            AppDimensions.radiusXl,
-                          ),
-                          border: Border.all(color: AppColors.border),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 48,
-                              height: 48,
-                              decoration: BoxDecoration(
-                                color: AppColors.backgroundSecondary,
-                                borderRadius: BorderRadius.circular(
-                                  AppDimensions.radiusLg,
-                                ),
-                              ),
-                              child: const Icon(
-                                Icons.inventory_2,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                            const SizedBox(width: AppDimensions.spacing4),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'PKG-2024-00152$index',
-                                    style: AppTypography.bodyLarge.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    'دمشق ← حلب',
-                                    style: AppTypography.caption.copyWith(
-                                      color: AppColors.textMuted,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Flexible(
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.successBg,
-                                  borderRadius: BorderRadius.circular(
-                                    AppDimensions.radiusFull,
-                                  ),
-                                ),
-                                child: Text(
-                                  'في الطريق',
-                                  style: AppTypography.caption.copyWith(
-                                    color: AppColors.success,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
+                              ],
                             ),
                           ],
                         ),
                       ),
-                    );
-                  }, childCount: 3),
+                    ),
+                  ),
                 ),
 
-                const SliverToBoxAdapter(
-                  child: SizedBox(height: AppDimensions.spacing8),
-                ),
+                if (state is DashboardLoading)
+                  const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                else if (state is DashboardError)
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, authState) {
+                      if (authState is GuestAuthenticated) {
+                        return SliverToBoxAdapter(
+                          child: _buildGuestDashboardPlaceholder(context),
+                        );
+                      }
+                      return SliverFillRemaining(
+                        child: Center(child: Text(state.message)),
+                      );
+                    },
+                  )
+                else if (state is DashboardLoaded) ...[
+                  // Quick Actions
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppDimensions.spacing6,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: AppDimensions.spacing4,
+                            ),
+                            child: Text(
+                              'إجراءات سريعة',
+                              style: AppTypography.heading3,
+                            ),
+                          ),
+                          const SizedBox(height: AppDimensions.spacing4),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppDimensions.spacing4,
+                            ),
+                            child: Row(
+                              children: [
+                                QuickActionCard(
+                                  title: 'طرد جديد',
+                                  description: 'إرسال طرد جديد الآن',
+                                  icon: Icons.add_box_outlined,
+                                  gradient: const [
+                                    AppColors.primary,
+                                    AppColors.primaryDark,
+                                  ],
+                                  onTap: () {
+                                    final authState = context
+                                        .read<AuthBloc>()
+                                        .state;
+                                    if (authState is GuestAuthenticated) {
+                                      GuestPromptBottomSheet.show(
+                                        context,
+                                        'إرسال طرد',
+                                      );
+                                    } else {
+                                      context.push('/new-parcel');
+                                    }
+                                  },
+                                ),
+                                const SizedBox(width: AppDimensions.spacing3),
+                                QuickActionCard(
+                                  title: 'تتبع الشحنات',
+                                  description: 'عرض موقع شحناتك',
+                                  icon: Icons.map_outlined,
+                                  gradient: const [
+                                    AppColors.primaryLight,
+                                    AppColors.info,
+                                  ],
+                                  onTap: () => context.push('/map/RMA-99001'),
+                                ),
+                                const SizedBox(width: AppDimensions.spacing3),
+                                QuickActionCard(
+                                  title: 'التخويلات',
+                                  description: 'إدارة تخويلات الاستلام',
+                                  icon: Icons.security_outlined,
+                                  gradient: const [
+                                    AppColors.primarySoft,
+                                    AppColors.primary,
+                                  ],
+                                  onTap: () {
+                                    final authState = context
+                                        .read<AuthBloc>()
+                                        .state;
+                                    if (authState is GuestAuthenticated) {
+                                      GuestPromptBottomSheet.show(
+                                        context,
+                                        'التخويلات',
+                                      );
+                                    } else {
+                                      context.push('/authorizations');
+                                    }
+                                  },
+                                ),
+                                const SizedBox(width: AppDimensions.spacing3),
+                                QuickActionCard(
+                                  title: 'المسارات',
+                                  description: 'عرض المسارات المتاحة',
+                                  icon: Icons.route_outlined,
+                                  gradient: const [
+                                    AppColors.warning,
+                                    AppColors.warning,
+                                  ],
+                                  onTap: () => context.push('/routes'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Stats Grid
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppDimensions.spacing4,
+                    ),
+                    sliver: SliverGrid(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: MediaQuery.of(context).size.width > 600
+                            ? 4
+                            : 2,
+                        mainAxisSpacing: AppDimensions.spacing3,
+                        crossAxisSpacing: AppDimensions.spacing3,
+                        childAspectRatio:
+                            MediaQuery.of(context).size.width > 600 ? 1.5 : 1.0,
+                      ),
+                      delegate: SliverChildListDelegate([
+                        StatsCard(
+                          title: 'إجمالي الطرود',
+                          value: state.stats.totalParcels.toString(),
+                          change:
+                              '${state.stats.parcelsByStatus['Pending'] ?? 0} قيد الانتظار',
+                          icon: Icons.inventory_2_outlined,
+                          iconGradient: const [
+                            AppColors.primary,
+                            AppColors.primaryDark,
+                          ],
+                        ),
+                        StatsCard(
+                          title: 'تم التوصيل',
+                          value: (state.stats.parcelsByStatus['Delivered'] ?? 0)
+                              .toString(),
+                          change: 'من إجمالي الشحنات',
+                          icon: Icons.check_circle_outline,
+                          iconGradient: const [
+                            AppColors.success,
+                            AppColors.info,
+                          ],
+                        ),
+                        StatsCard(
+                          title: 'الفروع',
+                          value: state.stats.branchesCount.toString(),
+                          change: 'فرعاً في خدمتكم',
+                          icon: Icons.storefront_outlined,
+                          iconGradient: const [
+                            AppColors.warning,
+                            AppColors.warning,
+                          ],
+                        ),
+                        StatsCard(
+                          title: 'تغطيتنا',
+                          value: state.stats.citiesCount.toString(),
+                          change: 'مدينة حول العالم',
+                          icon: Icons.public_outlined,
+                          iconGradient: const [
+                            AppColors.primarySoft,
+                            AppColors.primary,
+                          ],
+                        ),
+                      ]),
+                    ),
+                  ),
+
+                  // Recent Parcels Header
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppDimensions.spacing4,
+                        AppDimensions.spacing8,
+                        AppDimensions.spacing4,
+                        AppDimensions.spacing4,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'الطرود الأخيرة',
+                            style: AppTypography.heading3,
+                          ),
+                          TextButton(
+                            onPressed: () => context.push('/parcels'),
+                            child: const Text('عرض الكل'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Recent Parcels List (Placeholder)
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppDimensions.spacing4,
+                          vertical: AppDimensions.spacing2,
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.all(AppDimensions.spacing4),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.radiusXl,
+                            ),
+                            border: Border.all(color: AppColors.border),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  color: AppColors.backgroundSecondary,
+                                  borderRadius: BorderRadius.circular(
+                                    AppDimensions.radiusLg,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.inventory_2,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                              const SizedBox(width: AppDimensions.spacing4),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'PKG-2024-00152$index',
+                                      style: AppTypography.bodyLarge.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      'دمشق ← حلب',
+                                      style: AppTypography.caption.copyWith(
+                                        color: AppColors.textMuted,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Flexible(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.successBg,
+                                    borderRadius: BorderRadius.circular(
+                                      AppDimensions.radiusFull,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'في الطريق',
+                                    style: AppTypography.caption.copyWith(
+                                      color: AppColors.success,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }, childCount: 3),
+                  ),
+
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: AppDimensions.spacing8),
+                  ),
+                ],
               ],
-            ],
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
