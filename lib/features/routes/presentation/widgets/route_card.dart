@@ -8,15 +8,12 @@ class RouteCard extends StatelessWidget {
   final RouteEntity route;
   final VoidCallback? onTap;
 
-  const RouteCard({
-    super.key,
-    required this.route,
-    this.onTap,
-  });
+  const RouteCard({super.key, required this.route, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final bool isActive = route.status == 'نشط';
+    final bool isActive = route.isActive;
+    final firstDay = route.days.isNotEmpty ? route.days.first : null;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppDimensions.spacing3),
@@ -24,7 +21,9 @@ class RouteCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
         border: Border.all(
-          color: isActive ? AppColors.primaryBlue.withValues(alpha: 0.3) : AppColors.slate100,
+          color: isActive
+              ? AppColors.primaryBlue.withValues(alpha: 0.3)
+              : AppColors.slate100,
         ),
         boxShadow: [
           BoxShadow(
@@ -47,9 +46,11 @@ class RouteCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      route.name,
+                      'مسار رقم ${route.fromBranchId} - ${route.toBranchId}',
                       style: AppTypography.heading3.copyWith(
-                        color: isActive ? AppColors.primaryBlue : AppColors.slate900,
+                        color: isActive
+                            ? AppColors.primaryBlue
+                            : AppColors.slate900,
                       ),
                     ),
                   ),
@@ -59,32 +60,51 @@ class RouteCard extends StatelessWidget {
               const SizedBox(height: AppDimensions.spacing3),
               Row(
                 children: [
-                  const Icon(Icons.location_on_outlined, size: 16, color: AppColors.slate500),
+                  const Icon(
+                    Icons.location_on_outlined,
+                    size: 16,
+                    color: AppColors.slate500,
+                  ),
                   const SizedBox(width: AppDimensions.spacing2),
                   Text(
-                    '${route.fromCity} ➔ ${route.toCity}',
-                    style: AppTypography.bodySmall.copyWith(color: AppColors.slate600),
+                    'من الفرع ${route.fromBranchId} ➔ إلى الفرع ${route.toBranchId}',
+                    style: AppTypography.bodySmall.copyWith(
+                      color: AppColors.slate600,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: AppDimensions.spacing2),
-              Row(
-                children: [
-                  const Icon(Icons.person_outline, size: 16, color: AppColors.slate500),
-                  const SizedBox(width: AppDimensions.spacing2),
-                  Text(
-                    'السائق: ${route.driverName}',
-                    style: AppTypography.bodySmall.copyWith(color: AppColors.slate600),
-                  ),
-                  const Spacer(),
-                  const Icon(Icons.calendar_today_outlined, size: 14, color: AppColors.slate400),
-                  const SizedBox(width: AppDimensions.spacing1),
-                  Text(
-                    '${route.date.day}/${route.date.month}/${route.date.year}',
-                    style: AppTypography.caption.copyWith(color: AppColors.slate400),
-                  ),
-                ],
-              ),
+              if (firstDay != null)
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.access_time,
+                      size: 16,
+                      color: AppColors.slate500,
+                    ),
+                    const SizedBox(width: AppDimensions.spacing2),
+                    Text(
+                      'المغادرة: ${firstDay.estimatedDepartureTime}',
+                      style: AppTypography.bodySmall.copyWith(
+                        color: AppColors.slate600,
+                      ),
+                    ),
+                    const Spacer(),
+                    const Icon(
+                      Icons.calendar_today_outlined,
+                      size: 14,
+                      color: AppColors.slate400,
+                    ),
+                    const SizedBox(width: AppDimensions.spacing1),
+                    Text(
+                      '${route.days.length} أيام',
+                      style: AppTypography.caption.copyWith(
+                        color: AppColors.slate400,
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
         ),

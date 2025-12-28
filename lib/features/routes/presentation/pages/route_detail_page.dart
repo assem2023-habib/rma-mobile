@@ -46,19 +46,22 @@ class RouteDetailPage extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          route.name,
+                          'مسار ${route.fromBranchId} - ${route.toBranchId}',
                           style: AppTypography.heading1.copyWith(
                             color: Colors.white,
                           ),
                         ),
                       ),
-                      _buildStatusBadge(route.status),
+                      _buildStatusBadge(route.isActive ? 'Active' : 'Inactive'),
                     ],
                   ),
                   const SizedBox(height: AppDimensions.spacing6),
                   Row(
                     children: [
-                      _buildLocationPoint(route.fromCity, 'نقطة الانطلاق'),
+                      _buildLocationPoint(
+                        'الفرع ${route.fromBranchId}',
+                        'نقطة الانطلاق',
+                      ),
                       const Expanded(
                         child: Padding(
                           padding: EdgeInsets.symmetric(
@@ -71,7 +74,10 @@ class RouteDetailPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      _buildLocationPoint(route.toCity, 'وجهة الوصول'),
+                      _buildLocationPoint(
+                        'الفرع ${route.toBranchId}',
+                        'وجهة الوصول',
+                      ),
                     ],
                   ),
                 ],
@@ -79,31 +85,42 @@ class RouteDetailPage extends StatelessWidget {
             ),
             const SizedBox(height: AppDimensions.spacing6),
 
-            // Driver Info Section
-            const Text('معلومات السائق', style: AppTypography.heading3),
+            // Route Days Section
+            const Text('أيام العمل والمواعيد', style: AppTypography.heading3),
             const SizedBox(height: AppDimensions.spacing3),
-            Card(
-              child: ListTile(
-                leading: const CircleAvatar(
-                  backgroundColor: AppColors.primaryBlue,
-                  child: Icon(Icons.person, color: Colors.white),
-                ),
-                title: Text(route.driverName, style: AppTypography.bodyLarge),
-                subtitle: const Text('سائق محترف معتمد'),
-                trailing: IconButton(
-                  icon: const Icon(
-                    Icons.phone_outlined,
-                    color: AppColors.primaryBlue,
+            ...route.days.map(
+              (day) => Card(
+                margin: const EdgeInsets.only(bottom: AppDimensions.spacing3),
+                child: Padding(
+                  padding: const EdgeInsets.all(AppDimensions.spacing4),
+                  child: Column(
+                    children: [
+                      _buildInfoRow(
+                        Icons.calendar_today,
+                        'اليوم',
+                        day.dayOfWeek,
+                      ),
+                      const Divider(),
+                      _buildInfoRow(
+                        Icons.access_time,
+                        'وقت المغادرة',
+                        day.estimatedDepartureTime,
+                      ),
+                      const Divider(),
+                      _buildInfoRow(
+                        Icons.timer_outlined,
+                        'وقت الوصول المتوقع',
+                        day.estimatedArrivalTime,
+                      ),
+                    ],
                   ),
-                  onPressed: () =>
-                      _makePhoneCall('+963912345678'), // رقم تجريبي
                 ),
               ),
             ),
-            const SizedBox(height: AppDimensions.spacing6),
+            const SizedBox(height: AppDimensions.spacing3),
 
-            // Schedule Section
-            const Text('الجدول الزمني', style: AppTypography.heading3),
+            // General Info Section
+            const Text('معلومات عامة', style: AppTypography.heading3),
             const SizedBox(height: AppDimensions.spacing3),
             Card(
               child: Padding(
@@ -111,21 +128,9 @@ class RouteDetailPage extends StatelessWidget {
                 child: Column(
                   children: [
                     _buildInfoRow(
-                      Icons.calendar_today_outlined,
-                      'التاريخ',
-                      '${route.date.day}/${route.date.month}/${route.date.year}',
-                    ),
-                    const Divider(height: AppDimensions.spacing6),
-                    _buildInfoRow(
-                      Icons.access_time,
-                      'وقت الانطلاق المتوقع',
-                      '08:00 صباحاً',
-                    ),
-                    const Divider(height: AppDimensions.spacing6),
-                    _buildInfoRow(
-                      Icons.timer_outlined,
-                      'وقت الوصول المتوقع',
-                      '02:00 مساءً',
+                      Icons.straighten,
+                      'التكلفة لكل كيلو',
+                      '${route.distancePerKilo} ل.س',
                     ),
                   ],
                 ),
@@ -182,20 +187,25 @@ class RouteDetailPage extends StatelessWidget {
   }
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: AppColors.slate500),
-        const SizedBox(width: AppDimensions.spacing3),
-        Text(
-          label,
-          style: AppTypography.bodySmall.copyWith(color: AppColors.slate500),
-        ),
-        const Spacer(),
-        Text(
-          value,
-          style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.w500),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing2),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: AppColors.primaryBlue),
+          const SizedBox(width: AppDimensions.spacing3),
+          Text(
+            label,
+            style: AppTypography.bodySmall.copyWith(color: AppColors.slate500),
+          ),
+          const Spacer(),
+          Text(
+            value,
+            style: AppTypography.bodyLarge.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -2,23 +2,50 @@ import 'package:equatable/equatable.dart';
 
 class RouteEntity extends Equatable {
   final int id;
-  final String name;
-  final String fromCity;
-  final String toCity;
-  final String status;
-  final DateTime date;
-  final String driverName;
+  final int fromBranchId;
+  final int toBranchId;
+  final bool isActive;
+  final num distancePerKilo;
+  final List<RouteDayEntity> days;
 
   const RouteEntity({
     required this.id,
-    required this.name,
-    required this.fromCity,
-    required this.toCity,
-    required this.status,
-    required this.date,
-    required this.driverName,
+    required this.fromBranchId,
+    required this.toBranchId,
+    required this.isActive,
+    required this.distancePerKilo,
+    required this.days,
   });
 
   @override
-  List<Object?> get props => [id, name, fromCity, toCity, status, date, driverName];
+  List<Object?> get props => [
+    id,
+    fromBranchId,
+    toBranchId,
+    isActive,
+    distancePerKilo,
+    days,
+  ];
+}
+
+class RouteDayEntity extends Equatable {
+  final int id;
+  final String dayOfWeek;
+  final String estimatedDepartureTime;
+  final String estimatedArrivalTime;
+
+  const RouteDayEntity({
+    required this.id,
+    required this.dayOfWeek,
+    required this.estimatedDepartureTime,
+    required this.estimatedArrivalTime,
+  });
+
+  @override
+  List<Object?> get props => [
+    id,
+    dayOfWeek,
+    estimatedDepartureTime,
+    estimatedArrivalTime,
+  ];
 }
