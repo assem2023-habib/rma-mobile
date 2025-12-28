@@ -58,9 +58,7 @@ class StatsCard extends StatelessWidget {
                     vertical: AppDimensions.spacing1 / 2,
                   ),
                   decoration: BoxDecoration(
-                    color: isPositive
-                        ? AppColors.successLight
-                        : AppColors.errorLight,
+                    color: isPositive ? AppColors.successBg : AppColors.errorBg,
                     borderRadius: BorderRadius.circular(
                       AppDimensions.radiusFull,
                     ),
@@ -68,9 +66,7 @@ class StatsCard extends StatelessWidget {
                   child: Text(
                     change,
                     style: TextStyle(
-                      color: isPositive
-                          ? AppColors.successDark
-                          : AppColors.errorDark,
+                      color: isPositive ? AppColors.success : AppColors.error,
                       fontSize: 9,
                       fontWeight: FontWeight.bold,
                     ),
@@ -85,7 +81,7 @@ class StatsCard extends StatelessWidget {
           Text(
             title,
             style: AppTypography.bodySmall.copyWith(
-              color: AppColors.slate500,
+              color: AppColors.textSecondary,
               fontSize: 10,
             ),
             maxLines: 1,

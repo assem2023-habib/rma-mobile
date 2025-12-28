@@ -44,8 +44,8 @@ class DashboardHomePage extends StatelessWidget {
                       description: 'إرسال طرد جديد الآن',
                       icon: Icons.add_box_outlined,
                       gradient: const [
-                        AppColors.primaryBlue,
-                        AppColors.primaryIndigo,
+                        AppColors.primary,
+                        AppColors.primaryDark,
                       ],
                       onTap: () =>
                           GuestPromptBottomSheet.show(context, 'إرسال طرد'),
@@ -55,7 +55,7 @@ class DashboardHomePage extends StatelessWidget {
                       title: 'تتبع الشحنات',
                       description: 'عرض موقع شحناتك',
                       icon: Icons.map_outlined,
-                      gradient: const [AppColors.emerald500, AppColors.teal600],
+                      gradient: const [AppColors.primaryLight, AppColors.info],
                       onTap: () => context.push('/map/RMA-99001'),
                     ),
                     const SizedBox(width: AppDimensions.spacing3),
@@ -63,7 +63,10 @@ class DashboardHomePage extends StatelessWidget {
                       title: 'التخويلات',
                       description: 'إدارة تخويلات الاستلام',
                       icon: Icons.security_outlined,
-                      gradient: const [AppColors.purple500, AppColors.pink600],
+                      gradient: const [
+                        AppColors.primarySoft,
+                        AppColors.primary,
+                      ],
                       onTap: () =>
                           GuestPromptBottomSheet.show(context, 'التخويلات'),
                     ),
@@ -72,10 +75,7 @@ class DashboardHomePage extends StatelessWidget {
                       title: 'المسارات',
                       description: 'عرض المسارات المتاحة',
                       icon: Icons.route_outlined,
-                      gradient: const [
-                        AppColors.warning,
-                        AppColors.warningDark,
-                      ],
+                      gradient: const [AppColors.warning, AppColors.warning],
                       onTap: () => context.push('/routes'),
                     ),
                   ],
@@ -92,7 +92,7 @@ class DashboardHomePage extends StatelessWidget {
             padding: const EdgeInsets.all(AppDimensions.spacing6),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [AppColors.slate800, AppColors.slate900],
+                colors: [AppColors.primaryDark, AppColors.textPrimary],
               ),
               borderRadius: BorderRadius.circular(AppDimensions.radius2xl),
             ),
@@ -121,7 +121,7 @@ class DashboardHomePage extends StatelessWidget {
                   onPressed: () => context.push('/register'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    foregroundColor: AppColors.slate900,
+                    foregroundColor: AppColors.textPrimary,
                     minimumSize: const Size(double.infinity, 48),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(
@@ -158,10 +158,7 @@ class DashboardHomePage extends StatelessWidget {
                   background: Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          AppColors.primaryBlue,
-                          AppColors.primaryIndigo,
-                        ],
+                        colors: [AppColors.primary, AppColors.primaryDark],
                         begin: Alignment.topRight,
                         end: Alignment.bottomLeft,
                       ),
@@ -313,8 +310,8 @@ class DashboardHomePage extends StatelessWidget {
                                 description: 'إرسال طرد جديد الآن',
                                 icon: Icons.add_box_outlined,
                                 gradient: const [
-                                  AppColors.primaryBlue,
-                                  AppColors.primaryIndigo,
+                                  AppColors.primary,
+                                  AppColors.primaryDark,
                                 ],
                                 onTap: () {
                                   final authState = context
@@ -336,8 +333,8 @@ class DashboardHomePage extends StatelessWidget {
                                 description: 'عرض موقع شحناتك',
                                 icon: Icons.map_outlined,
                                 gradient: const [
-                                  AppColors.emerald500,
-                                  AppColors.teal600,
+                                  AppColors.primaryLight,
+                                  AppColors.info,
                                 ],
                                 onTap: () => context.push('/map/RMA-99001'),
                               ),
@@ -347,8 +344,8 @@ class DashboardHomePage extends StatelessWidget {
                                 description: 'إدارة تخويلات الاستلام',
                                 icon: Icons.security_outlined,
                                 gradient: const [
-                                  AppColors.purple500,
-                                  AppColors.pink600,
+                                  AppColors.primarySoft,
+                                  AppColors.primary,
                                 ],
                                 onTap: () {
                                   final authState = context
@@ -371,7 +368,7 @@ class DashboardHomePage extends StatelessWidget {
                                 icon: Icons.route_outlined,
                                 gradient: const [
                                   AppColors.warning,
-                                  AppColors.warningDark,
+                                  AppColors.warning,
                                 ],
                                 onTap: () => context.push('/routes'),
                               ),
@@ -407,8 +404,8 @@ class DashboardHomePage extends StatelessWidget {
                             '${state.stats.parcelsByStatus['Pending'] ?? 0} قيد الانتظار',
                         icon: Icons.inventory_2_outlined,
                         iconGradient: const [
-                          AppColors.primaryBlue,
-                          AppColors.primaryIndigo,
+                          AppColors.primary,
+                          AppColors.primaryDark,
                         ],
                       ),
                       StatsCard(
@@ -417,10 +414,7 @@ class DashboardHomePage extends StatelessWidget {
                             .toString(),
                         change: 'من إجمالي الشحنات',
                         icon: Icons.check_circle_outline,
-                        iconGradient: const [
-                          AppColors.success,
-                          AppColors.successDark,
-                        ],
+                        iconGradient: const [AppColors.success, AppColors.info],
                       ),
                       StatsCard(
                         title: 'الفروع',
@@ -429,7 +423,7 @@ class DashboardHomePage extends StatelessWidget {
                         icon: Icons.storefront_outlined,
                         iconGradient: const [
                           AppColors.warning,
-                          AppColors.warningDark,
+                          AppColors.warning,
                         ],
                       ),
                       StatsCard(
@@ -438,8 +432,8 @@ class DashboardHomePage extends StatelessWidget {
                         change: 'مدينة حول العالم',
                         icon: Icons.public_outlined,
                         iconGradient: const [
-                          AppColors.purple500,
-                          AppColors.purple600,
+                          AppColors.primarySoft,
+                          AppColors.primary,
                         ],
                       ),
                     ]),
@@ -486,7 +480,7 @@ class DashboardHomePage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(
                             AppDimensions.radiusXl,
                           ),
-                          border: Border.all(color: AppColors.slate100),
+                          border: Border.all(color: AppColors.border),
                         ),
                         child: Row(
                           children: [
@@ -494,14 +488,14 @@ class DashboardHomePage extends StatelessWidget {
                               width: 48,
                               height: 48,
                               decoration: BoxDecoration(
-                                color: AppColors.slate50,
+                                color: AppColors.backgroundSecondary,
                                 borderRadius: BorderRadius.circular(
                                   AppDimensions.radiusLg,
                                 ),
                               ),
                               child: const Icon(
                                 Icons.inventory_2,
-                                color: AppColors.primaryBlue,
+                                color: AppColors.primary,
                               ),
                             ),
                             const SizedBox(width: AppDimensions.spacing4),
@@ -518,7 +512,7 @@ class DashboardHomePage extends StatelessWidget {
                                   Text(
                                     'دمشق ← حلب',
                                     style: AppTypography.caption.copyWith(
-                                      color: AppColors.slate500,
+                                      color: AppColors.textMuted,
                                     ),
                                   ),
                                 ],
@@ -531,7 +525,7 @@ class DashboardHomePage extends StatelessWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.successLight,
+                                  color: AppColors.successBg,
                                   borderRadius: BorderRadius.circular(
                                     AppDimensions.radiusFull,
                                   ),
@@ -539,7 +533,7 @@ class DashboardHomePage extends StatelessWidget {
                                 child: Text(
                                   'في الطريق',
                                   style: AppTypography.caption.copyWith(
-                                    color: AppColors.successDark,
+                                    color: AppColors.success,
                                     fontWeight: FontWeight.bold,
                                   ),
                                   maxLines: 1,
