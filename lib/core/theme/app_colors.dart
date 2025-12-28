@@ -55,6 +55,27 @@ class AppColors {
   static const Color warningBg = Color(0xFFFFFDE7);
   static const Color errorBg = Color(0xFFFDECEA);
 
+  // =========================
+  // Gradients
+  // =========================
+  static const LinearGradient primaryGradient = LinearGradient(
+    colors: [primary, primaryDark],
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+  );
+
+  static const LinearGradient backgroundGradient = LinearGradient(
+    colors: [backgroundMain, Color(0xFFE8F5E9)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+
+  static const LinearGradient shinyGradient = LinearGradient(
+    colors: [Color(0xFF2E7D32), Color(0xFF388E3C), Color(0xFF43A047)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
   // Legacy Colors (Mapped to new ones to avoid breaking other screens)
   // =========================
   static const Color successLight = successBg;

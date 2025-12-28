@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/cards/stats_card.dart';
+import '../../../../core/widgets/backgrounds/shiny_background.dart';
 import '../bloc/dashboard_bloc.dart';
 import '../bloc/dashboard_state.dart';
 import '../widgets/quick_action_card.dart';
@@ -145,24 +146,34 @@ class DashboardHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<DashboardBloc, DashboardState>(
-        builder: (context, state) {
-          return CustomScrollView(
-            slivers: [
-              // Custom AppBar
-              SliverAppBar(
-                expandedHeight: 120,
-                floating: false,
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [AppColors.primary, AppColors.primaryDark],
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
+      body: ShinyBackground(
+        child: BlocBuilder<DashboardBloc, DashboardState>(
+          builder: (context, state) {
+            return CustomScrollView(
+              slivers: [
+                // Custom AppBar
+                SliverAppBar(
+                  expandedHeight: 120,
+                  floating: false,
+                  pinned: true,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.primary,
+                            AppColors.primaryDark,
+                          ],
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomLeft,
+                        ),
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(AppDimensions.radius3xl),
+                          bottomRight: Radius.circular(AppDimensions.radius3xl),
+                        ),
                       ),
-                    ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppDimensions.spacing4,
