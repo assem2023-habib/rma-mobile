@@ -19,16 +19,28 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<Either<Failure, UserEntity>> updateProfile({
     required String firstName,
     required String lastName,
+    String? email,
+    String? userName,
     required String phone,
+    String? birthday,
     required int cityId,
+    String? nationalNumber,
+    String? address,
+    dynamic imageProfile,
   }) async {
     if (await networkInfo.isConnected) {
       try {
         final remoteUser = await remoteDataSource.updateProfile(
           firstName: firstName,
           lastName: lastName,
+          email: email,
+          userName: userName,
           phone: phone,
+          birthday: birthday,
           cityId: cityId,
+          nationalNumber: nationalNumber,
+          address: address,
+          imageProfile: imageProfile,
         );
         return Right(remoteUser);
       } on ServerException {

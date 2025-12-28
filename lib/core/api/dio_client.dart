@@ -12,6 +12,10 @@ class DioClient {
       ..options.connectTimeout = ApiConfig.connectTimeout
       ..options.receiveTimeout = ApiConfig.receiveTimeout
       ..options.responseType = ResponseType.json
+      ..options.headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
       ..interceptors.add(
         InterceptorsWrapper(
           onRequest: (options, handler) {
@@ -23,14 +27,16 @@ class DioClient {
           },
         ),
       )
-      ..interceptors.add(LogInterceptor(
-        request: true,
-        requestHeader: true,
-        requestBody: true,
-        responseHeader: true,
-        responseBody: true,
-        error: true,
-      ));
+      ..interceptors.add(
+        LogInterceptor(
+          request: true,
+          requestHeader: true,
+          requestBody: true,
+          responseHeader: true,
+          responseBody: true,
+          error: true,
+        ),
+      );
   }
 
   // GET request

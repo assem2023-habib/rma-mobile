@@ -14,6 +14,9 @@ import 'package:rma_customer/features/parcels/domain/entities/parcel.dart';
 import 'package:rma_customer/features/routes/domain/entities/route_entity.dart';
 import 'package:rma_customer/features/authorizations/presentation/pages/authorizations_page.dart';
 import 'package:rma_customer/features/authorizations/presentation/pages/request_authorization_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rma_customer/injection_container.dart';
+import 'package:rma_customer/features/map/presentation/bloc/map_bloc.dart';
 import 'package:rma_customer/features/map/presentation/pages/map_page.dart';
 import 'package:rma_customer/features/profile/presentation/pages/profile_page.dart';
 
@@ -89,7 +92,10 @@ class AppRouter {
         path: '/map/:parcelId',
         builder: (context, state) {
           final parcelId = state.pathParameters['parcelId'] ?? '';
-          return MapPage(parcelId: parcelId);
+          return BlocProvider(
+            create: (context) => sl<MapBloc>(),
+            child: MapPage(parcelId: parcelId),
+          );
         },
       ),
       GoRoute(

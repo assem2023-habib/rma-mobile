@@ -11,14 +11,26 @@ class UpdateProfileUseCase {
   Future<Either<Failure, UserEntity>> call({
     required String firstName,
     required String lastName,
+    String? email,
+    String? userName,
     required String phone,
+    String? birthday,
     required int cityId,
+    String? nationalNumber,
+    String? address,
+    dynamic imageProfile,
   }) async {
     return await repository.updateProfile(
       firstName: firstName,
       lastName: lastName,
+      email: email,
+      userName: userName,
       phone: phone,
+      birthday: birthday,
       cityId: cityId,
+      nationalNumber: nationalNumber,
+      address: address,
+      imageProfile: imageProfile,
     );
   }
 }

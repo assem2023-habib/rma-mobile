@@ -2,39 +2,48 @@ import '../../domain/entities/dashboard_stats.dart';
 
 class DashboardStatsModel extends DashboardStats {
   const DashboardStatsModel({
-    required super.activeParcels,
-    required super.deliveredParcels,
-    required super.pendingParcels,
-    required super.rating,
-    required super.activeParcelsChange,
-    required super.deliveredParcelsChange,
-    required super.pendingParcelsChange,
-    required super.ratingChange,
+    required super.usersCount,
+    required super.totalParcels,
+    required super.parcelsByStatus,
+    required super.ratesCount,
+    required super.branchesCount,
+    required super.shipmentsCount,
+    required super.trucksCount,
+    required super.countriesCount,
+    required super.citiesCount,
   });
 
   factory DashboardStatsModel.fromJson(Map<String, dynamic> json) {
+    final parcels = json['parcels'] as Map<String, dynamic>?;
+    final byStatus = parcels?['by_status'] as Map<String, dynamic>?;
+    final locations = json['locations'] as Map<String, dynamic>?;
+
     return DashboardStatsModel(
-      activeParcels: json['active_parcels'] ?? 0,
-      deliveredParcels: json['delivered_parcels'] ?? 0,
-      pendingParcels: json['pending_parcels'] ?? 0,
-      rating: (json['rating'] ?? 0).toDouble(),
-      activeParcelsChange: json['active_parcels_change'] ?? '',
-      deliveredParcelsChange: json['delivered_parcels_change'] ?? '',
-      pendingParcelsChange: json['pending_parcels_change'] ?? '',
-      ratingChange: json['rating_change'] ?? '',
+      usersCount: json['users_count'] ?? 0,
+      totalParcels: parcels?['total'] ?? 0,
+      parcelsByStatus:
+          byStatus?.map((key, value) => MapEntry(key, value as int)) ?? {},
+      ratesCount: json['rates_count'] ?? 0,
+      branchesCount: json['branches_count'] ?? 0,
+      shipmentsCount: json['shipments_count'] ?? 0,
+      trucksCount: json['trucks_count'] ?? 0,
+      countriesCount: locations?['countries_count'] ?? 0,
+      citiesCount: locations?['cities_count'] ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'active_parcels': activeParcels,
-      'delivered_parcels': deliveredParcels,
-      'pending_parcels': pendingParcels,
-      'rating': rating,
-      'active_parcels_change': activeParcelsChange,
-      'delivered_parcels_change': deliveredParcelsChange,
-      'pending_parcels_change': pendingParcelsChange,
-      'rating_change': ratingChange,
+      'users_count': usersCount,
+      'parcels': {'total': totalParcels, 'by_status': parcelsByStatus},
+      'rates_count': ratesCount,
+      'branches_count': branchesCount,
+      'shipments_count': shipmentsCount,
+      'trucks_count': trucksCount,
+      'locations': {
+        'countries_count': countriesCount,
+        'cities_count': citiesCount,
+      },
     };
   }
 }

@@ -1,35 +1,38 @@
 import 'package:equatable/equatable.dart';
 
 class DashboardStats extends Equatable {
-  final int activeParcels;
-  final int deliveredParcels;
-  final int pendingParcels;
-  final double rating;
-  final String activeParcelsChange;
-  final String deliveredParcelsChange;
-  final String pendingParcelsChange;
-  final String ratingChange;
+  final int usersCount;
+  final int totalParcels;
+  final Map<String, int> parcelsByStatus;
+  final int ratesCount;
+  final int branchesCount;
+  final int shipmentsCount;
+  final int trucksCount;
+  final int countriesCount;
+  final int citiesCount;
 
   const DashboardStats({
-    required this.activeParcels,
-    required this.deliveredParcels,
-    required this.pendingParcels,
-    required this.rating,
-    required this.activeParcelsChange,
-    required this.deliveredParcelsChange,
-    required this.pendingParcelsChange,
-    required this.ratingChange,
+    required this.usersCount,
+    required this.totalParcels,
+    required this.parcelsByStatus,
+    required this.ratesCount,
+    required this.branchesCount,
+    required this.shipmentsCount,
+    required this.trucksCount,
+    required this.countriesCount,
+    required this.citiesCount,
   });
 
   @override
   List<Object?> get props => [
-        activeParcels,
-        deliveredParcels,
-        pendingParcels,
-        rating,
-        activeParcelsChange,
-        deliveredParcelsChange,
-        pendingParcelsChange,
-        ratingChange,
+        usersCount,
+        totalParcels,
+        parcelsByStatus,
+        ratesCount,
+        branchesCount,
+        shipmentsCount,
+        trucksCount,
+        countriesCount,
+        citiesCount,
       ];
 }

@@ -396,14 +396,15 @@ class DashboardHomePage extends StatelessWidget {
                       mainAxisSpacing: AppDimensions.spacing3,
                       crossAxisSpacing: AppDimensions.spacing3,
                       childAspectRatio: MediaQuery.of(context).size.width > 600
-                          ? 1.6
-                          : 1.4,
+                          ? 1.5
+                          : 1.1,
                     ),
                     delegate: SliverChildListDelegate([
                       StatsCard(
-                        title: 'الطرود النشطة',
-                        value: state.stats.activeParcels.toString(),
-                        change: state.stats.activeParcelsChange,
+                        title: 'إجمالي الطرود',
+                        value: state.stats.totalParcels.toString(),
+                        change:
+                            '${state.stats.parcelsByStatus['Pending'] ?? 0} قيد الانتظار',
                         icon: Icons.inventory_2_outlined,
                         iconGradient: const [
                           AppColors.primaryBlue,
@@ -412,8 +413,9 @@ class DashboardHomePage extends StatelessWidget {
                       ),
                       StatsCard(
                         title: 'تم التوصيل',
-                        value: state.stats.deliveredParcels.toString(),
-                        change: state.stats.deliveredParcelsChange,
+                        value: (state.stats.parcelsByStatus['Delivered'] ?? 0)
+                            .toString(),
+                        change: 'من إجمالي الشحنات',
                         icon: Icons.check_circle_outline,
                         iconGradient: const [
                           AppColors.success,
@@ -421,20 +423,20 @@ class DashboardHomePage extends StatelessWidget {
                         ],
                       ),
                       StatsCard(
-                        title: 'قيد الانتظار',
-                        value: state.stats.pendingParcels.toString(),
-                        change: state.stats.pendingParcelsChange,
-                        icon: Icons.pending_actions,
+                        title: 'الفروع',
+                        value: state.stats.branchesCount.toString(),
+                        change: 'فرعاً في خدمتكم',
+                        icon: Icons.storefront_outlined,
                         iconGradient: const [
                           AppColors.warning,
                           AppColors.warningDark,
                         ],
                       ),
                       StatsCard(
-                        title: 'التقييم العام',
-                        value: state.stats.rating.toString(),
-                        change: state.stats.ratingChange,
-                        icon: Icons.star_outline,
+                        title: 'تغطيتنا',
+                        value: state.stats.citiesCount.toString(),
+                        change: 'مدينة حول العالم',
+                        icon: Icons.public_outlined,
                         iconGradient: const [
                           AppColors.purple500,
                           AppColors.purple600,
@@ -522,22 +524,26 @@ class DashboardHomePage extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.successLight,
-                                borderRadius: BorderRadius.circular(
-                                  AppDimensions.radiusFull,
+                            Flexible(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
                                 ),
-                              ),
-                              child: Text(
-                                'في الطريق',
-                                style: AppTypography.caption.copyWith(
-                                  color: AppColors.successDark,
-                                  fontWeight: FontWeight.bold,
+                                decoration: BoxDecoration(
+                                  color: AppColors.successLight,
+                                  borderRadius: BorderRadius.circular(
+                                    AppDimensions.radiusFull,
+                                  ),
+                                ),
+                                child: Text(
+                                  'في الطريق',
+                                  style: AppTypography.caption.copyWith(
+                                    color: AppColors.successDark,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ),

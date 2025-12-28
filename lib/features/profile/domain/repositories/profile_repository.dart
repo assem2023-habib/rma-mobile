@@ -6,8 +6,14 @@ abstract class ProfileRepository {
   Future<Either<Failure, UserEntity>> updateProfile({
     required String firstName,
     required String lastName,
+    String? email,
+    String? userName,
     required String phone,
+    String? birthday,
     required int cityId,
+    String? nationalNumber,
+    String? address,
+    dynamic imageProfile, // Can be File or String path
   });
   Future<Either<Failure, void>> changePassword({
     required String oldPassword,

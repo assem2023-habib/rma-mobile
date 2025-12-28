@@ -8,6 +8,7 @@ class ApiConfig {
   static const String login = '/login';
   static const String register = '/register';
   static const String logout = '/logout';
+  static const String updateProfile = '/update-profile';
   static const String currentUser = '/me';
   static const String forgotPassword = '/forgot-password';
   static const String newPassword = '/new-password';
@@ -17,7 +18,7 @@ class ApiConfig {
   static const String verifyTelegramOtp = '/telegram/otp/verify';
   static const String changePassword = '/change-password';
 
-  static const String dashboardStats = '/dashboard/stats';
+  static const String dashboardStats = '/statistics';
   static const String parcels = '/parcel';
   static const String authorizations = '/authorization';
   static const String rates = '/rates';
