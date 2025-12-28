@@ -12,7 +12,9 @@ import 'package:rma_customer/features/parcels/presentation/bloc/parcels_bloc.dar
 import 'package:rma_customer/features/parcels/presentation/bloc/parcels_state.dart';
 
 class RequestAuthorizationPage extends StatefulWidget {
-  const RequestAuthorizationPage({super.key});
+  final int? parcelId;
+
+  const RequestAuthorizationPage({super.key, this.parcelId});
 
   @override
   State<RequestAuthorizationPage> createState() =>
@@ -31,6 +33,12 @@ class _RequestAuthorizationPageState extends State<RequestAuthorizationPage> {
   final _authorizedAddressController = TextEditingController();
   final _authorizedBirthdayController = TextEditingController();
   int? _selectedCityIdForGuest;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedParcelId = widget.parcelId;
+  }
 
   // Mock cities for now
   final List<Map<String, dynamic>> _cities = [

@@ -149,6 +149,61 @@ class ParcelDetailPage extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: AppDimensions.spacing6),
+
+            // Authorization Section
+            const Text('التخويلات', style: AppTypography.heading3),
+            const SizedBox(height: AppDimensions.spacing3),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(AppDimensions.spacing4),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.security_outlined,
+                          color: AppColors.primaryBlue,
+                          size: 30,
+                        ),
+                        const SizedBox(width: AppDimensions.spacing3),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'تخويل شخص آخر بالاستلام',
+                                style: AppTypography.bodyLarge,
+                              ),
+                              Text(
+                                'يمكنك تخويل شخص آخر لاستلام هذا الطرد بدلاً عنك',
+                                style: AppTypography.caption.copyWith(
+                                  color: AppColors.slate500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppDimensions.spacing4),
+                    OutlinedButton.icon(
+                      onPressed: () => context.push(
+                        '/request-authorization',
+                        extra: parcel.id,
+                      ),
+                      icon: const Icon(Icons.add_moderator_outlined),
+                      label: const Text('إنشاء تخويل جديد'),
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 45),
+                        foregroundColor: AppColors.primaryBlue,
+                        side: const BorderSide(color: AppColors.primaryBlue),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -188,8 +243,10 @@ class ParcelDetailPage extends StatelessWidget {
                   if (fromBranch != null)
                     Text(
                       fromBranch.address,
-                      style: AppTypography.bodySmall
-                          .copyWith(color: AppColors.slate500, fontSize: 10),
+                      style: AppTypography.bodySmall.copyWith(
+                        color: AppColors.slate500,
+                        fontSize: 10,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -211,8 +268,10 @@ class ParcelDetailPage extends StatelessWidget {
                   if (toBranch != null)
                     Text(
                       toBranch.address,
-                      style: AppTypography.bodySmall
-                          .copyWith(color: AppColors.slate500, fontSize: 10),
+                      style: AppTypography.bodySmall.copyWith(
+                        color: AppColors.slate500,
+                        fontSize: 10,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.end,
@@ -256,12 +315,13 @@ class ParcelDetailPage extends StatelessWidget {
           children: [
             Icon(icon, size: 12, color: AppColors.slate400),
             const SizedBox(width: 4),
-            Text(label,
-                style: AppTypography.caption.copyWith(fontSize: 10)),
+            Text(label, style: AppTypography.caption.copyWith(fontSize: 10)),
           ],
         ),
-        Text(value,
-            style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.w600)),
+        Text(
+          value,
+          style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.w600),
+        ),
       ],
     );
   }

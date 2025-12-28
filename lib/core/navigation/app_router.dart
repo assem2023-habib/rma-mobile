@@ -86,7 +86,10 @@ class AppRouter {
       ),
       GoRoute(
         path: '/request-authorization',
-        builder: (context, state) => const RequestAuthorizationPage(),
+        builder: (context, state) {
+          final parcelId = state.extra as int?;
+          return RequestAuthorizationPage(parcelId: parcelId);
+        },
       ),
       GoRoute(
         path: '/map/:parcelId',
