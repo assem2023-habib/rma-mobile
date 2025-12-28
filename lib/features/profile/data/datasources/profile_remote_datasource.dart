@@ -39,7 +39,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         },
       );
       if (response.statusCode == 200) {
-        return UserModel.fromJson(response.data['data']);
+        final userData = response.data['data']['user'] ?? response.data['data'];
+        return UserModel.fromJson(userData);
       } else {
         throw ServerException();
       }

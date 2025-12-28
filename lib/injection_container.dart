@@ -1,7 +1,9 @@
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rma_customer/core/api/dio_client.dart';
+import 'package:rma_customer/core/api/token_manager.dart';
 import 'package:rma_customer/core/network/network_info.dart';
 import 'package:rma_customer/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:rma_customer/features/auth/data/repositories/auth_repository_impl.dart';
@@ -203,7 +205,7 @@ Future<void> init() async {
   );
   // Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(dioClient: sl()),
+    () => AuthRemoteDataSourceImpl(dioClient: sl(), tokenManager: sl()),
   );
 
   //! Features - Profile
@@ -276,9 +278,12 @@ Future<void> init() async {
 
   //! Core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
-  sl.registerLazySingleton(() => DioClient(sl()));
+  sl.registerLazySingleton(() => DioClient(sl(), sl()));
+  sl.registerLazySingleton(() => TokenManager(sl()));
 
   //! External
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton(() => sharedPreferences);
   sl.registerLazySingleton(() => Dio());
   sl.registerLazySingleton(() => InternetConnectionChecker());
 }

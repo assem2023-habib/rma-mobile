@@ -1,5 +1,6 @@
 import '../../../../core/api/api_config.dart';
 import '../../../../core/api/dio_client.dart';
+import '../../../../core/api/token_manager.dart';
 import '../../../../core/error/exceptions.dart';
 import '../models/user_model.dart';
 
@@ -33,8 +34,12 @@ abstract class AuthRemoteDataSource {
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final DioClient dioClient;
+  final TokenManager tokenManager;
 
-  AuthRemoteDataSourceImpl({required this.dioClient});
+  AuthRemoteDataSourceImpl({
+    required this.dioClient,
+    required this.tokenManager,
+  });
 
   @override
   Future<UserModel> login(String email, String password) async {
@@ -45,7 +50,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       if (response.statusCode == 200) {
-        return UserModel.fromJson(response.data['data']);
+        // The server returns { "status": true, "message": "...", "data": { "user": {...}, "token": "..." } }
+        final userData = response.data['data']['user'];
+        final token = response.data['data']['token'];
+
+        if (token != null) {
+          await tokenManager.saveToken(token);
+        }
+
+        return UserModel.fromJson(userData);
       } else {
         throw ServerException();
       }
@@ -83,7 +96,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return UserModel.fromJson(response.data['data']);
+        // Similar to login, register might return user and token
+        final userData = response.data['data']['user'] ?? response.data['data'];
+        final token = response.data['data']['token'];
+
+        if (token != null) {
+          await tokenManager.saveToken(token);
+        }
+
+        return UserModel.fromJson(userData);
       } else {
         throw ServerException();
       }
@@ -96,6 +117,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<void> logout() async {
     try {
       await dioClient.get(ApiConfig.logout);
+      await tokenManager.deleteToken();
     } catch (e) {
       throw ServerException();
     }
@@ -106,7 +128,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await dioClient.get(ApiConfig.currentUser);
       if (response.statusCode == 200) {
-        return UserModel.fromJson(response.data['data']);
+        final userData = response.data['data']['user'] ?? response.data['data'];
+        return UserModel.fromJson(userData);
       } else {
         throw ServerException();
       }

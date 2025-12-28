@@ -1,15 +1,28 @@
 import 'package:dio/dio.dart';
 import 'api_config.dart';
+import 'token_manager.dart';
 
 class DioClient {
   final Dio dio;
+  final TokenManager tokenManager;
 
-  DioClient(this.dio) {
+  DioClient(this.dio, this.tokenManager) {
     dio
       ..options.baseUrl = ApiConfig.baseUrl
       ..options.connectTimeout = ApiConfig.connectTimeout
       ..options.receiveTimeout = ApiConfig.receiveTimeout
       ..options.responseType = ResponseType.json
+      ..interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            final token = tokenManager.getToken();
+            if (token != null) {
+              options.headers['Authorization'] = 'Bearer $token';
+            }
+            return handler.next(options);
+          },
+        ),
+      )
       ..interceptors.add(LogInterceptor(
         request: true,
         requestHeader: true,

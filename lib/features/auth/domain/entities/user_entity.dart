@@ -7,7 +7,11 @@ class UserEntity extends Equatable {
   final String email;
   final String? userName;
   final String phone;
+  final String? address;
+  final String? nationalNumber;
+  final String? birthday;
   final int cityId;
+  final String? imageProfile;
   final String? emailVerifiedAt;
   final String? createdAt;
   final String? updatedAt;
@@ -19,7 +23,11 @@ class UserEntity extends Equatable {
     required this.email,
     this.userName,
     required this.phone,
+    this.address,
+    this.nationalNumber,
+    this.birthday,
     required this.cityId,
+    this.imageProfile,
     this.emailVerifiedAt,
     this.createdAt,
     this.updatedAt,
@@ -35,7 +43,11 @@ class UserEntity extends Equatable {
         email,
         userName,
         phone,
+        address,
+        nationalNumber,
+        birthday,
         cityId,
+        imageProfile,
         emailVerifiedAt,
         createdAt,
         updatedAt,

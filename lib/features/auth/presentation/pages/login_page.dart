@@ -32,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: AppColors.background,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is Authenticated) {
+          if (state is Authenticated || state is GuestAuthenticated) {
             context.go('/'); // Navigate to dashboard
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
