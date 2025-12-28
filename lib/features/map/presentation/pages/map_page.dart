@@ -70,20 +70,53 @@ class _MapPageState extends State<MapPage> {
             return const Center(child: CircularProgressIndicator());
           } else if (state is MapError) {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(state.message, style: AppTypography.bodyLarge),
-                  const SizedBox(height: AppDimensions.spacing4),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<MapBloc>().add(
-                        GetParcelLocationEvent(widget.parcelId),
-                      );
-                    },
-                    child: const Text('إعادة المحاولة'),
-                  ),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.all(AppDimensions.spacing6),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.location_off_outlined,
+                      size: 80,
+                      color: AppColors.slate300,
+                    ),
+                    const SizedBox(height: AppDimensions.spacing4),
+                    Text(
+                      'تتبع غير متاح',
+                      style: AppTypography.heading3.copyWith(
+                        color: AppColors.slate900,
+                      ),
+                    ),
+                    const SizedBox(height: AppDimensions.spacing2),
+                    Text(
+                      state.message,
+                      style: AppTypography.bodyMedium.copyWith(
+                        color: AppColors.slate500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: AppDimensions.spacing8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          context.read<MapBloc>().add(
+                            GetParcelLocationEvent(widget.parcelId),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        child: const Text('إعادة المحاولة'),
+                      ),
+                    ),
+                    const SizedBox(height: AppDimensions.spacing3),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('العودة لتفاصيل الطرد'),
+                    ),
+                  ],
+                ),
               ),
             );
           } else if (state is MapLoaded) {

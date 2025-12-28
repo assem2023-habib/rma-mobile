@@ -23,7 +23,7 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
           return ParcelLocationModel.fromJson(response.data['data']);
         } else {
           throw ServerException(
-            message: response.data['message'] ?? 'لم يتم العثور على الطرد',
+            message: response.data['message'] ?? 'لم يتم العثور على موقع الطرد',
           );
         }
       } else {
@@ -31,6 +31,14 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
       }
     } catch (e) {
       if (e is ServerException) rethrow;
+
+      // Handle Dio 404 error and extract message if available
+      if (e.toString().contains('404')) {
+        throw ServerException(
+          message: 'عذراً، لا توجد بيانات تتبع متاحة لهذا الطرد حالياً',
+        );
+      }
+
       throw ServerException(message: 'خطأ في معالجة بيانات الموقع: $e');
     }
   }
