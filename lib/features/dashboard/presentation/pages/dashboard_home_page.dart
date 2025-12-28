@@ -397,7 +397,7 @@ class DashboardHomePage extends StatelessWidget {
                       crossAxisSpacing: AppDimensions.spacing3,
                       childAspectRatio: MediaQuery.of(context).size.width > 600
                           ? 1.5
-                          : 1.1,
+                          : 1.0,
                     ),
                     delegate: SliverChildListDelegate([
                       StatsCard(

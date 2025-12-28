@@ -81,7 +81,7 @@ class StatsCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppDimensions.spacing4),
+          const SizedBox(height: AppDimensions.spacing3),
           Text(
             title,
             style: AppTypography.bodySmall.copyWith(
@@ -91,7 +91,7 @@ class StatsCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: AppDimensions.spacing1),
+          const SizedBox(height: AppDimensions.spacing1 / 2),
           FittedBox(
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerRight,

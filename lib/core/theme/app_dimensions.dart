@@ -29,7 +29,7 @@ class AppDimensions {
   static const double bottomNavHeight = 80.0;
   static const double appBarHeight = 72.0;
   static const double mapHeight = 320.0;
-  static const double quickActionCardHeight = 96.0;
+  static const double quickActionCardHeight = 110.0;
   static const double statsCardHeight = 120.0;
 
   // Avatars
