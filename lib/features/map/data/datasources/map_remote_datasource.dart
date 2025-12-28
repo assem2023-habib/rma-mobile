@@ -15,19 +15,23 @@ class MapRemoteDataSourceImpl implements MapRemoteDataSource {
   @override
   Future<ParcelLocationModel> getParcelLocation(String trackingNumber) async {
     try {
-      final response = await dioClient.get('${ApiConfig.parcelLocation}/$trackingNumber/location');
+      final response = await dioClient.get(
+        '${ApiConfig.parcelLocation}/$trackingNumber/location',
+      );
       if (response.statusCode == 200) {
         if (response.data['status'] == true) {
           return ParcelLocationModel.fromJson(response.data['data']);
         } else {
-          throw ServerException(message: response.data['message'] ?? 'لم يتم العثور على الطرد');
+          throw ServerException(
+            message: response.data['message'] ?? 'لم يتم العثور على الطرد',
+          );
         }
       } else {
         throw ServerException(message: 'حدث خطأ في الاتصال بالسيرفر');
       }
     } catch (e) {
       if (e is ServerException) rethrow;
-      throw ServerException(message: 'حدث خطأ غير متوقع أثناء جلب الموقع');
+      throw ServerException(message: 'خطأ في معالجة بيانات الموقع: $e');
     }
   }
 }
