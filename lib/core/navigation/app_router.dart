@@ -14,6 +14,7 @@ import 'package:rma_customer/features/parcels/domain/entities/parcel.dart';
 import 'package:rma_customer/features/routes/domain/entities/route_entity.dart';
 import 'package:rma_customer/features/authorizations/presentation/pages/authorizations_page.dart';
 import 'package:rma_customer/features/authorizations/presentation/pages/request_authorization_page.dart';
+import 'package:rma_customer/features/authorizations/presentation/bloc/authorizations_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rma_customer/injection_container.dart';
 import 'package:rma_customer/features/map/presentation/bloc/map_bloc.dart';
@@ -82,13 +83,19 @@ class AppRouter {
       ),
       GoRoute(
         path: '/authorizations',
-        builder: (context, state) => const AuthorizationsPage(),
+        builder: (context, state) => BlocProvider(
+          create: (context) => sl<AuthorizationsBloc>(),
+          child: const AuthorizationsPage(),
+        ),
       ),
       GoRoute(
         path: '/request-authorization',
         builder: (context, state) {
           final parcelId = state.extra as int?;
-          return RequestAuthorizationPage(parcelId: parcelId);
+          return BlocProvider(
+            create: (context) => sl<AuthorizationsBloc>(),
+            child: RequestAuthorizationPage(parcelId: parcelId),
+          );
         },
       ),
       GoRoute(
