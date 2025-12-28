@@ -90,7 +90,7 @@ class _MapPageState extends State<MapPage> {
                     const SizedBox(height: AppDimensions.spacing2),
                     Text(
                       state.message,
-                      style: AppTypography.bodyMedium.copyWith(
+                      style: AppTypography.bodySmall.copyWith(
                         color: AppColors.slate500,
                       ),
                       textAlign: TextAlign.center,
