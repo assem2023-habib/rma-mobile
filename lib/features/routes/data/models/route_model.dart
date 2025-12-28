@@ -67,8 +67,12 @@ class BranchModel extends BranchEntity {
       branchName: json['branch_name'],
       cityId: json['city_id'],
       address: json['address'],
-      latitude: (json['latitude'] as num).toDouble(),
-      longitude: (json['longitude'] as num).toDouble(),
+      latitude: json['latitude'] is String
+          ? double.tryParse(json['latitude']) ?? 0.0
+          : (json['latitude'] as num?)?.toDouble() ?? 0.0,
+      longitude: json['longitude'] is String
+          ? double.tryParse(json['longitude']) ?? 0.0
+          : (json['longitude'] as num?)?.toDouble() ?? 0.0,
     );
   }
 

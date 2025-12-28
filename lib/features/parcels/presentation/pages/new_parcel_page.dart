@@ -247,9 +247,13 @@ class _NewParcelPageState extends State<NewParcelPage> {
               ),
             ),
             items: state.routes.map((route) {
+              final fromName =
+                  route.fromBranch?.branchName ?? 'الفرع ${route.fromBranchId}';
+              final toName =
+                  route.toBranch?.branchName ?? 'الفرع ${route.toBranchId}';
               return DropdownMenuItem<int>(
                 value: route.id,
-                child: Text('من الفرع ${route.fromBranchId} إلى الفرع ${route.toBranchId}'),
+                child: Text('من $fromName إلى $toName'),
               );
             }).toList(),
             onChanged: (value) {
