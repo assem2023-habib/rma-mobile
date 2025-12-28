@@ -31,7 +31,7 @@ class AppTheme {
     // =========================
     // Cards
     // =========================
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: AppColors.backgroundCard,
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -47,13 +47,8 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.textOnPrimary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        padding: const EdgeInsets.symmetric(
-          vertical: 14,
-          horizontal: 20,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
       ),
     ),
 
@@ -61,9 +56,7 @@ class AppTheme {
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.primary,
         side: const BorderSide(color: AppColors.primary),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     ),
 
@@ -79,12 +72,8 @@ class AppTheme {
         color: AppColors.textPrimary,
         fontWeight: FontWeight.w600,
       ),
-      bodyLarge: TextStyle(
-        color: AppColors.textSecondary,
-      ),
-      bodyMedium: TextStyle(
-        color: AppColors.textMuted,
-      ),
+      bodyLarge: TextStyle(color: AppColors.textSecondary),
+      bodyMedium: TextStyle(color: AppColors.textMuted),
     ),
 
     // =========================

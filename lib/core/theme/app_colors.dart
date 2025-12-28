@@ -60,6 +60,9 @@ class AppColors {
   static const Color successLight = successBg;
   static const Color errorLight = errorBg;
   static const Color successDark = success;
+  static const Color warningDark = warning;
+  static const Color warningLight = warningBg;
+  static const Color background = backgroundMain;
   static const Color primaryBlue = primary;
   static const Color primaryIndigo = primaryDark;
   static const Color surface = backgroundCard;
