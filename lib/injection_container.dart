@@ -75,6 +75,11 @@ import 'package:rma_customer/features/appointments/domain/repositories/appointme
 import 'package:rma_customer/features/appointments/domain/usecases/get_available_appointments_usecase.dart';
 import 'package:rma_customer/features/appointments/domain/usecases/book_appointment_usecase.dart';
 import 'package:rma_customer/features/appointments/presentation/bloc/appointment_bloc.dart';
+import 'package:rma_customer/features/notifications/data/datasources/notifications_remote_datasource.dart';
+import 'package:rma_customer/features/notifications/data/repositories/notifications_repository_impl.dart';
+import 'package:rma_customer/features/notifications/domain/repositories/notifications_repository.dart';
+import 'package:rma_customer/features/notifications/presentation/bloc/notifications_bloc.dart';
+import 'package:rma_customer/core/services/realtime_notification_service.dart';
 
 final sl = GetIt.instance;
 
@@ -274,6 +279,28 @@ Future<void> init() async {
   // Data sources
   sl.registerLazySingleton<AppointmentRemoteDataSource>(
     () => AppointmentRemoteDataSourceImpl(dioClient: sl()),
+  );
+
+  //! Features - Notifications
+  // Bloc
+  sl.registerLazySingleton(() => NotificationsBloc(repository: sl()));
+  // Repository
+  sl.registerLazySingleton<NotificationsRepository>(
+    () =>
+        NotificationsRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<NotificationsRemoteDataSource>(
+    () => NotificationsRemoteDataSourceImpl(dioClient: sl()),
+  );
+
+  //! Services
+  sl.registerLazySingleton(
+    () => RealtimeNotificationService(
+      tokenManager: sl(),
+      notificationsBloc: sl(),
+      authBloc: sl(),
+    ),
   );
 
   //! Core

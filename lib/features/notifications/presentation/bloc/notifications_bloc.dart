@@ -1,0 +1,146 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/repositories/notifications_repository.dart';
+import '../../domain/entities/notification_entity.dart';
+import 'notifications_event.dart';
+import 'notifications_state.dart';
+
+class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
+  final NotificationsRepository repository;
+
+  NotificationsBloc({required this.repository})
+    : super(NotificationsInitial()) {
+    on<GetNotificationsEvent>(_onGetNotifications);
+    on<MarkNotificationAsReadEvent>(_onMarkAsRead);
+    on<MarkAllNotificationsAsReadEvent>(_onMarkAllAsRead);
+    on<DeleteNotificationEvent>(_onDelete);
+    on<NewNotificationReceivedEvent>(_onNewReceived);
+  }
+
+  Future<void> _onGetNotifications(
+    GetNotificationsEvent event,
+    Emitter<NotificationsState> emit,
+  ) async {
+    emit(NotificationsLoading());
+    final result = await repository.getNotifications();
+    result.fold((failure) => emit(NotificationsError(failure.message)), (
+      notifications,
+    ) {
+      final unreadCount = notifications.where((n) => n.isRead == false).length;
+      emit(
+        NotificationsLoaded(
+          notifications: notifications,
+          unreadCount: unreadCount,
+        ),
+      );
+    });
+  }
+
+  Future<void> _onMarkAsRead(
+    MarkNotificationAsReadEvent event,
+    Emitter<NotificationsState> emit,
+  ) async {
+    if (state is NotificationsLoaded) {
+      final currentState = state as NotificationsLoaded;
+      final updatedNotifications = currentState.notifications.map((n) {
+        if (n.id == event.id) {
+          return NotificationEntity(
+            id: n.id,
+            type: n.type,
+            title: n.title,
+            message: n.message,
+            data: n.data,
+            readAt: DateTime.now(),
+            createdAt: n.createdAt,
+          );
+        }
+        return n;
+      }).toList();
+
+      emit(
+        NotificationsLoaded(
+          notifications: updatedNotifications,
+          unreadCount: updatedNotifications
+              .where((n) => n.isRead == false)
+              .length,
+        ),
+      );
+      await repository.markAsRead(event.id);
+    }
+  }
+
+  Future<void> _onMarkAllAsRead(
+    MarkAllNotificationsAsReadEvent event,
+    Emitter<NotificationsState> emit,
+  ) async {
+    if (state is NotificationsLoaded) {
+      final currentState = state as NotificationsLoaded;
+      final updatedNotifications = currentState.notifications.map((n) {
+        return NotificationEntity(
+          id: n.id,
+          type: n.type,
+          title: n.title,
+          message: n.message,
+          data: n.data,
+          readAt: DateTime.now(),
+          createdAt: n.createdAt,
+        );
+      }).toList();
+
+      emit(
+        NotificationsLoaded(
+          notifications: updatedNotifications,
+          unreadCount: 0,
+        ),
+      );
+
+      await repository.markAllAsRead();
+    }
+  }
+
+  Future<void> _onDelete(
+    DeleteNotificationEvent event,
+    Emitter<NotificationsState> emit,
+  ) async {
+    if (state is NotificationsLoaded) {
+      final currentState = state as NotificationsLoaded;
+      final updatedNotifications = currentState.notifications
+          .where((n) => n.id != event.id)
+          .toList();
+
+      emit(
+        NotificationsLoaded(
+          notifications: updatedNotifications,
+          unreadCount: updatedNotifications
+              .where((n) => n.isRead == false)
+              .length,
+        ),
+      );
+
+      await repository.deleteNotification(event.id);
+    }
+  }
+
+  void _onNewReceived(
+    NewNotificationReceivedEvent event,
+    Emitter<NotificationsState> emit,
+  ) {
+    if (state is NotificationsLoaded) {
+      final currentState = state as NotificationsLoaded;
+      final List<NotificationEntity> updatedNotifications = [
+        event.notification,
+        ...currentState.notifications,
+      ];
+
+      emit(
+        NotificationsLoaded(
+          notifications: updatedNotifications,
+          unreadCount: updatedNotifications
+              .where((n) => n.isRead == false)
+              .length,
+        ),
+      );
+    } else {
+      add(GetNotificationsEvent());
+    }
+  }
+}

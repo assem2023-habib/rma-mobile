@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rma_customer/features/dashboard/presentation/bloc/dashboard_event.dart';
+import 'package:rma_customer/features/notifications/presentation/bloc/notifications_bloc.dart';
+import 'package:rma_customer/features/notifications/presentation/bloc/notifications_state.dart';
+import 'package:rma_customer/features/notifications/presentation/bloc/notifications_event.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -31,6 +34,7 @@ class _DashboardHomePageState extends State<DashboardHomePage> {
     super.initState();
     context.read<DashboardBloc>().add(GetDashboardStatsEvent());
     context.read<ParcelsBloc>().add(GetParcelsEvent());
+    context.read<NotificationsBloc>().add(GetNotificationsEvent());
   }
 
   Widget _buildGuestDashboardPlaceholder(BuildContext context) {
@@ -252,30 +256,112 @@ class _DashboardHomePageState extends State<DashboardHomePage> {
                                     ),
                                   ],
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    final authState = context
-                                        .read<AuthBloc>()
-                                        .state;
-                                    if (authState is GuestAuthenticated) {
-                                      GuestPromptBottomSheet.show(
-                                        context,
-                                        'الملف الشخصي',
-                                      );
-                                    } else {
-                                      context.push('/profile');
-                                    }
-                                  },
-                                  child: CircleAvatar(
-                                    radius: 20,
-                                    backgroundColor: Colors.white.withValues(
-                                      alpha: 0.2,
+                                Row(
+                                  children: [
+                                    BlocBuilder<
+                                      NotificationsBloc,
+                                      NotificationsState
+                                    >(
+                                      builder: (context, state) {
+                                        int unreadCount = 0;
+                                        if (state is NotificationsLoaded) {
+                                          unreadCount = state.unreadCount;
+                                        }
+                                        return GestureDetector(
+                                          onTap: () {
+                                            final authState = context
+                                                .read<AuthBloc>()
+                                                .state;
+                                            if (authState
+                                                is GuestAuthenticated) {
+                                              GuestPromptBottomSheet.show(
+                                                context,
+                                                'الإشعارات',
+                                              );
+                                            } else {
+                                              context.push('/notifications');
+                                            }
+                                          },
+                                          child: Stack(
+                                            clipBehavior: Clip.none,
+                                            children: [
+                                              CircleAvatar(
+                                                radius: 20,
+                                                backgroundColor: Colors.white
+                                                    .withValues(alpha: 0.2),
+                                                child: const Icon(
+                                                  Icons.notifications_outlined,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              if (unreadCount > 0)
+                                                Positioned(
+                                                  right: -2,
+                                                  top: -2,
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(4),
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                          color:
+                                                              AppColors.error,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                    constraints:
+                                                        const BoxConstraints(
+                                                          minWidth: 16,
+                                                          minHeight: 16,
+                                                        ),
+                                                    child: Text(
+                                                      unreadCount > 9
+                                                          ? '9+'
+                                                          : unreadCount
+                                                                .toString(),
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        );
+                                      },
                                     ),
-                                    child: const Icon(
-                                      Icons.person_outline,
-                                      color: Colors.white,
+                                    const SizedBox(
+                                      width: AppDimensions.spacing3,
                                     ),
-                                  ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        final authState = context
+                                            .read<AuthBloc>()
+                                            .state;
+                                        if (authState is GuestAuthenticated) {
+                                          GuestPromptBottomSheet.show(
+                                            context,
+                                            'الملف الشخصي',
+                                          );
+                                        } else {
+                                          context.push('/profile');
+                                        }
+                                      },
+                                      child: CircleAvatar(
+                                        radius: 20,
+                                        backgroundColor: Colors.white
+                                            .withValues(alpha: 0.2),
+                                        child: const Icon(
+                                          Icons.person_outline,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

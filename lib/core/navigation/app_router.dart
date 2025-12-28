@@ -20,6 +20,7 @@ import 'package:rma_customer/injection_container.dart';
 import 'package:rma_customer/features/map/presentation/bloc/map_bloc.dart';
 import 'package:rma_customer/features/map/presentation/pages/map_page.dart';
 import 'package:rma_customer/features/profile/presentation/pages/profile_page.dart';
+import 'package:rma_customer/features/notifications/presentation/pages/notification_screen.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -111,6 +112,10 @@ class AppRouter {
       GoRoute(
         path: '/profile',
         builder: (context, state) => const ProfilePage(),
+      ),
+      GoRoute(
+        path: '/notifications',
+        builder: (context, state) => const NotificationScreen(),
       ),
     ],
   );

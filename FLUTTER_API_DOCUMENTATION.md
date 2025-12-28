@@ -13,11 +13,65 @@
 9. [Endpoints الفروع والمسارات](#endpoints-الفروع-والمسارات)
 10. [Endpoints التقييم](#endpoints-التقييم)
 11. [Endpoints Telegram OTP](#endpoints-telegram-otp)
-12. [أمثلة Dart/Flutter](#أمثلة-dartflutter)
+12. [نظام الإشعارات المباشرة (Real-time Notifications)](#نظام-الإشعارات-المباشرة)
+13. [أمثلة Dart/Flutter](#أمثلة-dartflutter)
 
 ---
 
-## المعلومات الأساسية
+## نظام الإشعارات المباشرة
+
+يعتمد النظام على **Laravel Reverb** للبث المباشر (Broadcasting) وقاعدة البيانات للتخزين.
+
+### 🔌 الاتصال بـ Reverb (Pusher Client)
+
+يجب استخدام حزمة `pusher_client` أو `laravel_echo` في Flutter.
+
+**بيانات الاتصال:**
+- **Host:** `127.0.0.1` (أو IP السيرفر)
+- **Port:** `6001`
+- **Key:** `z8gmvgvmclvhoezjsfil`
+- **Scheme:** `http`
+- **Cluster:** `mt1`
+
+**قناة الاشتراك (Private Channel):**
+يجب الاشتراك في القناة الخاصة بالمستخدم:
+`App.Models.User.{user_id}`
+
+---
+
+### 🔔 أنواع الإشعارات (Notification Types)
+
+| النوع | الحدث | البيانات المرسلة (Payload) |
+| :--- | :--- | :--- |
+| `parcel_status_updated` | تغيير حالة الطرد | `parcel_id`, `tracking_number` |
+| `appointment_confirmed` | تأكيد موعد الاستلام | `appointment_id` |
+| `authorization_status_updated` | تأكيد/إلغاء تخويل | `auth_id`, `parcel_id`, `status` |
+| `pickup_reminder` | تذكير باستلام طرد متأخر | `parcel_id`, `tracking_number` |
+
+---
+
+### 🚀 Endpoints الإشعارات
+
+#### 1️⃣ جلب جميع الإشعارات
+- **Endpoint:** `GET /api/v1/notifications`
+- **Auth Required:** ✅ نعم
+- **Pagination:** 20 عنصر في الصفحة
+
+#### 2️⃣ تحديد إشعار كمقروء
+- **Endpoint:** `POST /api/v1/notifications/{id}/read`
+- **Auth Required:** ✅ نعم
+
+#### 3️⃣ تحديد الكل كمقروء
+- **Endpoint:** `POST /api/v1/notifications/read-all`
+- **Auth Required:** ✅ نعم
+
+#### 4️⃣ حذف إشعار
+- **Endpoint:** `DELETE /api/v1/notifications/{id}`
+- **Auth Required:** ✅ نعم
+
+---
+
+## أمثلة Dart/Flutterالمعلومات الأساسية
 
 ### Base URL
 
@@ -1734,4 +1788,93 @@ if (data['errors'] != null) {
 
 **تم إنشاء هذا التوثيق في**: 2024-12-26
 
-**الإصدار**: 1.0.0
+**الإصدار**: 1.1.0
+
+---
+
+## 12. نظام الإشعارات المباشرة (Real-time Notifications)
+
+يعتمد النظام على **Laravel Reverb** للبث المباشر (Broadcasting) وقاعدة البيانات للتخزين.
+
+### 🔌 الاتصال بـ Reverb (Pusher Client)
+
+يجب استخدام حزمة `pusher_client` أو `laravel_echo` في Flutter.
+
+**بيانات الاتصال:**
+- **Host:** `127.0.0.1` (أو IP السيرفر)
+- **Port:** `6001`
+- **Key:** `z8gmvgvmclvhoezjsfil`
+- **Scheme:** `http`
+- **Cluster:** `mt1`
+
+**قناة الاشتراك (Private Channel):**
+يجب الاشتراك في القناة الخاصة بالمستخدم:
+`App.Models.User.{user_id}`
+
+---
+
+### 🔔 أنواع الإشعارات (Notification Types)
+
+| النوع | الحدث | البيانات المرسلة (Payload) |
+| :--- | :--- | :--- |
+| `parcel_status_updated` | تغيير حالة الطرد | `parcel_id`, `tracking_number` |
+| `appointment_confirmed` | تأكيد موعد الاستلام | `appointment_id` |
+| `authorization_status_updated` | تأكيد/إلغاء تخويل | `auth_id`, `parcel_id`, `status` |
+| `pickup_reminder` | تذكير باستلام طرد متأخر | `parcel_id`, `tracking_number` |
+
+---
+
+### 🚀 Endpoints الإشعارات
+
+#### 1️⃣ جلب جميع الإشعارات
+- **Endpoint:** `GET /api/v1/notifications`
+- **Auth Required:** ✅ نعم
+- **Pagination:** 20 عنصر في الصفحة
+
+#### 2️⃣ تحديد إشعار كمقروء
+- **Endpoint:** `POST /api/v1/notifications/{id}/read`
+- **Auth Required:** ✅ نعم
+
+#### 3️⃣ تحديد الكل كمقروء
+- **Endpoint:** `POST /api/v1/notifications/read-all`
+- **Auth Required:** ✅ نعم
+
+#### 4️⃣ حذف إشعار
+- **Endpoint:** `DELETE /api/v1/notifications/{id}`
+- **Auth Required:** ✅ نعم
+
+---
+
+## 13. أمثلة Dart/Flutter
+
+### الاتصال بـ Laravel Echo
+
+```dart
+import 'package:laravel_echo/laravel_echo.dart';
+import 'package:pusher_client/pusher_client.dart';
+
+PusherOptions options = PusherOptions(
+  host: '127.0.0.1',
+  port: 6001,
+  encrypted: false,
+  cluster: 'mt1',
+  auth: PusherAuth(
+    'http://127.0.0.1/api/broadcasting/auth',
+    headers: {
+      'Authorization': 'Bearer $token',
+    },
+  ),
+);
+
+PusherClient pusher = PusherClient('z8gmvgvmclvhoezjsfil', options, autoConnect: true);
+
+Echo echo = Echo(
+  client: pusher,
+  broadcaster: EchoBroadcasterType.Pusher,
+);
+
+echo.private('App.Models.User.$userId')
+    .notification((notification) {
+      print(notification);
+    });
+```

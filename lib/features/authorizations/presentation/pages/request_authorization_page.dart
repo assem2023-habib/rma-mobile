@@ -153,7 +153,7 @@ class _RequestAuthorizationPageState extends State<RequestAuthorizationPage> {
                           state.parcels.any((p) => p.id == _selectedParcelId);
 
                       return DropdownButtonFormField<int>(
-                        value: parcelExists ? _selectedParcelId : null,
+                        initialValue: parcelExists ? _selectedParcelId : null,
                         decoration: InputDecoration(
                           hintText: 'اختر الطرد المراد تخويله',
                           border: OutlineInputBorder(

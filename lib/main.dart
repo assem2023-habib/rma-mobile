@@ -11,12 +11,18 @@ import 'features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'features/parcels/presentation/bloc/parcels_bloc.dart';
 import 'features/parcels/presentation/bloc/parcels_event.dart';
 import 'features/routes/presentation/bloc/routes_bloc.dart';
-import 'features/routes/presentation/bloc/routes_event.dart';
+import 'package:rma_customer/features/routes/presentation/bloc/routes_event.dart';
+import 'package:rma_customer/features/notifications/presentation/bloc/notifications_bloc.dart';
+import 'package:rma_customer/core/services/realtime_notification_service.dart';
 import 'package:rma_customer/injection_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
+
+  // Initialize RealtimeNotificationService
+  di.sl<RealtimeNotificationService>();
+
   runApp(const MyApp());
 }
 
@@ -38,6 +44,7 @@ class MyApp extends StatelessWidget {
           create: (_) => di.sl<ParcelsBloc>()..add(GetParcelsEvent()),
         ),
         BlocProvider(create: (_) => di.sl<RoutesBloc>()..add(GetRoutesEvent())),
+        BlocProvider(create: (_) => di.sl<NotificationsBloc>()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

@@ -31,6 +31,9 @@ class ApiConfig {
   static const String appointments = '/get-getCalender'; // /{tracking_number}
   static const String bookAppointment = '/book-appointment';
 
+  // Notifications
+  static const String notifications = '/notifications';
+
   // General
   static const String general = '/general';
   static const String privacyPolicy = '/privacy-policy';
