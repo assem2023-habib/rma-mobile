@@ -1,5 +1,6 @@
 import '../../../../core/enums/parcel_status.dart';
 import '../../domain/entities/parcel.dart';
+import '../../../routes/data/models/route_model.dart';
 
 class ParcelModel extends Parcel {
   const ParcelModel({
@@ -19,6 +20,7 @@ class ParcelModel extends Parcel {
     required super.trackingNumber,
     required super.createdAt,
     required super.updatedAt,
+    super.route,
   });
 
   factory ParcelModel.fromJson(Map<String, dynamic> json) {
@@ -43,6 +45,7 @@ class ParcelModel extends Parcel {
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'])
           : DateTime.now(),
+      route: json['route'] != null ? RouteModel.fromJson(json['route']) : null,
     );
   }
 
@@ -64,6 +67,7 @@ class ParcelModel extends Parcel {
       'tracking_number': trackingNumber,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
+      'route': route != null ? (route as RouteModel).toJson() : null,
     };
   }
 

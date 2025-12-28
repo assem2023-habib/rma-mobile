@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../../../core/enums/parcel_status.dart';
+import '../../../routes/domain/entities/route_entity.dart';
 
 class Parcel extends Equatable {
   final int id;
@@ -18,6 +19,7 @@ class Parcel extends Equatable {
   final String trackingNumber;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final RouteEntity? route;
 
   const Parcel({
     required this.id,
@@ -36,25 +38,27 @@ class Parcel extends Equatable {
     required this.trackingNumber,
     required this.createdAt,
     required this.updatedAt,
+    this.route,
   });
 
   @override
   List<Object?> get props => [
-    id,
-    senderId,
-    senderType,
-    routeId,
-    fromCity,
-    toCity,
-    receiverName,
-    receiverAddress,
-    receiverPhone,
-    weight,
-    cost,
-    isPaid,
-    status,
-    trackingNumber,
-    createdAt,
-    updatedAt,
-  ];
+        id,
+        senderId,
+        senderType,
+        routeId,
+        fromCity,
+        toCity,
+        receiverName,
+        receiverAddress,
+        receiverPhone,
+        weight,
+        cost,
+        isPaid,
+        status,
+        trackingNumber,
+        createdAt,
+        updatedAt,
+        route,
+      ];
 }

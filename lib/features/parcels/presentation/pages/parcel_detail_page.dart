@@ -167,37 +167,101 @@ class ParcelDetailPage extends StatelessWidget {
   }
 
   Widget _buildRouteInfo({required String from, required String to}) {
-    return Row(
+    final fromBranch = parcel.route?.fromBranch;
+    final toBranch = parcel.route?.toBranch;
+
+    return Column(
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('من', style: AppTypography.caption),
+                  Text(
+                    fromBranch?.branchName ?? from,
+                    style: AppTypography.bodyLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (fromBranch != null)
+                    Text(
+                      fromBranch.address,
+                      style: AppTypography.bodySmall
+                          .copyWith(color: AppColors.slate500, fontSize: 10),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward, color: AppColors.slate300),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const Text('إلى', style: AppTypography.caption),
+                  Text(
+                    toBranch?.branchName ?? to,
+                    style: AppTypography.bodyLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (toBranch != null)
+                    Text(
+                      toBranch.address,
+                      style: AppTypography.bodySmall
+                          .copyWith(color: AppColors.slate500, fontSize: 10),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.end,
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        if (parcel.route != null) ...[
+          const SizedBox(height: AppDimensions.spacing4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('من', style: AppTypography.caption),
-              Text(
-                from,
-                style: AppTypography.bodyLarge.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+              _buildCompactInfo(
+                Icons.access_time,
+                'وقت الانطلاق المتوقع',
+                parcel.route!.days.isNotEmpty
+                    ? parcel.route!.days.first.estimatedDepartureTime
+                    : 'غير محدد',
+              ),
+              _buildCompactInfo(
+                Icons.access_time_filled,
+                'وقت الوصول المتوقع',
+                parcel.route!.days.isNotEmpty
+                    ? parcel.route!.days.first.estimatedArrivalTime
+                    : 'غير محدد',
               ),
             ],
           ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildCompactInfo(IconData icon, String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 12, color: AppColors.slate400),
+            const SizedBox(width: 4),
+            Text(label,
+                style: AppTypography.caption.copyWith(fontSize: 10)),
+          ],
         ),
-        const Icon(Icons.arrow_forward, color: AppColors.slate300),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              const Text('إلى', style: AppTypography.caption),
-              Text(
-                to,
-                style: AppTypography.bodyLarge.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
+        Text(value,
+            style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.w600)),
       ],
     );
   }
