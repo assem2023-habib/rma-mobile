@@ -96,7 +96,7 @@ class _MapPageState extends State<MapPage> {
                       state.parcelLocation.latitude,
                       state.parcelLocation.longitude,
                     ),
-                    initialZoom: 15.0,
+                    initialZoom: 10.0,
                   ),
                   children: [
                     TileLayer(
@@ -104,8 +104,130 @@ class _MapPageState extends State<MapPage> {
                           'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                       userAgentPackageName: 'com.rma.customer',
                     ),
+                    if (state.parcelLocation.sourceBranch != null &&
+                        state.parcelLocation.destinationBranch != null)
+                      PolylineLayer(
+                        polylines: [
+                          Polyline(
+                            points: [
+                              LatLng(
+                                state.parcelLocation.sourceBranch!.latitude,
+                                state.parcelLocation.sourceBranch!.longitude,
+                              ),
+                              LatLng(
+                                state.parcelLocation.latitude,
+                                state.parcelLocation.longitude,
+                              ),
+                              LatLng(
+                                state
+                                    .parcelLocation
+                                    .destinationBranch!
+                                    .latitude,
+                                state
+                                    .parcelLocation
+                                    .destinationBranch!
+                                    .longitude,
+                              ),
+                            ],
+                            color: AppColors.primaryBlue,
+                            strokeWidth: 4.0,
+                            isDotted: true,
+                          ),
+                        ],
+                      ),
                     MarkerLayer(
                       markers: [
+                        // Source Branch Marker
+                        if (state.parcelLocation.sourceBranch != null)
+                          Marker(
+                            point: LatLng(
+                              state.parcelLocation.sourceBranch!.latitude,
+                              state.parcelLocation.sourceBranch!.longitude,
+                            ),
+                            width: 80,
+                            height: 80,
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        blurRadius: 4,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(
+                                    state
+                                        .parcelLocation
+                                        .sourceBranch!
+                                        .branchName,
+                                    style: AppTypography.bodySmall.copyWith(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const Icon(
+                                  Icons.location_on,
+                                  color: Colors.green,
+                                  size: 40,
+                                ),
+                              ],
+                            ),
+                          ),
+                        // Destination Branch Marker
+                        if (state.parcelLocation.destinationBranch != null)
+                          Marker(
+                            point: LatLng(
+                              state.parcelLocation.destinationBranch!.latitude,
+                              state.parcelLocation.destinationBranch!.longitude,
+                            ),
+                            width: 80,
+                            height: 80,
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        blurRadius: 4,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(
+                                    state
+                                        .parcelLocation
+                                        .destinationBranch!
+                                        .branchName,
+                                    style: AppTypography.bodySmall.copyWith(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const Icon(
+                                  Icons.location_on,
+                                  color: AppColors.error,
+                                  size: 40,
+                                ),
+                              ],
+                            ),
+                          ),
+                        // Current Location Marker
                         Marker(
                           point: LatLng(
                             state.parcelLocation.latitude,
@@ -114,9 +236,9 @@ class _MapPageState extends State<MapPage> {
                           width: 80,
                           height: 80,
                           child: const Icon(
-                            Icons.location_on,
-                            color: AppColors.error,
-                            size: 40,
+                            Icons.local_shipping,
+                            color: AppColors.primaryBlue,
+                            size: 45,
                           ),
                         ),
                       ],

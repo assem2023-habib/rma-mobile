@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../../routes/domain/entities/route_entity.dart';
 
 class ParcelLocation extends Equatable {
   final String parcelId;
@@ -6,6 +7,8 @@ class ParcelLocation extends Equatable {
   final double longitude;
   final String status;
   final String lastUpdated;
+  final BranchEntity? sourceBranch;
+  final BranchEntity? destinationBranch;
 
   const ParcelLocation({
     required this.parcelId,
@@ -13,8 +16,18 @@ class ParcelLocation extends Equatable {
     required this.longitude,
     required this.status,
     required this.lastUpdated,
+    this.sourceBranch,
+    this.destinationBranch,
   });
 
   @override
-  List<Object?> get props => [parcelId, latitude, longitude, status, lastUpdated];
+  List<Object?> get props => [
+        parcelId,
+        latitude,
+        longitude,
+        status,
+        lastUpdated,
+        sourceBranch,
+        destinationBranch,
+      ];
 }
