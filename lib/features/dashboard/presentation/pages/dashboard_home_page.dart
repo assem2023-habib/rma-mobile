@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rma_customer/features/dashboard/presentation/bloc/dashboard_event.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -29,7 +30,7 @@ class _DashboardHomePageState extends State<DashboardHomePage> {
   void initState() {
     super.initState();
     context.read<DashboardBloc>().add(GetDashboardStatsEvent());
-    context.read<ParcelsBloc>().add(const GetParcelsEvent());
+    context.read<ParcelsBloc>().add(GetParcelsEvent());
   }
 
   Widget _buildGuestDashboardPlaceholder(BuildContext context) {

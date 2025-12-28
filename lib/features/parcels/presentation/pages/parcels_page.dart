@@ -20,7 +20,7 @@ class _ParcelsPageState extends State<ParcelsPage> {
   @override
   void initState() {
     super.initState();
-    context.read<ParcelsBloc>().add(const GetParcelsEvent());
+    context.read<ParcelsBloc>().add(GetParcelsEvent());
   }
 
   @override
