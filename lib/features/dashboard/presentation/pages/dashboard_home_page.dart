@@ -167,10 +167,17 @@ class _DashboardHomePageState extends State<DashboardHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ShinyBackground(
-        child: BlocBuilder<DashboardBloc, DashboardState>(
-          builder: (context, state) {
-            return CustomScrollView(
-              slivers: [
+        child: RefreshIndicator(
+          onRefresh: () async {
+            context.read<DashboardBloc>().add(GetDashboardStatsEvent());
+            context.read<ParcelsBloc>().add(GetParcelsEvent());
+            context.read<NotificationsBloc>().add(GetNotificationsEvent());
+          },
+          child: BlocBuilder<DashboardBloc, DashboardState>(
+            builder: (context, state) {
+              return CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
                 // Custom AppBar
                 SliverAppBar(
                   expandedHeight: 120,
