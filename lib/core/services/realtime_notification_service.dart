@@ -44,13 +44,13 @@ class RealtimeNotificationService {
     );
 
     PusherOptions options = PusherOptions(
-      host: '10.43.226.236', // Using the same IP as baseUrl
+      host: '10.79.70.236', // Using the same IP as baseUrl
       wsPort: 6001,
       wssPort: 6001,
       encrypted: false,
       cluster: 'mt1',
       auth: PusherAuth(
-        'http://10.43.226.236:8000/api/broadcasting/auth',
+        'http://10.79.70.236:8000/api/broadcasting/auth',
         headers: {
           'Authorization': 'Bearer $token',
           'Accept': 'application/json',

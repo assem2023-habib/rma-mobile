@@ -1,6 +1,6 @@
 class ApiConfig {
   static const String baseUrl =
-      'http://10.43.226.236:8000/api/v1'; // Local domain provided by user
+      'http://10.79.70.236:8000/api/v1'; // Local domain provided by user
   static const Duration connectTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);
 

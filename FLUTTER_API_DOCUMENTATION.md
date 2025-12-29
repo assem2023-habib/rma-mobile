@@ -27,7 +27,7 @@
 يجب استخدام حزمة `pusher_client` أو `laravel_echo` في Flutter.
 
 **بيانات الاتصال:**
-- **Host:** `127.0.0.1` (أو IP السيرفر)
+- **Host:** `10.79.70.236` (IP السيرفر)
 - **Port:** `6001`
 - **Key:** `z8gmvgvmclvhoezjsfil`
 - **Scheme:** `http`
@@ -1801,7 +1801,7 @@ if (data['errors'] != null) {
 يجب استخدام حزمة `pusher_client` أو `laravel_echo` في Flutter.
 
 **بيانات الاتصال:**
-- **Host:** `127.0.0.1` (أو IP السيرفر)
+- **Host:** `10.79.70.236` (IP السيرفر)
 - **Port:** `6001`
 - **Key:** `z8gmvgvmclvhoezjsfil`
 - **Scheme:** `http`
@@ -1854,12 +1854,13 @@ import 'package:laravel_echo/laravel_echo.dart';
 import 'package:pusher_client/pusher_client.dart';
 
 PusherOptions options = PusherOptions(
-  host: '127.0.0.1',
-  port: 6001,
+  host: '10.79.70.236',
+  wsPort: 6001,
+  wssPort: 6001,
   encrypted: false,
   cluster: 'mt1',
   auth: PusherAuth(
-    'http://127.0.0.1/api/broadcasting/auth',
+    'http://10.79.70.236/api/broadcasting/auth',
     headers: {
       'Authorization': 'Bearer $token',
     },
