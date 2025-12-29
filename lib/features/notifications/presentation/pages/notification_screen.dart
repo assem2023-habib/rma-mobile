@@ -9,6 +9,8 @@ import '../bloc/notifications_event.dart';
 import '../bloc/notifications_state.dart';
 import '../../domain/entities/notification_entity.dart';
 
+import '../../../../core/widgets/backgrounds/shiny_background.dart';
+
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
 
@@ -26,26 +28,66 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
+      body: ShinyBackground(
         child: Column(
           children: [
-            AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              title: const Text('الإشعارات', style: AppTypography.heading3),
-              centerTitle: true,
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    context.read<NotificationsBloc>().add(
-                      MarkAllNotificationsAsReadEvent(),
-                    );
-                  },
-                  icon: const Icon(Icons.done_all, color: AppColors.primary),
-                  tooltip: 'تحديد الكل كمقروء',
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppColors.primary, AppColors.primaryDark],
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
                 ),
-              ],
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(AppDimensions.radius3xl),
+                  bottomRight: Radius.circular(AppDimensions.radius3xl),
+                ),
+              ),
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppDimensions.spacing2,
+                    AppDimensions.spacing2,
+                    AppDimensions.spacing4,
+                    AppDimensions.spacing6,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: const Icon(
+                              Icons.arrow_back_ios,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                          const Text(
+                            'الإشعارات',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          context.read<NotificationsBloc>().add(
+                            MarkAllNotificationsAsReadEvent(),
+                          );
+                        },
+                        icon: const Icon(Icons.done_all, color: Colors.white),
+                        tooltip: 'تحديد الكل كمقروء',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
             Expanded(
               child: BlocBuilder<NotificationsBloc, NotificationsState>(
