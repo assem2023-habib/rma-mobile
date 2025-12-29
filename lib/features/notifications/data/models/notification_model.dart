@@ -18,8 +18,15 @@ class NotificationModel extends NotificationEntity {
         ? (pivot['is_read'] == 1 || pivot['is_read'] == true)
         : false;
 
+    // Helper to parse ID safely
+    int parseId(dynamic id) {
+      if (id is int) return id;
+      if (id is String) return int.tryParse(id) ?? 0;
+      return 0;
+    }
+
     return NotificationModel(
-      id: json['id'] as int,
+      id: parseId(json['id']),
       type: json['notification_type'] as String?,
       title: json['title'] as String? ?? 'إشعار جديد',
       message: json['message'] as String? ?? '',
