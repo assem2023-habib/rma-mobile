@@ -12,40 +12,21 @@ class NotificationModel extends NotificationEntity {
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
-    // Laravel notifications typically have a specific structure
-    final dataMap = json['data'] as Map<String, dynamic>? ?? {};
-    
+    // Handling the structure from the server response
+    final pivot = json['pivot'] as Map<String, dynamic>?;
+    final isRead = pivot != null
+        ? (pivot['is_read'] == 1 || pivot['is_read'] == true)
+        : false;
+
     return NotificationModel(
-      id: json['id'] as String,
-      type: json['type'] as String? ?? (dataMap['type'] as String? ?? 'unknown'),
-      title: dataMap['title'] as String? ?? _getDefaultTitle(json['type'] as String?),
-      message: dataMap['message'] as String? ?? _getDefaultMessage(dataMap),
-      data: dataMap,
-      readAt: json['read_at'] != null ? DateTime.parse(json['read_at'] as String) : null,
+      id: json['id'] as int,
+      type: json['notification_type'] as String?,
+      title: json['title'] as String? ?? 'إشعار جديد',
+      message: json['message'] as String? ?? '',
+      data: json['data'] is Map ? json['data'] as Map<String, dynamic> : null,
+      readAt: isRead ? DateTime.tryParse(pivot!['read_at'] ?? '') : null,
       createdAt: DateTime.parse(json['created_at'] as String),
     );
-  }
-
-  static String _getDefaultTitle(String? type) {
-    switch (type) {
-      case 'parcel_status_updated':
-        return 'تحديث حالة الطرد';
-      case 'appointment_confirmed':
-        return 'تأكيد الموعد';
-      case 'authorization_status_updated':
-        return 'تحديث التخويل';
-      case 'pickup_reminder':
-        return 'تذكير بالاستلام';
-      default:
-        return 'إشعار جديد';
-    }
-  }
-
-  static String _getDefaultMessage(Map<String, dynamic> data) {
-    if (data.containsKey('tracking_number')) {
-      return 'تحديث بخصوص الطرد رقم: ${data['tracking_number']}';
-    }
-    return 'لديك تنبيه جديد في النظام';
   }
 
   Map<String, dynamic> toJson() {

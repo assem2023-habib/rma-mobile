@@ -30,7 +30,7 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> markAsRead(String id) async {
+  Future<Either<Failure, Unit>> markAsRead(int id) async {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.markAsRead(id);
@@ -58,7 +58,7 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> deleteNotification(String id) async {
+  Future<Either<Failure, Unit>> deleteNotification(int id) async {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.deleteNotification(id);

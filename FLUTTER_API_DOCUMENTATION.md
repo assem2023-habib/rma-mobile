@@ -1860,7 +1860,7 @@ PusherOptions options = PusherOptions(
   encrypted: false,
   cluster: 'mt1',
   auth: PusherAuth(
-    'http://10.79.70.236/api/broadcasting/auth',
+    'http://10.79.70.236:8000/api/broadcasting/auth',
     headers: {
       'Authorization': 'Bearer $token',
     },

@@ -33,7 +33,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              context.read<NotificationsBloc>().add(MarkAllNotificationsAsReadEvent());
+              context.read<NotificationsBloc>().add(
+                MarkAllNotificationsAsReadEvent(),
+              );
             },
             icon: const Icon(Icons.done_all, color: AppColors.primary),
             tooltip: 'تحديد الكل كمقروء',
@@ -72,7 +74,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   Widget _buildNotificationCard(NotificationEntity notification) {
     return Dismissible(
-      key: Key(notification.id),
+      key: Key(notification.id.toString()),
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerLeft,
@@ -84,31 +86,39 @@ class _NotificationScreenState extends State<NotificationScreen> {
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       onDismissed: (_) {
-        context.read<NotificationsBloc>().add(DeleteNotificationEvent(notification.id));
+        context.read<NotificationsBloc>().add(
+          DeleteNotificationEvent(notification.id),
+        );
       },
       child: Card(
         margin: const EdgeInsets.only(bottom: AppDimensions.spacing3),
         elevation: notification.isRead ? 0 : 2,
-        color: notification.isRead ? Colors.white.withValues(alpha: 0.8) : Colors.white,
+        color: notification.isRead
+            ? Colors.white.withValues(alpha: 0.8)
+            : Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-          side: notification.isRead 
-              ? BorderSide(color: AppColors.divider.withValues(alpha: 0.5)) 
+          side: notification.isRead
+              ? BorderSide(color: AppColors.divider.withValues(alpha: 0.5))
               : const BorderSide(color: AppColors.primary, width: 0.5),
         ),
         child: ListTile(
           onTap: () {
             if (!notification.isRead) {
-              context.read<NotificationsBloc>().add(MarkNotificationAsReadEvent(notification.id));
+              context.read<NotificationsBloc>().add(
+                MarkNotificationAsReadEvent(notification.id),
+              );
             }
             // Handle navigation based on notification data
             _handleNotificationClick(notification);
           },
-          leading: _buildNotificationIcon(notification.type),
+          leading: _buildNotificationIcon(notification.type ?? ''),
           title: Text(
             notification.title,
             style: AppTypography.bodyLarge.copyWith(
-              fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
+              fontWeight: notification.isRead
+                  ? FontWeight.normal
+                  : FontWeight.bold,
             ),
           ),
           subtitle: Column(
@@ -119,11 +129,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
               const SizedBox(height: 8),
               Text(
                 _formatDateTime(notification.createdAt),
-                style: AppTypography.caption.copyWith(color: AppColors.textMuted),
+                style: AppTypography.caption.copyWith(
+                  color: AppColors.textMuted,
+                ),
               ),
             ],
           ),
-          trailing: !notification.isRead 
+          trailing: !notification.isRead
               ? Container(
                   width: 10,
                   height: 10,
@@ -179,11 +191,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.notifications_off_outlined, size: 80, color: AppColors.textMuted.withValues(alpha: 0.5)),
+          Icon(
+            Icons.notifications_off_outlined,
+            size: 80,
+            color: AppColors.textMuted.withValues(alpha: 0.5),
+          ),
           const SizedBox(height: AppDimensions.spacing4),
           const Text('لا توجد إشعارات حالياً', style: AppTypography.heading3),
           const SizedBox(height: AppDimensions.spacing2),
-          const Text('سنقوم بتنبيهك عند وجود تحديثات جديدة', style: AppTypography.bodySmall),
+          const Text(
+            'سنقوم بتنبيهك عند وجود تحديثات جديدة',
+            style: AppTypography.bodySmall,
+          ),
         ],
       ),
     );
@@ -198,7 +217,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
           children: [
             const Icon(Icons.error_outline, size: 60, color: AppColors.error),
             const SizedBox(height: AppDimensions.spacing4),
-            Text(message, style: AppTypography.bodyLarge, textAlign: TextAlign.center),
+            Text(
+              message,
+              style: AppTypography.bodyLarge,
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: AppDimensions.spacing4),
             ElevatedButton(
               onPressed: () {

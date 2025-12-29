@@ -43,15 +43,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
       final currentState = state as NotificationsLoaded;
       final updatedNotifications = currentState.notifications.map((n) {
         if (n.id == event.id) {
-          return NotificationEntity(
-            id: n.id,
-            type: n.type,
-            title: n.title,
-            message: n.message,
-            data: n.data,
-            readAt: DateTime.now(),
-            createdAt: n.createdAt,
-          );
+          return n.copyWith(readAt: DateTime.now());
         }
         return n;
       }).toList();
@@ -75,15 +67,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     if (state is NotificationsLoaded) {
       final currentState = state as NotificationsLoaded;
       final updatedNotifications = currentState.notifications.map((n) {
-        return NotificationEntity(
-          id: n.id,
-          type: n.type,
-          title: n.title,
-          message: n.message,
-          data: n.data,
-          readAt: DateTime.now(),
-          createdAt: n.createdAt,
-        );
+        return n.copyWith(readAt: DateTime.now());
       }).toList();
 
       emit(
