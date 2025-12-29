@@ -46,13 +46,13 @@ class RealtimeNotificationService {
     );
 
     PusherOptions options = PusherOptions(
-      host: '10.79.70.236', // Using the same IP as baseUrl
+      host: '10.43.226.236',
       wsPort: 6001,
       wssPort: 6001,
       encrypted: false,
       cluster: 'mt1',
       auth: PusherAuth(
-        'http://10.79.70.236:8000/api/broadcasting/auth',
+        'http://10.43.226.236:8000/api/broadcasting/auth',
         headers: {
           'Authorization': 'Bearer $token',
           'Accept': 'application/json',
@@ -61,6 +61,21 @@ class RealtimeNotificationService {
     );
 
     _pusher = PusherClient('z8gmvgvmclvhoezjsfil', options, autoConnect: true);
+
+    _pusher!.onConnectionStateChange((state) {
+      dev.log(
+        'Connection state changed: ${state?.currentState}',
+        name: 'RealtimeNotification',
+      );
+    });
+
+    _pusher!.onConnectionError((error) {
+      dev.log(
+        'Connection error: ${error?.message}',
+        name: 'RealtimeNotification',
+        error: error?.exception,
+      );
+    });
 
     _echo = Echo(client: _pusher, broadcaster: EchoBroadcasterType.Pusher);
 

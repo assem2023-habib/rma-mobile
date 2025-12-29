@@ -1,8 +1,13 @@
 class ApiConfig {
   static const String baseUrl =
-      'http://10.79.70.236:8000/api/v1'; // Local domain provided by user
+      'http://10.43.226.236:8000/api/v1'; // Updated IP provided by user
   static const Duration connectTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);
+
+  // Passport Client credentials
+  static const String passportClientId = '01980742-84ea-7291-aed5-d9297263b3be';
+  static const String passportClientSecret =
+      'GPGlGNKDO9QS3enM10DC99hPTiftmJyhhmJQNgQ1';
 
   // Endpoints
   static const String login = '/login';

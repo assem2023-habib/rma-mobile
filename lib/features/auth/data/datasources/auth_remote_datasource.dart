@@ -46,7 +46,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await dioClient.post(
         ApiConfig.login,
-        data: {'email': email, 'password': password},
+        data: {
+          'email': email,
+          'password': password,
+          'client_id': ApiConfig.passportClientId,
+          'client_secret': ApiConfig.passportClientSecret,
+        },
       );
 
       if (response.statusCode == 200) {
@@ -92,6 +97,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'birthday': birthday,
           'city_id': cityId,
           'national_number': nationalNumber,
+          'client_id': ApiConfig.passportClientId,
+          'client_secret': ApiConfig.passportClientSecret,
         },
       );
 

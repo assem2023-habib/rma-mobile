@@ -27,7 +27,7 @@
 يجب استخدام حزمة `pusher_client_fixed` أو `laravel_echo` في Flutter.
 
 **بيانات الاتصال:**
-- **Host:** `10.79.70.236` (IP السيرفر)
+- **Host:** `10.43.226.236` (IP السيرفر)
 - **Port:** `6001`
 - **Key:** `z8gmvgvmclvhoezjsfil`
 - **Scheme:** `http`
@@ -76,7 +76,7 @@
 ### Base URL
 
 ```
-https://your-domain.com/api/v1
+http://10.43.226.236:8000/api/v1
 ```
 
 ### Rate Limiting
