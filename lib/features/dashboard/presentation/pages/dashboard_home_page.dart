@@ -178,553 +178,573 @@ class _DashboardHomePageState extends State<DashboardHomePage> {
               return CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
-                // Custom AppBar
-                SliverAppBar(
-                  expandedHeight: 120,
-                  floating: false,
-                  pinned: true,
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppColors.primary, AppColors.primaryDark],
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomLeft,
+                  // Custom AppBar
+                  SliverAppBar(
+                    expandedHeight: 120,
+                    floating: false,
+                    pinned: true,
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [AppColors.primary, AppColors.primaryDark],
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(
+                              AppDimensions.radius3xl,
+                            ),
+                            bottomRight: Radius.circular(
+                              AppDimensions.radius3xl,
+                            ),
+                          ),
                         ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(AppDimensions.radius3xl),
-                          bottomRight: Radius.circular(AppDimensions.radius3xl),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppDimensions.spacing4,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 40),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withValues(
-                                          alpha: 0.2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(
-                                          AppDimensions.radiusXl,
-                                        ),
-                                      ),
-                                      child: const Icon(
-                                        Icons.local_shipping,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: AppDimensions.spacing3,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'شحن سريع',
-                                          style: AppTypography.heading3
-                                              .copyWith(color: Colors.white),
-                                        ),
-                                        BlocBuilder<AuthBloc, AuthState>(
-                                          builder: (context, state) {
-                                            String name = 'أحمد';
-                                            if (state is Authenticated) {
-                                              name = state.user.firstName;
-                                            } else if (state
-                                                is GuestAuthenticated) {
-                                              name = 'ضيف';
-                                            }
-                                            return Text(
-                                              'مرحباً بك، $name',
-                                              style: AppTypography.caption
-                                                  .copyWith(
-                                                    color: Colors.white
-                                                        .withValues(alpha: 0.8),
-                                                  ),
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    BlocBuilder<
-                                      NotificationsBloc,
-                                      NotificationsState
-                                    >(
-                                      builder: (context, state) {
-                                        int unreadCount = 0;
-                                        if (state is NotificationsLoaded) {
-                                          unreadCount = state.unreadCount;
-                                        }
-                                        return GestureDetector(
-                                          onTap: () {
-                                            final authState = context
-                                                .read<AuthBloc>()
-                                                .state;
-                                            if (authState
-                                                is GuestAuthenticated) {
-                                              GuestPromptBottomSheet.show(
-                                                context,
-                                                'الإشعارات',
-                                              );
-                                            } else {
-                                              context.push('/notifications');
-                                            }
-                                          },
-                                          child: Stack(
-                                            clipBehavior: Clip.none,
-                                            children: [
-                                              CircleAvatar(
-                                                radius: 20,
-                                                backgroundColor: Colors.white
-                                                    .withValues(alpha: 0.2),
-                                                child: const Icon(
-                                                  Icons.notifications_outlined,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              if (unreadCount > 0)
-                                                Positioned(
-                                                  right: -2,
-                                                  top: -2,
-                                                  child: Container(
-                                                    padding:
-                                                        const EdgeInsets.all(4),
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                          color:
-                                                              AppColors.error,
-                                                          shape:
-                                                              BoxShape.circle,
-                                                        ),
-                                                    constraints:
-                                                        const BoxConstraints(
-                                                          minWidth: 16,
-                                                          minHeight: 16,
-                                                        ),
-                                                    child: Text(
-                                                      unreadCount > 9
-                                                          ? '9+'
-                                                          : unreadCount
-                                                                .toString(),
-                                                      style: const TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 10,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ),
-                                            ],
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppDimensions.spacing4,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 40),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.2,
                                           ),
-                                        );
-                                      },
-                                    ),
-                                    const SizedBox(
-                                      width: AppDimensions.spacing3,
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        final authState = context
-                                            .read<AuthBloc>()
-                                            .state;
-                                        if (authState is GuestAuthenticated) {
-                                          GuestPromptBottomSheet.show(
-                                            context,
-                                            'الملف الشخصي',
-                                          );
-                                        } else {
-                                          context.push('/profile');
-                                        }
-                                      },
-                                      child: CircleAvatar(
-                                        radius: 20,
-                                        backgroundColor: Colors.white
-                                            .withValues(alpha: 0.2),
+                                          borderRadius: BorderRadius.circular(
+                                            AppDimensions.radiusXl,
+                                          ),
+                                        ),
                                         child: const Icon(
-                                          Icons.person_outline,
+                                          Icons.local_shipping,
                                           color: Colors.white,
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
-                if (state is DashboardLoading)
-                  const SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                else if (state is DashboardError)
-                  BlocBuilder<AuthBloc, AuthState>(
-                    builder: (context, authState) {
-                      if (authState is GuestAuthenticated) {
-                        return SliverToBoxAdapter(
-                          child: _buildGuestDashboardPlaceholder(context),
-                        );
-                      }
-                      return SliverFillRemaining(
-                        child: Center(child: Text(state.message)),
-                      );
-                    },
-                  )
-                else if (state is DashboardLoaded) ...[
-                  // Quick Actions
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AppDimensions.spacing6,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: AppDimensions.spacing4,
-                            ),
-                            child: Text(
-                              'إجراءات سريعة',
-                              style: AppTypography.heading3,
-                            ),
-                          ),
-                          const SizedBox(height: AppDimensions.spacing4),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppDimensions.spacing4,
-                            ),
-                            child: Row(
-                              children: [
-                                QuickActionCard(
-                                  title: 'طرد جديد',
-                                  description: 'إرسال طرد جديد الآن',
-                                  icon: Icons.add_box_outlined,
-                                  gradient: const [
-                                    AppColors.primary,
-                                    AppColors.primaryDark,
-                                  ],
-                                  onTap: () {
-                                    final authState = context
-                                        .read<AuthBloc>()
-                                        .state;
-                                    if (authState is GuestAuthenticated) {
-                                      GuestPromptBottomSheet.show(
-                                        context,
-                                        'إرسال طرد',
-                                      );
-                                    } else {
-                                      context.push('/new-parcel');
-                                    }
-                                  },
-                                ),
-                                const SizedBox(width: AppDimensions.spacing3),
-                                QuickActionCard(
-                                  title: 'تتبع الشحنات',
-                                  description: 'عرض موقع شحناتك',
-                                  icon: Icons.map_outlined,
-                                  gradient: const [
-                                    AppColors.primaryLight,
-                                    AppColors.info,
-                                  ],
-                                  onTap: () => context.push('/map/RMA-99001'),
-                                ),
-                                const SizedBox(width: AppDimensions.spacing3),
-                                QuickActionCard(
-                                  title: 'التخويلات',
-                                  description: 'إدارة تخويلات الاستلام',
-                                  icon: Icons.security_outlined,
-                                  gradient: const [
-                                    AppColors.primarySoft,
-                                    AppColors.primary,
-                                  ],
-                                  onTap: () {
-                                    final authState = context
-                                        .read<AuthBloc>()
-                                        .state;
-                                    if (authState is GuestAuthenticated) {
-                                      GuestPromptBottomSheet.show(
-                                        context,
-                                        'التخويلات',
-                                      );
-                                    } else {
-                                      context.push('/authorizations');
-                                    }
-                                  },
-                                ),
-                                const SizedBox(width: AppDimensions.spacing3),
-                                QuickActionCard(
-                                  title: 'المسارات',
-                                  description: 'عرض المسارات المتاحة',
-                                  icon: Icons.route_outlined,
-                                  gradient: const [
-                                    AppColors.warning,
-                                    AppColors.warning,
-                                  ],
-                                  onTap: () => context.push('/routes'),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // Stats Grid
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDimensions.spacing4,
-                    ),
-                    sliver: SliverGrid(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: MediaQuery.of(context).size.width > 600
-                            ? 4
-                            : 2,
-                        mainAxisSpacing: AppDimensions.spacing3,
-                        crossAxisSpacing: AppDimensions.spacing3,
-                        childAspectRatio:
-                            MediaQuery.of(context).size.width > 600 ? 1.5 : 1.0,
-                      ),
-                      delegate: SliverChildListDelegate([
-                        StatsCard(
-                          title: 'إجمالي الطرود',
-                          value: state.stats.totalParcels.toString(),
-                          change:
-                              '${state.stats.parcelsByStatus['Pending'] ?? 0} قيد الانتظار',
-                          icon: Icons.inventory_2_outlined,
-                          iconGradient: const [
-                            AppColors.primary,
-                            AppColors.primaryDark,
-                          ],
-                        ),
-                        StatsCard(
-                          title: 'تم التوصيل',
-                          value: (state.stats.parcelsByStatus['Delivered'] ?? 0)
-                              .toString(),
-                          change: 'من إجمالي الشحنات',
-                          icon: Icons.check_circle_outline,
-                          iconGradient: const [
-                            AppColors.success,
-                            AppColors.info,
-                          ],
-                        ),
-                        StatsCard(
-                          title: 'الفروع',
-                          value: state.stats.branchesCount.toString(),
-                          change: 'فرعاً في خدمتكم',
-                          icon: Icons.storefront_outlined,
-                          iconGradient: const [
-                            AppColors.warning,
-                            AppColors.warning,
-                          ],
-                        ),
-                        StatsCard(
-                          title: 'تغطيتنا',
-                          value: state.stats.citiesCount.toString(),
-                          change: 'مدينة حول العالم',
-                          icon: Icons.public_outlined,
-                          iconGradient: const [
-                            AppColors.primarySoft,
-                            AppColors.primary,
-                          ],
-                        ),
-                      ]),
-                    ),
-                  ),
-
-                  // Recent Parcels Header
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        AppDimensions.spacing4,
-                        AppDimensions.spacing8,
-                        AppDimensions.spacing4,
-                        AppDimensions.spacing4,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'الطرود الأخيرة',
-                            style: AppTypography.heading3,
-                          ),
-                          TextButton(
-                            onPressed: () => context.push('/parcels'),
-                            child: const Text('عرض الكل'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // Recent Parcels List
-                  BlocBuilder<ParcelsBloc, ParcelsState>(
-                    builder: (context, parcelState) {
-                      if (parcelState is ParcelsLoading) {
-                        return const SliverToBoxAdapter(
-                          child: Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(AppDimensions.spacing4),
-                              child: CircularProgressIndicator(),
-                            ),
-                          ),
-                        );
-                      }
-
-                      if (parcelState is ParcelsError) {
-                        return SliverToBoxAdapter(
-                          child: Center(child: Text(parcelState.message)),
-                        );
-                      }
-
-                      if (parcelState is ParcelsLoaded) {
-                        final recentParcels = parcelState.parcels
-                            .take(5)
-                            .toList();
-
-                        if (recentParcels.isEmpty) {
-                          return const SliverToBoxAdapter(
-                            child: Center(child: Text('لا يوجد طرود حالياً')),
-                          );
-                        }
-
-                        return SliverList(
-                          delegate: SliverChildBuilderDelegate((
-                            context,
-                            index,
-                          ) {
-                            final parcel = recentParcels[index];
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppDimensions.spacing4,
-                                vertical: AppDimensions.spacing2,
-                              ),
-                              child: GestureDetector(
-                                onTap: () => context.push(
-                                  '/parcels/${parcel.id}',
-                                  extra: parcel,
-                                ),
-                                child: Container(
-                                  padding: const EdgeInsets.all(
-                                    AppDimensions.spacing4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(
-                                      AppDimensions.radiusXl,
-                                    ),
-                                    border: Border.all(color: AppColors.border),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 48,
-                                        height: 48,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.backgroundSecondary,
-                                          borderRadius: BorderRadius.circular(
-                                            AppDimensions.radiusLg,
+                                      const SizedBox(
+                                        width: AppDimensions.spacing3,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'شحن سريع',
+                                            style: AppTypography.heading3
+                                                .copyWith(color: Colors.white),
                                           ),
-                                        ),
-                                        child: Icon(
-                                          Icons.inventory_2,
-                                          color: parcel.status.color,
-                                        ),
+                                          BlocBuilder<AuthBloc, AuthState>(
+                                            builder: (context, state) {
+                                              String name = 'أحمد';
+                                              if (state is Authenticated) {
+                                                name = state.user.firstName;
+                                              } else if (state
+                                                  is GuestAuthenticated) {
+                                                name = 'ضيف';
+                                              }
+                                              return Text(
+                                                'مرحباً بك، $name',
+                                                style: AppTypography.caption
+                                                    .copyWith(
+                                                      color: Colors.white
+                                                          .withValues(
+                                                            alpha: 0.8,
+                                                          ),
+                                                    ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      BlocBuilder<
+                                        NotificationsBloc,
+                                        NotificationsState
+                                      >(
+                                        builder: (context, state) {
+                                          int unreadCount = 0;
+                                          if (state is NotificationsLoaded) {
+                                            unreadCount = state.unreadCount;
+                                          }
+                                          return GestureDetector(
+                                            onTap: () {
+                                              final authState = context
+                                                  .read<AuthBloc>()
+                                                  .state;
+                                              if (authState
+                                                  is GuestAuthenticated) {
+                                                GuestPromptBottomSheet.show(
+                                                  context,
+                                                  'الإشعارات',
+                                                );
+                                              } else {
+                                                context.push('/notifications');
+                                              }
+                                            },
+                                            child: Stack(
+                                              clipBehavior: Clip.none,
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: 20,
+                                                  backgroundColor: Colors.white
+                                                      .withValues(alpha: 0.2),
+                                                  child: const Icon(
+                                                    Icons
+                                                        .notifications_outlined,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                if (unreadCount > 0)
+                                                  Positioned(
+                                                    right: -2,
+                                                    top: -2,
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                            4,
+                                                          ),
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                            color:
+                                                                AppColors.error,
+                                                            shape:
+                                                                BoxShape.circle,
+                                                          ),
+                                                      constraints:
+                                                          const BoxConstraints(
+                                                            minWidth: 16,
+                                                            minHeight: 16,
+                                                          ),
+                                                      child: Text(
+                                                        unreadCount > 9
+                                                            ? '9+'
+                                                            : unreadCount
+                                                                  .toString(),
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                          );
+                                        },
                                       ),
                                       const SizedBox(
-                                        width: AppDimensions.spacing4,
+                                        width: AppDimensions.spacing3,
                                       ),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              parcel.trackingNumber,
-                                              style: AppTypography.bodyLarge
-                                                  .copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                            ),
-                                            Text(
-                                              '${parcel.fromCity} ← ${parcel.toCity}',
-                                              style: AppTypography.caption
-                                                  .copyWith(
-                                                    color: AppColors.textMuted,
-                                                  ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: parcel.status.color.withValues(
-                                            alpha: 0.1,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            AppDimensions.radiusFull,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          parcel.status.label,
-                                          style: AppTypography.caption.copyWith(
-                                            color: parcel.status.color,
-                                            fontWeight: FontWeight.bold,
+                                      GestureDetector(
+                                        onTap: () {
+                                          final authState = context
+                                              .read<AuthBloc>()
+                                              .state;
+                                          if (authState is GuestAuthenticated) {
+                                            GuestPromptBottomSheet.show(
+                                              context,
+                                              'الملف الشخصي',
+                                            );
+                                          } else {
+                                            context.push('/profile');
+                                          }
+                                        },
+                                        child: CircleAvatar(
+                                          radius: 20,
+                                          backgroundColor: Colors.white
+                                              .withValues(alpha: 0.2),
+                                          child: const Icon(
+                                            Icons.person_outline,
+                                            color: Colors.white,
                                           ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                ),
+                                ],
                               ),
-                            );
-                          }, childCount: recentParcels.length),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  if (state is DashboardLoading)
+                    const SliverFillRemaining(
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else if (state is DashboardError)
+                    BlocBuilder<AuthBloc, AuthState>(
+                      builder: (context, authState) {
+                        if (authState is GuestAuthenticated) {
+                          return SliverToBoxAdapter(
+                            child: _buildGuestDashboardPlaceholder(context),
+                          );
+                        }
+                        return SliverFillRemaining(
+                          child: Center(child: Text(state.message)),
                         );
-                      }
+                      },
+                    )
+                  else if (state is DashboardLoaded) ...[
+                    // Quick Actions
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppDimensions.spacing6,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: AppDimensions.spacing4,
+                              ),
+                              child: Text(
+                                'إجراءات سريعة',
+                                style: AppTypography.heading3,
+                              ),
+                            ),
+                            const SizedBox(height: AppDimensions.spacing4),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppDimensions.spacing4,
+                              ),
+                              child: Row(
+                                children: [
+                                  QuickActionCard(
+                                    title: 'طرد جديد',
+                                    description: 'إرسال طرد جديد الآن',
+                                    icon: Icons.add_box_outlined,
+                                    gradient: const [
+                                      AppColors.primary,
+                                      AppColors.primaryDark,
+                                    ],
+                                    onTap: () {
+                                      final authState = context
+                                          .read<AuthBloc>()
+                                          .state;
+                                      if (authState is GuestAuthenticated) {
+                                        GuestPromptBottomSheet.show(
+                                          context,
+                                          'إرسال طرد',
+                                        );
+                                      } else {
+                                        context.push('/new-parcel');
+                                      }
+                                    },
+                                  ),
+                                  const SizedBox(width: AppDimensions.spacing3),
+                                  QuickActionCard(
+                                    title: 'تتبع الشحنات',
+                                    description: 'عرض موقع شحناتك',
+                                    icon: Icons.map_outlined,
+                                    gradient: const [
+                                      AppColors.primaryLight,
+                                      AppColors.info,
+                                    ],
+                                    onTap: () => context.push('/map/RMA-99001'),
+                                  ),
+                                  const SizedBox(width: AppDimensions.spacing3),
+                                  QuickActionCard(
+                                    title: 'التخويلات',
+                                    description: 'إدارة تخويلات الاستلام',
+                                    icon: Icons.security_outlined,
+                                    gradient: const [
+                                      AppColors.primarySoft,
+                                      AppColors.primary,
+                                    ],
+                                    onTap: () {
+                                      final authState = context
+                                          .read<AuthBloc>()
+                                          .state;
+                                      if (authState is GuestAuthenticated) {
+                                        GuestPromptBottomSheet.show(
+                                          context,
+                                          'التخويلات',
+                                        );
+                                      } else {
+                                        context.push('/authorizations');
+                                      }
+                                    },
+                                  ),
+                                  const SizedBox(width: AppDimensions.spacing3),
+                                  QuickActionCard(
+                                    title: 'المسارات',
+                                    description: 'عرض المسارات المتاحة',
+                                    icon: Icons.route_outlined,
+                                    gradient: const [
+                                      AppColors.warning,
+                                      AppColors.warning,
+                                    ],
+                                    onTap: () => context.push('/routes'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
 
-                      return const SliverToBoxAdapter(child: SizedBox.shrink());
-                    },
-                  ),
+                    // Stats Grid
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppDimensions.spacing4,
+                      ),
+                      sliver: SliverGrid(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount:
+                              MediaQuery.of(context).size.width > 600 ? 4 : 2,
+                          mainAxisSpacing: AppDimensions.spacing3,
+                          crossAxisSpacing: AppDimensions.spacing3,
+                          childAspectRatio:
+                              MediaQuery.of(context).size.width > 600
+                              ? 1.5
+                              : 1.0,
+                        ),
+                        delegate: SliverChildListDelegate([
+                          StatsCard(
+                            title: 'إجمالي الطرود',
+                            value: state.stats.totalParcels.toString(),
+                            change:
+                                '${state.stats.parcelsByStatus['Pending'] ?? 0} قيد الانتظار',
+                            icon: Icons.inventory_2_outlined,
+                            iconGradient: const [
+                              AppColors.primary,
+                              AppColors.primaryDark,
+                            ],
+                          ),
+                          StatsCard(
+                            title: 'تم التوصيل',
+                            value:
+                                (state.stats.parcelsByStatus['Delivered'] ?? 0)
+                                    .toString(),
+                            change: 'من إجمالي الشحنات',
+                            icon: Icons.check_circle_outline,
+                            iconGradient: const [
+                              AppColors.success,
+                              AppColors.info,
+                            ],
+                          ),
+                          StatsCard(
+                            title: 'الفروع',
+                            value: state.stats.branchesCount.toString(),
+                            change: 'فرعاً في خدمتكم',
+                            icon: Icons.storefront_outlined,
+                            iconGradient: const [
+                              AppColors.warning,
+                              AppColors.warning,
+                            ],
+                          ),
+                          StatsCard(
+                            title: 'تغطيتنا',
+                            value: state.stats.citiesCount.toString(),
+                            change: 'مدينة حول العالم',
+                            icon: Icons.public_outlined,
+                            iconGradient: const [
+                              AppColors.primarySoft,
+                              AppColors.primary,
+                            ],
+                          ),
+                        ]),
+                      ),
+                    ),
 
-                  const SliverToBoxAdapter(
-                    child: SizedBox(height: AppDimensions.spacing8),
-                  ),
+                    // Recent Parcels Header
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppDimensions.spacing4,
+                          AppDimensions.spacing8,
+                          AppDimensions.spacing4,
+                          AppDimensions.spacing4,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'الطرود الأخيرة',
+                              style: AppTypography.heading3,
+                            ),
+                            TextButton(
+                              onPressed: () => context.push('/parcels'),
+                              child: const Text('عرض الكل'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Recent Parcels List
+                    BlocBuilder<ParcelsBloc, ParcelsState>(
+                      builder: (context, parcelState) {
+                        if (parcelState is ParcelsLoading) {
+                          return const SliverToBoxAdapter(
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(AppDimensions.spacing4),
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
+                          );
+                        }
+
+                        if (parcelState is ParcelsError) {
+                          return SliverToBoxAdapter(
+                            child: Center(child: Text(parcelState.message)),
+                          );
+                        }
+
+                        if (parcelState is ParcelsLoaded) {
+                          final recentParcels = parcelState.parcels
+                              .take(5)
+                              .toList();
+
+                          if (recentParcels.isEmpty) {
+                            return const SliverToBoxAdapter(
+                              child: Center(child: Text('لا يوجد طرود حالياً')),
+                            );
+                          }
+
+                          return SliverList(
+                            delegate: SliverChildBuilderDelegate((
+                              context,
+                              index,
+                            ) {
+                              final parcel = recentParcels[index];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppDimensions.spacing4,
+                                  vertical: AppDimensions.spacing2,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () => context.push(
+                                    '/parcels/${parcel.id}',
+                                    extra: parcel,
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(
+                                      AppDimensions.spacing4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(
+                                        AppDimensions.radiusXl,
+                                      ),
+                                      border: Border.all(
+                                        color: AppColors.border,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 48,
+                                          height: 48,
+                                          decoration: BoxDecoration(
+                                            color:
+                                                AppColors.backgroundSecondary,
+                                            borderRadius: BorderRadius.circular(
+                                              AppDimensions.radiusLg,
+                                            ),
+                                          ),
+                                          child: Icon(
+                                            Icons.inventory_2,
+                                            color: parcel.status.color,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: AppDimensions.spacing4,
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                parcel.trackingNumber,
+                                                style: AppTypography.bodyLarge
+                                                    .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                              ),
+                                              Text(
+                                                '${parcel.fromCity} ← ${parcel.toCity}',
+                                                style: AppTypography.caption
+                                                    .copyWith(
+                                                      color:
+                                                          AppColors.textMuted,
+                                                    ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: parcel.status.color
+                                                .withValues(alpha: 0.1),
+                                            borderRadius: BorderRadius.circular(
+                                              AppDimensions.radiusFull,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            parcel.status.label,
+                                            style: AppTypography.caption
+                                                .copyWith(
+                                                  color: parcel.status.color,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }, childCount: recentParcels.length),
+                          );
+                        }
+
+                        return const SliverToBoxAdapter(
+                          child: SizedBox.shrink(),
+                        );
+                      },
+                    ),
+
+                    const SliverToBoxAdapter(
+                      child: SizedBox(height: AppDimensions.spacing8),
+                    ),
+                  ],
                 ],
-              ],
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
