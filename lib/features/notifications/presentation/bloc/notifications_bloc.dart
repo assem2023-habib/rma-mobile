@@ -91,16 +91,21 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
           .where((n) => n.id != event.id)
           .toList();
 
-      emit(
-        NotificationsLoaded(
-          notifications: updatedNotifications,
-          unreadCount: updatedNotifications
-              .where((n) => n.isRead == false)
-              .length,
-        ),
-      );
+      final result = await repository.deleteNotification(event.id);
 
-      await repository.deleteNotification(event.id);
+      result.fold((failure) => emit(NotificationsError(failure.message)), (
+        message,
+      ) {
+        emit(
+          NotificationsLoaded(
+            notifications: updatedNotifications,
+            unreadCount: updatedNotifications
+                .where((n) => n.isRead == false)
+                .length,
+            successMessage: message,
+          ),
+        );
+      });
     }
   }
 

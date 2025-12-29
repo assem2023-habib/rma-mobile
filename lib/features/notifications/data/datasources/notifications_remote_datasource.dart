@@ -7,7 +7,7 @@ abstract class NotificationsRemoteDataSource {
   Future<List<NotificationModel>> getNotifications();
   Future<void> markAsRead(int id);
   Future<void> markAllAsRead();
-  Future<void> deleteNotification(int id);
+  Future<String?> deleteNotification(int id);
 }
 
 class NotificationsRemoteDataSourceImpl
@@ -61,10 +61,12 @@ class NotificationsRemoteDataSourceImpl
   }
 
   @override
-  Future<void> deleteNotification(int id) async {
+  Future<String?> deleteNotification(int id) async {
     try {
       final response = await dioClient.delete('${ApiConfig.notifications}/$id');
-      if (response.statusCode != 200) {
+      if (response.statusCode == 200) {
+        return response.data['message'] as String?;
+      } else {
         throw ServerException();
       }
     } catch (e) {

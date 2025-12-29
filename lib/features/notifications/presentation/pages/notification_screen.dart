@@ -90,34 +90,48 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
             ),
             Expanded(
-              child: BlocBuilder<NotificationsBloc, NotificationsState>(
-                builder: (context, state) {
-                  if (state is NotificationsLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is NotificationsLoaded) {
-                    if (state.notifications.isEmpty) {
-                      return _buildEmptyState();
-                    }
-                    return RefreshIndicator(
-                      onRefresh: () async {
-                        context.read<NotificationsBloc>().add(
-                          GetNotificationsEvent(),
-                        );
-                      },
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(AppDimensions.spacing4),
-                        itemCount: state.notifications.length,
-                        itemBuilder: (context, index) {
-                          final notification = state.notifications[index];
-                          return _buildNotificationCard(notification);
-                        },
+              child: BlocListener<NotificationsBloc, NotificationsState>(
+                listener: (context, state) {
+                  if (state is NotificationsLoaded &&
+                      state.successMessage != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.successMessage!),
+                        backgroundColor: Colors.green,
+                        behavior: SnackBarBehavior.floating,
                       ),
                     );
-                  } else if (state is NotificationsError) {
-                    return _buildErrorState(state.message);
                   }
-                  return const SizedBox.shrink();
                 },
+                child: BlocBuilder<NotificationsBloc, NotificationsState>(
+                  builder: (context, state) {
+                    if (state is NotificationsLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is NotificationsLoaded) {
+                      if (state.notifications.isEmpty) {
+                        return _buildEmptyState();
+                      }
+                      return RefreshIndicator(
+                        onRefresh: () async {
+                          context.read<NotificationsBloc>().add(
+                            GetNotificationsEvent(),
+                          );
+                        },
+                        child: ListView.builder(
+                          padding: const EdgeInsets.all(AppDimensions.spacing4),
+                          itemCount: state.notifications.length,
+                          itemBuilder: (context, index) {
+                            final notification = state.notifications[index];
+                            return _buildNotificationCard(notification);
+                          },
+                        ),
+                      );
+                    } else if (state is NotificationsError) {
+                      return _buildErrorState(state.message);
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
               ),
             ),
           ],

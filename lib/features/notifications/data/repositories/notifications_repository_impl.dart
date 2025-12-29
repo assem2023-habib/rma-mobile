@@ -58,11 +58,11 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> deleteNotification(int id) async {
+  Future<Either<Failure, String?>> deleteNotification(int id) async {
     if (await networkInfo.isConnected) {
       try {
-        await remoteDataSource.deleteNotification(id);
-        return const Right(unit);
+        final message = await remoteDataSource.deleteNotification(id);
+        return Right(message);
       } on ServerException {
         return const Left(ServerFailure('حدث خطأ أثناء حذف الإشعار'));
       }
