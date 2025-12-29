@@ -79,9 +79,11 @@ class RealtimeNotificationService {
 
     _echo = Echo(client: _pusher, broadcaster: EchoBroadcasterType.Pusher);
 
+    // Listening to the specific Laravel notification event:
+    // Illuminate\Notifications\Events\BroadcastNotificationCreated
     _echo!.private('App.Models.User.$userId').notification((notification) {
       dev.log(
-        'New notification received via Echo: $notification',
+        'New notification received via Echo (BroadcastNotificationCreated): $notification',
         name: 'RealtimeNotification',
       );
 
