@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class NotificationEntity extends Equatable {
-  final int id;
+  final String id;
   final String? type;
   final String title;
   final String message;
@@ -20,7 +20,7 @@ class NotificationEntity extends Equatable {
   });
 
   NotificationEntity copyWith({
-    int? id,
+    String? id,
     String? type,
     String? title,
     String? message,

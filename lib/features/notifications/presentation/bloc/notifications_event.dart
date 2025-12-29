@@ -11,7 +11,7 @@ abstract class NotificationsEvent extends Equatable {
 class GetNotificationsEvent extends NotificationsEvent {}
 
 class MarkNotificationAsReadEvent extends NotificationsEvent {
-  final int id;
+  final String id;
   const MarkNotificationAsReadEvent(this.id);
 
   @override
@@ -21,7 +21,7 @@ class MarkNotificationAsReadEvent extends NotificationsEvent {
 class MarkAllNotificationsAsReadEvent extends NotificationsEvent {}
 
 class DeleteNotificationEvent extends NotificationsEvent {
-  final int id;
+  final String id;
   const DeleteNotificationEvent(this.id);
 
   @override

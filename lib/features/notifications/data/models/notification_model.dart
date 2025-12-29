@@ -19,10 +19,9 @@ class NotificationModel extends NotificationEntity {
         : false;
 
     // Helper to parse ID safely
-    int parseId(dynamic id) {
-      if (id is int) return id;
-      if (id is String) return int.tryParse(id) ?? 0;
-      return 0;
+    String parseId(dynamic id) {
+      if (id == null) return '';
+      return id.toString();
     }
 
     return NotificationModel(

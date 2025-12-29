@@ -5,9 +5,9 @@ import '../models/notification_model.dart';
 
 abstract class NotificationsRemoteDataSource {
   Future<List<NotificationModel>> getNotifications();
-  Future<void> markAsRead(int id);
+  Future<void> markAsRead(String id);
   Future<void> markAllAsRead();
-  Future<String?> deleteNotification(int id);
+  Future<String?> deleteNotification(String id);
 }
 
 class NotificationsRemoteDataSourceImpl
@@ -33,7 +33,7 @@ class NotificationsRemoteDataSourceImpl
   }
 
   @override
-  Future<void> markAsRead(int id) async {
+  Future<void> markAsRead(String id) async {
     try {
       final response = await dioClient.post(
         '${ApiConfig.notifications}/$id/read',
@@ -61,7 +61,7 @@ class NotificationsRemoteDataSourceImpl
   }
 
   @override
-  Future<String?> deleteNotification(int id) async {
+  Future<String?> deleteNotification(String id) async {
     try {
       final response = await dioClient.delete('${ApiConfig.notifications}/$id');
       if (response.statusCode == 200) {
