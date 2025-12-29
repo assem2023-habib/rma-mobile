@@ -24,7 +24,7 @@
 
 ### 🔌 الاتصال بـ Reverb (Pusher Client)
 
-يجب استخدام حزمة `pusher_client` أو `laravel_echo` في Flutter.
+يجب استخدام حزمة `pusher_client_fixed` أو `laravel_echo` في Flutter.
 
 **بيانات الاتصال:**
 - **Host:** `10.79.70.236` (IP السيرفر)
@@ -1798,7 +1798,7 @@ if (data['errors'] != null) {
 
 ### 🔌 الاتصال بـ Reverb (Pusher Client)
 
-يجب استخدام حزمة `pusher_client` أو `laravel_echo` في Flutter.
+يجب استخدام حزمة `pusher_client_fixed` أو `laravel_echo` في Flutter.
 
 **بيانات الاتصال:**
 - **Host:** `10.79.70.236` (IP السيرفر)
@@ -1851,7 +1851,7 @@ if (data['errors'] != null) {
 
 ```dart
 import 'package:laravel_echo/laravel_echo.dart';
-import 'package:pusher_client/pusher_client.dart';
+import 'package:pusher_client_fixed/pusher_client_fixed.dart';
 
 PusherOptions options = PusherOptions(
   host: '10.79.70.236',
