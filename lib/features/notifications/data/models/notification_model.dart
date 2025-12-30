@@ -12,26 +12,29 @@ class NotificationModel extends NotificationEntity {
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
-    // Handling the structure from the server response
-    final pivot = json['pivot'] as Map<String, dynamic>?;
-    final isRead = pivot != null
-        ? (pivot['is_read'] == 1 || pivot['is_read'] == true)
-        : false;
-
     // Helper to parse ID safely
     String parseId(dynamic id) {
       if (id == null) return '';
       return id.toString();
     }
 
+    // New structure: fields are direct or within data
+    final isRead = json['is_read'] == true || json['is_read'] == 1;
+
     return NotificationModel(
       id: parseId(json['id']),
-      type: json['notification_type'] as String?,
+      type: json['type'] as String?,
       title: json['title'] as String? ?? 'إشعار جديد',
       message: json['message'] as String? ?? '',
       data: json['data'] is Map ? json['data'] as Map<String, dynamic> : null,
-      readAt: isRead ? DateTime.tryParse(pivot!['read_at'] ?? '') : null,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      readAt: isRead
+          ? (json['read_at'] != null
+              ? DateTime.tryParse(json['read_at'].toString())
+              : null)
+          : null,
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'].toString())
+          : DateTime.now(),
     );
   }
 

@@ -21,8 +21,8 @@ class NotificationsRemoteDataSourceImpl
     try {
       final response = await dioClient.get(ApiConfig.notifications);
       if (response.statusCode == 200) {
-        // The real structure is response.data['notifications']['data']
-        final List<dynamic> data = response.data['notifications']['data'];
+        // New structure: response.data['data'] contains the notifications list
+        final List<dynamic> data = response.data['data'];
         return data.map((json) => NotificationModel.fromJson(json)).toList();
       } else {
         throw ServerException();
