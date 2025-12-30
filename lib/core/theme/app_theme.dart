@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
+import 'app_typography.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     scaffoldBackgroundColor: AppColors.backgroundMain,
+
+    // =========================
+    // TabBar
+    // =========================
+    tabBarTheme: const TabBarTheme(
+      labelStyle: AppTypography.bodyMedium,
+      unselectedLabelStyle: AppTypography.bodyMedium,
+      indicatorColor: AppColors.primary,
+      labelColor: AppColors.textOnPrimary,
+      unselectedLabelColor: AppColors.textOnPrimary,
+      indicatorSize: TabBarIndicatorSize.tab,
+    ),
 
     // =========================
     // Color Scheme

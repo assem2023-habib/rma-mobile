@@ -20,7 +20,7 @@ class UserTypeSelector extends StatelessWidget {
         const Text('نوع الشخص المخول', style: AppTypography.heading3),
         const SizedBox(height: AppDimensions.spacing2),
         DropdownButtonFormField<String>(
-          value: selectedUserType,
+          initialValue: selectedUserType,
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(

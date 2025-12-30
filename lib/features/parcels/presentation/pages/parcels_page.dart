@@ -55,14 +55,12 @@ class _ParcelsPageState extends State<ParcelsPage> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('طرودي', style: AppTypography.heading2),
-          bottom: TabBar(
+          title: const Text('طرودي', style: AppTypography.heading2),
+          bottom: const TabBar(
             tabs: [
               Tab(text: 'الكل'),
               Tab(text: 'المرتجعة'),
             ],
-            labelStyle: AppTypography.bodyMedium,
-            indicatorColor: const Color.fromRGBO(46, 125, 50, 1),
           ),
           actions: [
             IconButton(onPressed: () {}, icon: const Icon(Icons.filter_list)),

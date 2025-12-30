@@ -25,7 +25,7 @@ class ParcelSelectionField extends StatelessWidget {
               state.parcels.any((p) => p.id == selectedParcelId);
 
           return DropdownButtonFormField<int>(
-            value: parcelExists ? selectedParcelId : null,
+            initialValue: parcelExists ? selectedParcelId : null,
             decoration: InputDecoration(
               hintText: 'اختر الطرد المراد تخويله',
               border: OutlineInputBorder(

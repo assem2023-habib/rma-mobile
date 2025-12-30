@@ -4,8 +4,8 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/entities/pagination_entity.dart';
 import '../../../../core/network/network_info.dart';
 import '../datasources/user_remote_datasource.dart';
-import '../entities/user_entity.dart';
-import '../repositories/user_repository.dart';
+import '../../domain/entities/user_entity.dart';
+import '../../domain/repositories/user_repository.dart';
 
 class UserRepositoryImpl implements UserRepository {
   final UserRemoteDataSource remoteDataSource;
@@ -21,32 +21,32 @@ class UserRepositoryImpl implements UserRepository {
     required String userName,
     int? page,
   }) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final remoteUsers = await remoteDataSource.searchUsers(
-          userName: userName,
-          page: page,
-        );
-        return Right(remoteUsers);
-      } on ServerException {
-        return Left(ServerFailure());
-      }
-    } else {
-      return Left(NetworkFailure());
-    }
+    return await _getRemoteData(
+      () => remoteDataSource.searchUsers(userName: userName, page: page),
+    );
   }
 
   @override
   Future<Either<Failure, Pagination<UserEntity>>> getUsers({int? page}) async {
+    return await _getRemoteData(() => remoteDataSource.getUsers(page: page));
+  }
+
+  Future<Either<Failure, Pagination<UserEntity>>> _getRemoteData(
+    Future<Pagination<UserEntity>> Function() call,
+  ) async {
     if (await networkInfo.isConnected) {
       try {
-        final remoteUsers = await remoteDataSource.getUsers(page: page);
-        return Right(remoteUsers);
+        final remoteData = await call();
+        return Right(remoteData);
       } on ServerException {
-        return Left(ServerFailure());
+        return const Left(ServerFailure());
+      } catch (e) {
+        return const Left(
+          ServerFailure('حدث خطأ غير متوقع أثناء جلب البيانات'),
+        );
       }
     } else {
-      return Left(NetworkFailure());
+      return const Left(NetworkFailure());
     }
   }
 }

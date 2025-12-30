@@ -135,7 +135,7 @@ class GuestInfoForm extends StatelessWidget {
         ),
         const SizedBox(height: AppDimensions.spacing3),
         DropdownButtonFormField<int>(
-          value: selectedCountryId,
+          initialValue: selectedCountryId,
           decoration: InputDecoration(
             hintText: 'الدولة',
             border: OutlineInputBorder(
@@ -165,7 +165,7 @@ class GuestInfoForm extends StatelessWidget {
         ),
         const SizedBox(height: AppDimensions.spacing3),
         DropdownButtonFormField<int>(
-          value: selectedCityId,
+          initialValue: selectedCityId,
           decoration: InputDecoration(
             hintText: 'المدينة',
             border: OutlineInputBorder(
