@@ -1,10 +1,12 @@
 import '../../../../core/api/api_config.dart';
 import '../../../../core/api/dio_client.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/models/pagination_model.dart';
 import '../models/parcel_model.dart';
 
 abstract class ParcelRemoteDataSource {
   Future<List<ParcelModel>> getParcels();
+  Future<PaginationModel<ParcelModel>> getReturnedParcels({int? page});
   Future<ParcelModel> getParcelById(int id);
   Future<ParcelModel> createParcel({
     required int routeId,
@@ -36,6 +38,26 @@ class ParcelRemoteDataSourceImpl implements ParcelRemoteDataSource {
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data']['parcels'];
         return data.map((json) => ParcelModel.fromJson(json)).toList();
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<PaginationModel<ParcelModel>> getReturnedParcels({int? page}) async {
+    try {
+      final response = await dioClient.get(
+        ApiConfig.returnedParcels,
+        queryParameters: {if (page != null) 'page': page},
+      );
+      if (response.statusCode == 200) {
+        return PaginationModel.fromJson(
+          response.data['data']['parcels'],
+          (json) => ParcelModel.fromJson(json),
+        );
       } else {
         throw ServerException();
       }

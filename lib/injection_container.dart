@@ -81,9 +81,30 @@ import 'package:rma_customer/features/notifications/data/repositories/notificati
 import 'package:rma_customer/features/notifications/domain/repositories/notifications_repository.dart';
 import 'package:rma_customer/features/notifications/presentation/bloc/notifications_bloc.dart';
 
+import 'package:rma_customer/features/parcels/domain/usecases/get_returned_parcels_usecase.dart';
+import 'package:rma_customer/features/users/data/datasources/user_remote_datasource.dart';
+import 'package:rma_customer/features/users/data/repositories/user_repository_impl.dart';
+import 'package:rma_customer/features/users/domain/repositories/user_repository.dart';
+import 'package:rma_customer/features/users/domain/usecases/search_users_usecase.dart';
+import 'package:rma_customer/features/users/presentation/bloc/users_bloc.dart';
+
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  //! Features - Users
+  // Bloc
+  sl.registerFactory(() => UsersBloc(searchUsersUseCase: sl()));
+  // Use cases
+  sl.registerLazySingleton(() => SearchUsersUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<UserRepository>(
+    () => UserRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<UserRemoteDataSource>(
+    () => UserRemoteDataSourceImpl(dioClient: sl()),
+  );
+
   //! Features - Dashboard
   // Bloc
   sl.registerFactory(() => DashboardBloc(getDashboardStatsUseCase: sl()));
@@ -103,6 +124,7 @@ Future<void> init() async {
   sl.registerFactory(
     () => ParcelsBloc(
       getParcelsUseCase: sl(),
+      getReturnedParcelsUseCase: sl(),
       getParcelByIdUseCase: sl(),
       createParcelUseCase: sl(),
       updateParcelUseCase: sl(),
@@ -111,6 +133,7 @@ Future<void> init() async {
   );
   // Use cases
   sl.registerLazySingleton(() => GetParcelsUseCase(sl()));
+  sl.registerLazySingleton(() => GetReturnedParcelsUseCase(sl()));
   sl.registerLazySingleton(() => GetParcelByIdUseCase(sl()));
   sl.registerLazySingleton(() => parcel_create.CreateParcelUseCase(sl()));
   sl.registerLazySingleton(() => UpdateParcelUseCase(sl()));

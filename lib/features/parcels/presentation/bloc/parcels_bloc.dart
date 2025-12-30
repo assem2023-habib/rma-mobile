@@ -1,5 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/entities/pagination_entity.dart';
+import '../../domain/entities/parcel.dart';
 import '../../domain/usecases/get_parcels_usecase.dart';
+import '../../domain/usecases/get_returned_parcels_usecase.dart';
 import '../../domain/usecases/get_parcel_by_id_usecase.dart';
 import '../../domain/usecases/create_parcel_usecase.dart';
 import '../../domain/usecases/update_parcel_usecase.dart';
@@ -9,6 +12,7 @@ import 'parcels_state.dart';
 
 class ParcelsBloc extends Bloc<ParcelsEvent, ParcelsState> {
   final GetParcelsUseCase getParcelsUseCase;
+  final GetReturnedParcelsUseCase getReturnedParcelsUseCase;
   final GetParcelByIdUseCase getParcelByIdUseCase;
   final CreateParcelUseCase createParcelUseCase;
   final UpdateParcelUseCase updateParcelUseCase;
@@ -16,6 +20,7 @@ class ParcelsBloc extends Bloc<ParcelsEvent, ParcelsState> {
 
   ParcelsBloc({
     required this.getParcelsUseCase,
+    required this.getReturnedParcelsUseCase,
     required this.getParcelByIdUseCase,
     required this.createParcelUseCase,
     required this.updateParcelUseCase,
@@ -28,6 +33,45 @@ class ParcelsBloc extends Bloc<ParcelsEvent, ParcelsState> {
         (failure) => emit(ParcelsError(message: failure.message)),
         (parcels) => emit(ParcelsLoaded(parcels: parcels)),
       );
+    });
+
+    on<GetReturnedParcelsEvent>((event, emit) async {
+      final isFirstPage = event.page == null || event.page == 1;
+
+      if (isFirstPage) {
+        emit(ParcelsLoading());
+      }
+
+      final result = await getReturnedParcelsUseCase(page: event.page);
+
+      result.fold((failure) => emit(ParcelsError(message: failure.message)), (
+        pagination,
+      ) {
+        if (isFirstPage) {
+          emit(ReturnedParcelsLoaded(parcelsPagination: pagination));
+        } else {
+          if (state is ReturnedParcelsLoaded) {
+            final currentState = state as ReturnedParcelsLoaded;
+            final updatedParcels = List<Parcel>.from(
+              currentState.parcelsPagination.data,
+            )..addAll(pagination.data);
+
+            emit(
+              ReturnedParcelsLoaded(
+                parcelsPagination: Pagination<Parcel>(
+                  data: updatedParcels,
+                  currentPage: pagination.currentPage,
+                  lastPage: pagination.lastPage,
+                  total: pagination.total,
+                  perPage: pagination.perPage,
+                ),
+              ),
+            );
+          } else {
+            emit(ReturnedParcelsLoaded(parcelsPagination: pagination));
+          }
+        }
+      });
     });
 
     on<GetParcelByIdEvent>((event, emit) async {
@@ -51,7 +95,8 @@ class ParcelsBloc extends Bloc<ParcelsEvent, ParcelsState> {
       );
       result.fold(
         (failure) => emit(ParcelsError(message: failure.message)),
-        (parcel) => emit(const ParcelActionSuccess(message: 'تم إنشاء الطرد بنجاح')),
+        (parcel) =>
+            emit(const ParcelActionSuccess(message: 'تم إنشاء الطرد بنجاح')),
       );
     });
 
@@ -66,7 +111,8 @@ class ParcelsBloc extends Bloc<ParcelsEvent, ParcelsState> {
       );
       result.fold(
         (failure) => emit(ParcelsError(message: failure.message)),
-        (parcel) => emit(const ParcelActionSuccess(message: 'تم تحديث الطرد بنجاح')),
+        (parcel) =>
+            emit(const ParcelActionSuccess(message: 'تم تحديث الطرد بنجاح')),
       );
     });
 
@@ -86,9 +132,13 @@ class ParcelsBloc extends Bloc<ParcelsEvent, ParcelsState> {
           emit(ParcelsLoaded(parcels: allParcels));
           return;
         }
-        final filteredParcels = allParcels.where((parcel) =>
-            parcel.trackingNumber.contains(event.query) ||
-            parcel.receiverName.contains(event.query)).toList();
+        final filteredParcels = allParcels
+            .where(
+              (parcel) =>
+                  parcel.trackingNumber.contains(event.query) ||
+                  parcel.receiverName.contains(event.query),
+            )
+            .toList();
         emit(ParcelsLoaded(parcels: filteredParcels));
       }
     });

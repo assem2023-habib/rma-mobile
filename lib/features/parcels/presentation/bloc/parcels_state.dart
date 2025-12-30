@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../../../core/entities/pagination_entity.dart';
 import '../../domain/entities/parcel.dart';
 
 abstract class ParcelsState extends Equatable {
@@ -18,6 +19,14 @@ class ParcelsLoaded extends ParcelsState {
 
   @override
   List<Object> get props => [parcels];
+}
+
+class ReturnedParcelsLoaded extends ParcelsState {
+  final Pagination<Parcel> parcelsPagination;
+  const ReturnedParcelsLoaded({required this.parcelsPagination});
+
+  @override
+  List<Object> get props => [parcelsPagination];
 }
 
 class ParcelDetailLoaded extends ParcelsState {

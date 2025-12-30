@@ -9,6 +9,14 @@ abstract class ParcelsEvent extends Equatable {
 
 class GetParcelsEvent extends ParcelsEvent {}
 
+class GetReturnedParcelsEvent extends ParcelsEvent {
+  final int? page;
+  const GetReturnedParcelsEvent({this.page});
+
+  @override
+  List<Object> get props => [if (page != null) page!];
+}
+
 class GetParcelByIdEvent extends ParcelsEvent {
   final int id;
   const GetParcelByIdEvent(this.id);

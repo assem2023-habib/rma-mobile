@@ -25,6 +25,9 @@ class ApiConfig {
 
   static const String dashboardStats = '/statistics';
   static const String parcels = '/parcel';
+  static const String returnedParcels = '/parcel/returned';
+  static const String users = '/users';
+  static const String searchUsers = '/users/search';
   static const String authorizations = '/authorization';
   static const String rates = '/rates';
   static const String routes = '/routes';

@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:rma_customer/core/error/failures.dart';
+import 'package:rma_customer/core/entities/pagination_entity.dart';
 import 'package:rma_customer/features/parcels/domain/entities/parcel.dart';
 import 'package:rma_customer/features/parcels/domain/repositories/parcel_repository.dart';
 import 'package:rma_customer/features/parcels/data/datasources/parcel_remote_datasource.dart';
@@ -23,10 +24,28 @@ class ParcelRepositoryImpl implements ParcelRepository {
         final remoteParcels = await remoteDataSource.getParcels();
         return Right(remoteParcels);
       } on ServerException {
-        return const Left(ServerFailure('فشل تحميل الطرود من الخادم'));
+        return Left(ServerFailure());
       }
     } else {
-      return const Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));
+      return Left(NetworkFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, Pagination<Parcel>>> getReturnedParcels({
+    int? page,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteParcels = await remoteDataSource.getReturnedParcels(
+          page: page,
+        );
+        return Right(remoteParcels);
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(NetworkFailure());
     }
   }
 
