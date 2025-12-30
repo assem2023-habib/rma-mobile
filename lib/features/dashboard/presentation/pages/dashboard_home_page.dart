@@ -21,6 +21,9 @@ import 'package:rma_customer/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:rma_customer/features/auth/presentation/bloc/auth_state.dart';
 import '../../../../core/widgets/guest_prompt_bottom_sheet.dart';
 
+import 'package:rma_customer/core/services/realtime_notification_service.dart';
+import 'package:rma_customer/injection_container.dart';
+
 class DashboardHomePage extends StatefulWidget {
   const DashboardHomePage({super.key});
 
@@ -272,6 +275,21 @@ class _DashboardHomePageState extends State<DashboardHomePage> {
                                   ),
                                   Row(
                                     children: [
+                                      // Test Notification Button 🧪
+                                      IconButton(
+                                        onPressed: () {
+                                          sl<RealtimeNotificationService>()
+                                              .triggerTestNotification();
+                                        },
+                                        icon: const Icon(
+                                          Icons.bug_report_outlined,
+                                          color: Colors.white,
+                                        ),
+                                        tooltip: 'اختبار الإشعارات اللحظية',
+                                      ),
+                                      const SizedBox(
+                                        width: AppDimensions.spacing2,
+                                      ),
                                       BlocBuilder<
                                         NotificationsBloc,
                                         NotificationsState

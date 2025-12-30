@@ -48,10 +48,16 @@ class RealtimeNotificationService {
 
   void _connect(int userId) {
     final token = tokenManager.getToken();
-    if (token == null) return;
+    if (token == null) {
+      dev.log(
+        'FAILED to connect: Token is null',
+        name: 'RealtimeNotification',
+      );
+      return;
+    }
 
     dev.log(
-      'Connecting to Reverb for user $userId',
+      'INITIALIZING connection to Reverb for user $userId',
       name: 'RealtimeNotification',
     );
 
@@ -74,10 +80,23 @@ class RealtimeNotificationService {
 
     _pusher!.onConnectionError((error) {
       dev.log(
-        'CONNECTION ERROR: ${error?.message}',
+        '🔴 CONNECTION ERROR: ${error?.message}',
         name: 'RealtimeNotification',
         error: error?.exception,
       );
+    });
+
+    _pusher!.onConnectionStateChange((state) {
+      dev.log(
+        '🔵 Connection state changed: from ${state?.previousState} to ${state?.currentState}',
+        name: 'RealtimeNotification',
+      );
+      if (state?.currentState == 'CONNECTED') {
+        dev.log(
+          '✅ SUCCESS: Socket connected to Reverb server!',
+          name: 'RealtimeNotification',
+        );
+      }
     });
 
     _echo = Echo(
@@ -94,51 +113,59 @@ class RealtimeNotificationService {
 
     final channelName = 'App.Models.User.$userId';
     dev.log(
-      'Subscribing to private channel: $channelName',
+      '🛰️ Subscribing to private channel: $channelName',
       name: 'RealtimeNotification',
     );
 
     final channel = _echo!.private(channelName);
 
+    // Track subscription success/error
+    _pusher!.subscribe(channelName); // Ensure subscription is triggered
+
     channel.notification((notification) {
       dev.log(
-        'NOTIFICATION RECEIVED via .notification()! Payload: $notification',
+        '📥 NOTIFICATION RECEIVED via .notification()!',
         name: 'RealtimeNotification',
       );
+      dev.log('Payload: $notification', name: 'RealtimeNotification');
       _handleNotification(notification);
     });
 
-    // Listen for the event with and without the leading dot
-    // Laravel Echo usually expects a dot for full namespaces
     const eventName =
         'Illuminate\\Notifications\\Events\\BroadcastNotificationCreated';
 
     channel.listen('.$eventName', (event) {
       dev.log(
-        'EVENT RECEIVED via .listen(.$eventName)! Payload: $event',
+        '📥 EVENT RECEIVED via .listen(.$eventName)!',
         name: 'RealtimeNotification',
       );
+      dev.log('Payload: $event', name: 'RealtimeNotification');
       _handleNotification(event);
     });
 
     channel.listen(eventName, (event) {
       dev.log(
-        'EVENT RECEIVED via .listen($eventName)! Payload: $event',
+        '📥 EVENT RECEIVED via .listen($eventName)!',
         name: 'RealtimeNotification',
       );
+      dev.log('Payload: $event', name: 'RealtimeNotification');
       _handleNotification(event);
     });
+  }
 
-    // Cleanup the duplicate connection state listener
-    _pusher!.onConnectionStateChange((state) {
-      dev.log(
-        'Connection state changed: from ${state?.previousState} to ${state?.currentState}',
-        name: 'RealtimeNotification',
-      );
-      if (state?.currentState == 'CONNECTED') {
-        dev.log('SUCCESS: Connected to Reverb!', name: 'RealtimeNotification');
-      }
-    });
+  /// Trigger a test notification to verify UI and logs
+  void triggerTestNotification() {
+    dev.log('🧪 Triggering Test Notification...', name: 'RealtimeNotification');
+    final testPayload = {
+      'id': 'test-uuid-${DateTime.now().millisecondsSinceEpoch}',
+      'type': 'test_notification',
+      'title': 'إشعار تجريبي 🧪',
+      'message': 'هذا إشعار وهمي لاختبار الاتصال والواجهة.',
+      'is_read': false,
+      'created_at': DateTime.now().toIso8601String(),
+      'data': {'test_key': 'test_value'}
+    };
+    _handleNotification(testPayload);
   }
 
   void _handleNotification(dynamic notification) {
