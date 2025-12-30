@@ -79,7 +79,6 @@ import 'package:rma_customer/features/notifications/data/datasources/notificatio
 import 'package:rma_customer/features/notifications/data/repositories/notifications_repository_impl.dart';
 import 'package:rma_customer/features/notifications/domain/repositories/notifications_repository.dart';
 import 'package:rma_customer/features/notifications/presentation/bloc/notifications_bloc.dart';
-import 'package:rma_customer/core/services/realtime_notification_service.dart';
 
 final sl = GetIt.instance;
 
@@ -292,15 +291,6 @@ Future<void> init() async {
   // Data sources
   sl.registerLazySingleton<NotificationsRemoteDataSource>(
     () => NotificationsRemoteDataSourceImpl(dioClient: sl()),
-  );
-
-  //! Services
-  sl.registerLazySingleton(
-    () => RealtimeNotificationService(
-      tokenManager: sl(),
-      notificationsBloc: sl(),
-      authBloc: sl(),
-    ),
   );
 
   //! Core

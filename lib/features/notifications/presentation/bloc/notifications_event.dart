@@ -27,11 +27,3 @@ class DeleteNotificationEvent extends NotificationsEvent {
   @override
   List<Object?> get props => [id];
 }
-
-class NewNotificationReceivedEvent extends NotificationsEvent {
-  final NotificationEntity notification;
-  const NewNotificationReceivedEvent(this.notification);
-
-  @override
-  List<Object?> get props => [notification];
-}

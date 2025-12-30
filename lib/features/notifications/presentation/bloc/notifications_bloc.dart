@@ -13,7 +13,6 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     on<MarkNotificationAsReadEvent>(_onMarkAsRead);
     on<MarkAllNotificationsAsReadEvent>(_onMarkAllAsRead);
     on<DeleteNotificationEvent>(_onDelete);
-    on<NewNotificationReceivedEvent>(_onNewReceived);
   }
 
   Future<void> _onGetNotifications(
@@ -106,30 +105,6 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
           ),
         );
       });
-    }
-  }
-
-  void _onNewReceived(
-    NewNotificationReceivedEvent event,
-    Emitter<NotificationsState> emit,
-  ) {
-    if (state is NotificationsLoaded) {
-      final currentState = state as NotificationsLoaded;
-      final List<NotificationEntity> updatedNotifications = [
-        event.notification,
-        ...currentState.notifications,
-      ];
-
-      emit(
-        NotificationsLoaded(
-          notifications: updatedNotifications,
-          unreadCount: updatedNotifications
-              .where((n) => n.isRead == false)
-              .length,
-        ),
-      );
-    } else {
-      add(GetNotificationsEvent());
     }
   }
 }
