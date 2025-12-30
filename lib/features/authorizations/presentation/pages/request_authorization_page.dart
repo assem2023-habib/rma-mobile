@@ -4,6 +4,8 @@ import 'dart:async';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/app_dimensions.dart';
+import '../../../../core/widgets/backgrounds/shiny_background.dart';
+import '../../../../core/widgets/headers/custom_app_header.dart';
 import '../../../../core/widgets/buttons/gradient_button.dart';
 import '../bloc/authorizations_bloc.dart';
 import '../bloc/authorizations_event.dart';
@@ -124,49 +126,31 @@ class _RequestAuthorizationPageState extends State<RequestAuthorizationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => sl<UsersBloc>()),
-        BlocProvider(
-          create: (context) => sl<CommonBloc>()..add(GetCountriesRequested()),
-        ),
-      ],
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('طلب تخويل جديد', style: AppTypography.heading3),
-          centerTitle: true,
-        ),
-        body: BlocListener<AuthorizationsBloc, AuthorizationsState>(
-          listener: (context, state) {
-            if (state is AuthorizationActionSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: AppColors.success,
-                ),
-              );
-              context.read<AuthorizationsBloc>().add(GetAuthorizationsEvent());
-              Navigator.pop(context);
-            } else if (state is AuthorizationsError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: AppColors.error,
-                ),
-              );
-            }
-          },
-          child: BlocListener<CommonBloc, CommonState>(
+    return Scaffold(
+      appBar: const CustomAppHeader(title: 'طلب تخويل جديد'),
+      body: ShinyBackground(
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (context) => sl<UsersBloc>()),
+            BlocProvider(
+              create: (context) =>
+                  sl<CommonBloc>()..add(GetCountriesRequested()),
+            ),
+          ],
+          child: BlocListener<AuthorizationsBloc, AuthorizationsState>(
             listener: (context, state) {
-              if (state is CountriesLoaded) {
-                setState(() {
-                  _countries = state.countries;
-                });
-              } else if (state is CitiesLoaded) {
-                setState(() {
-                  _cities = state.cities;
-                });
-              } else if (state is CommonError) {
+              if (state is AuthorizationActionSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.success,
+                  ),
+                );
+                context.read<AuthorizationsBloc>().add(
+                  GetAuthorizationsEvent(),
+                );
+                Navigator.pop(context);
+              } else if (state is AuthorizationsError) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(state.message),
@@ -175,93 +159,117 @@ class _RequestAuthorizationPageState extends State<RequestAuthorizationPage> {
                 );
               }
             },
-            child: BlocBuilder<CommonBloc, CommonState>(
-              builder: (context, commonState) {
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.all(AppDimensions.spacing6),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('اختر الطرد', style: AppTypography.heading3),
-                        const SizedBox(height: AppDimensions.spacing2),
-                        ParcelSelectionField(
-                          selectedParcelId: _selectedParcelId,
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedParcelId = value;
-                            });
-                          },
-                        ),
-                        const SizedBox(height: AppDimensions.spacing6),
-                        UserTypeSelector(
-                          selectedUserType: _selectedUserType,
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedUserType = value!;
-                            });
-                          },
-                        ),
-                        if (_selectedUserType == 'user')
-                          RegisteredUserSearch(
-                            searchController: _userSearchController,
-                            userIdController: _authorizedUserIdController,
-                            onSearchChanged: _onSearchChanged,
-                            onUserSelected: () => setState(() {}),
-                          )
-                        else
-                          GuestInfoForm(
-                            firstNameController: _authorizedFirstNameController,
-                            lastNameController: _authorizedLastNameController,
-                            phoneController: _authorizedPhoneController,
-                            nationalNumberController:
-                                _authorizedNationalNumberController,
-                            addressController: _authorizedAddressController,
-                            birthdayController: _authorizedBirthdayController,
-                            selectedCountryId: _selectedCountryIdForGuest,
-                            selectedCityId: _selectedCityIdForGuest,
-                            countries: _countries,
-                            cities: _cities,
-                            isLoadingCountries:
-                                commonState is CommonLoading &&
-                                _countries.isEmpty,
-                            isLoadingCities:
-                                commonState is CommonLoading &&
-                                _selectedCountryIdForGuest != null,
-                            onCountryChanged: (value) {
+            child: BlocListener<CommonBloc, CommonState>(
+              listener: (context, state) {
+                if (state is CountriesLoaded) {
+                  setState(() {
+                    _countries = state.countries;
+                  });
+                } else if (state is CitiesLoaded) {
+                  setState(() {
+                    _cities = state.cities;
+                  });
+                } else if (state is CommonError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: AppColors.error,
+                    ),
+                  );
+                }
+              },
+              child: BlocBuilder<CommonBloc, CommonState>(
+                builder: (context, commonState) {
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.all(AppDimensions.spacing6),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'اختر الطرد',
+                            style: AppTypography.heading3,
+                          ),
+                          const SizedBox(height: AppDimensions.spacing2),
+                          ParcelSelectionField(
+                            selectedParcelId: _selectedParcelId,
+                            onChanged: (value) {
                               setState(() {
-                                _selectedCountryIdForGuest = value;
-                                _selectedCityIdForGuest = null;
-                                _cities = [];
-                              });
-                              if (value != null) {
-                                context.read<CommonBloc>().add(
-                                  GetCitiesRequested(value),
-                                );
-                              }
-                            },
-                            onCityChanged: (value) {
-                              setState(() {
-                                _selectedCityIdForGuest = value;
+                                _selectedParcelId = value;
                               });
                             },
                           ),
-                        const SizedBox(height: AppDimensions.spacing8),
-                        BlocBuilder<AuthorizationsBloc, AuthorizationsState>(
-                          builder: (context, state) {
-                            return GradientButton(
-                              text: 'إرسال الطلب',
-                              onPressed: _submitForm,
-                              isLoading: state is AuthorizationsLoading,
-                            );
-                          },
-                        ),
-                      ],
+                          const SizedBox(height: AppDimensions.spacing6),
+                          UserTypeSelector(
+                            selectedUserType: _selectedUserType,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedUserType = value!;
+                              });
+                            },
+                          ),
+                          if (_selectedUserType == 'user')
+                            RegisteredUserSearch(
+                              searchController: _userSearchController,
+                              userIdController: _authorizedUserIdController,
+                              onSearchChanged: _onSearchChanged,
+                              onUserSelected: () => setState(() {}),
+                            )
+                          else
+                            GuestInfoForm(
+                              firstNameController:
+                                  _authorizedFirstNameController,
+                              lastNameController: _authorizedLastNameController,
+                              phoneController: _authorizedPhoneController,
+                              nationalNumberController:
+                                  _authorizedNationalNumberController,
+                              addressController: _authorizedAddressController,
+                              birthdayController: _authorizedBirthdayController,
+                              selectedCountryId: _selectedCountryIdForGuest,
+                              selectedCityId: _selectedCityIdForGuest,
+                              countries: _countries,
+                              cities: _cities,
+                              isLoadingCountries:
+                                  commonState is CommonLoading &&
+                                  _countries.isEmpty,
+                              isLoadingCities:
+                                  commonState is CommonLoading &&
+                                  _selectedCountryIdForGuest != null,
+                              onCountryChanged: (value) {
+                                setState(() {
+                                  _selectedCountryIdForGuest = value;
+                                  _selectedCityIdForGuest = null;
+                                  _cities = [];
+                                });
+                                if (value != null) {
+                                  context.read<CommonBloc>().add(
+                                    GetCitiesRequested(value),
+                                  );
+                                }
+                              },
+                              onCityChanged: (value) {
+                                setState(() {
+                                  _selectedCityIdForGuest = value;
+                                });
+                              },
+                            ),
+                          const SizedBox(height: AppDimensions.spacing8),
+                          BlocBuilder<AuthorizationsBloc, AuthorizationsState>(
+                            builder: (context, state) {
+                              return GradientButton(
+                                text: 'إرسال الطلب',
+                                onPressed: _submitForm,
+                                isLoading: state is AuthorizationsLoading,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/backgrounds/shiny_background.dart';
+import '../../../../core/widgets/headers/custom_app_header.dart';
 import '../../domain/entities/route_entity.dart';
 
 class RouteDetailPage extends StatelessWidget {
@@ -12,138 +14,140 @@ class RouteDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('تفاصيل المسار', style: AppTypography.heading2),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppDimensions.spacing4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Route Header Card
-            Container(
-              padding: const EdgeInsets.all(AppDimensions.spacing6),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primaryBlue, AppColors.primaryIndigo],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+      appBar: const CustomAppHeader(title: 'تفاصيل المسار'),
+      body: ShinyBackground(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(AppDimensions.spacing4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Route Header Card
+              Container(
+                padding: const EdgeInsets.all(AppDimensions.spacing6),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [AppColors.primaryBlue, AppColors.primaryIndigo],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(AppDimensions.radius2xl),
                 ),
-                borderRadius: BorderRadius.circular(AppDimensions.radius2xl),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          route.fromBranch != null && route.toBranch != null
-                              ? '${route.fromBranch!.branchName} - ${route.toBranch!.branchName}'
-                              : 'مسار ${route.fromBranchId} - ${route.toBranchId}',
-                          style: AppTypography.heading1.copyWith(
-                            color: Colors.white,
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            route.fromBranch != null && route.toBranch != null
+                                ? '${route.fromBranch!.branchName} - ${route.toBranch!.branchName}'
+                                : 'مسار ${route.fromBranchId} - ${route.toBranchId}',
+                            style: AppTypography.heading1.copyWith(
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                      ),
-                      _buildStatusBadge(route.isActive ? 'Active' : 'Inactive'),
-                    ],
-                  ),
-                  const SizedBox(height: AppDimensions.spacing6),
-                  Row(
-                    children: [
-                      _buildLocationPoint(
-                        route.fromBranch?.branchName ??
-                            'الفرع ${route.fromBranchId}',
-                        'نقطة الانطلاق',
-                      ),
-                      const Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AppDimensions.spacing2,
-                          ),
-                          child: Icon(
-                            Icons.arrow_forward,
-                            color: Colors.white,
-                            size: 24,
+                        _buildStatusBadge(
+                          route.isActive ? 'Active' : 'Inactive',
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppDimensions.spacing6),
+                    Row(
+                      children: [
+                        _buildLocationPoint(
+                          route.fromBranch?.branchName ??
+                              'الفرع ${route.fromBranchId}',
+                          'نقطة الانطلاق',
+                        ),
+                        const Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: AppDimensions.spacing2,
+                            ),
+                            child: Icon(
+                              Icons.arrow_forward,
+                              color: Colors.white,
+                              size: 24,
+                            ),
                           ),
                         ),
-                      ),
-                      _buildLocationPoint(
-                        route.toBranch?.branchName ??
-                            'الفرع ${route.toBranchId}',
-                        'وجهة الوصول',
-                      ),
-                    ],
-                  ),
-                ],
+                        _buildLocationPoint(
+                          route.toBranch?.branchName ??
+                              'الفرع ${route.toBranchId}',
+                          'وجهة الوصول',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: AppDimensions.spacing6),
-
-            // Branch Details Section
-            if (route.fromBranch != null || route.toBranch != null) ...[
-              const Text('تفاصيل الأفرع', style: AppTypography.heading3),
-              const SizedBox(height: AppDimensions.spacing3),
-              if (route.fromBranch != null)
-                _buildBranchCard('فرع الانطلاق', route.fromBranch!),
-              if (route.toBranch != null)
-                _buildBranchCard('فرع الوصول', route.toBranch!),
               const SizedBox(height: AppDimensions.spacing6),
-            ],
 
-            // Route Days Section
-            const Text('أيام العمل والمواعيد', style: AppTypography.heading3),
-            const SizedBox(height: AppDimensions.spacing3),
-            ...route.days.map(
-              (day) => Card(
-                margin: const EdgeInsets.only(bottom: AppDimensions.spacing3),
+              // Branch Details Section
+              if (route.fromBranch != null || route.toBranch != null) ...[
+                const Text('تفاصيل الأفرع', style: AppTypography.heading3),
+                const SizedBox(height: AppDimensions.spacing3),
+                if (route.fromBranch != null)
+                  _buildBranchCard('فرع الانطلاق', route.fromBranch!),
+                if (route.toBranch != null)
+                  _buildBranchCard('فرع الوصول', route.toBranch!),
+                const SizedBox(height: AppDimensions.spacing6),
+              ],
+
+              // Route Days Section
+              const Text('أيام العمل والمواعيد', style: AppTypography.heading3),
+              const SizedBox(height: AppDimensions.spacing3),
+              ...route.days.map(
+                (day) => Card(
+                  margin: const EdgeInsets.only(bottom: AppDimensions.spacing3),
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppDimensions.spacing4),
+                    child: Column(
+                      children: [
+                        _buildInfoRow(
+                          Icons.calendar_today,
+                          'اليوم',
+                          day.dayOfWeek,
+                        ),
+                        const Divider(),
+                        _buildInfoRow(
+                          Icons.access_time,
+                          'وقت المغادرة',
+                          day.estimatedDepartureTime,
+                        ),
+                        const Divider(),
+                        _buildInfoRow(
+                          Icons.timer_outlined,
+                          'وقت الوصول المتوقع',
+                          day.estimatedArrivalTime,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppDimensions.spacing3),
+
+              // General Info Section
+              const Text('معلومات عامة', style: AppTypography.heading3),
+              const SizedBox(height: AppDimensions.spacing3),
+              Card(
                 child: Padding(
                   padding: const EdgeInsets.all(AppDimensions.spacing4),
                   child: Column(
                     children: [
                       _buildInfoRow(
-                        Icons.calendar_today,
-                        'اليوم',
-                        day.dayOfWeek,
-                      ),
-                      const Divider(),
-                      _buildInfoRow(
-                        Icons.access_time,
-                        'وقت المغادرة',
-                        day.estimatedDepartureTime,
-                      ),
-                      const Divider(),
-                      _buildInfoRow(
-                        Icons.timer_outlined,
-                        'وقت الوصول المتوقع',
-                        day.estimatedArrivalTime,
+                        Icons.straighten,
+                        'التكلفة لكل كيلو',
+                        '${route.distancePerKilo} ل.س',
                       ),
                     ],
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: AppDimensions.spacing3),
-
-            // General Info Section
-            const Text('معلومات عامة', style: AppTypography.heading3),
-            const SizedBox(height: AppDimensions.spacing3),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.spacing4),
-                child: Column(
-                  children: [
-                    _buildInfoRow(
-                      Icons.straighten,
-                      'التكلفة لكل كيلو',
-                      '${route.distancePerKilo} ل.س',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

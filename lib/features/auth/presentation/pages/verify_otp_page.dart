@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/backgrounds/shiny_background.dart';
+import '../../../../core/widgets/headers/custom_app_header.dart';
 import '../../../../core/widgets/buttons/gradient_button.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
@@ -55,82 +57,84 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('تحقق من الرمز')),
-      body: BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state is TelegramOtpVerified) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.success,
-              ),
-            );
-            context.go('/dashboard');
-          } else if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.error,
-              ),
-            );
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(AppDimensions.spacing4),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: AppDimensions.spacing8),
-                Text(
-                  'أدخل الرمز المكون من 6 أرقام المرسل إلى ${widget.isTelegram ? 'تيليجرام' : 'بريدك الإلكتروني'}',
-                  style: AppTypography.bodyLarge,
-                  textAlign: TextAlign.center,
+      appBar: const CustomAppHeader(title: 'تحقق من الرمز'),
+      body: ShinyBackground(
+        child: BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is TelegramOtpVerified) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: AppColors.success,
                 ),
-                Text(
-                  widget.email,
-                  style: AppTypography.bodyLarge.copyWith(
-                    fontWeight: FontWeight.bold,
+              );
+              context.go('/dashboard');
+            } else if (state is AuthError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: AppColors.error,
+                ),
+              );
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(AppDimensions.spacing4),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: AppDimensions.spacing8),
+                  Text(
+                    'أدخل الرمز المكون من 6 أرقام المرسل إلى ${widget.isTelegram ? 'تيليجرام' : 'بريدك الإلكتروني'}',
+                    style: AppTypography.bodyLarge,
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: AppDimensions.spacing8),
-                TextFormField(
-                  controller: _otpController,
-                  keyboardType: TextInputType.number,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 24, letterSpacing: 8),
-                  maxLength: 6,
-                  decoration: InputDecoration(
-                    counterText: '',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        AppDimensions.radiusMd,
+                  Text(
+                    widget.email,
+                    style: AppTypography.bodyLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppDimensions.spacing8),
+                  TextFormField(
+                    controller: _otpController,
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 24, letterSpacing: 8),
+                    maxLength: 6,
+                    decoration: InputDecoration(
+                      counterText: '',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusMd,
+                        ),
                       ),
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'يرجى إدخال الرمز';
+                      }
+                      if (value.length != 6) {
+                        return 'الرمز يجب أن يكون 6 أرقام';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'يرجى إدخال الرمز';
-                    }
-                    if (value.length != 6) {
-                      return 'الرمز يجب أن يكون 6 أرقام';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: AppDimensions.spacing8),
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    return GradientButton(
-                      onPressed: _onVerify,
-                      text: 'تحقق',
-                      isLoading: state is AuthLoading,
-                    );
-                  },
-                ),
-              ],
+                  const SizedBox(height: AppDimensions.spacing8),
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      return GradientButton(
+                        onPressed: _onVerify,
+                        text: 'تحقق',
+                        isLoading: state is AuthLoading,
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

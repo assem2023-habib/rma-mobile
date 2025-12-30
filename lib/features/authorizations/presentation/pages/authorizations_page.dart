@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/app_dimensions.dart';
+import '../../../../core/widgets/backgrounds/shiny_background.dart';
+import '../../../../core/widgets/headers/custom_app_header.dart';
 import '../../../../core/enums/authorization_status.dart';
 import '../bloc/authorizations_bloc.dart';
 import '../bloc/authorizations_event.dart';
@@ -27,61 +29,59 @@ class _AuthorizationsPageState extends State<AuthorizationsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('التخويلات', style: AppTypography.heading3),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
+      appBar: CustomAppHeader(
+        title: 'التخويلات',
         actions: [
           IconButton(
             onPressed: () => context.read<AuthorizationsBloc>().add(
               GetAuthorizationsEvent(),
             ),
-            icon: const Icon(Icons.refresh, color: AppColors.primaryBlue),
+            icon: const Icon(Icons.refresh, color: Colors.white),
           ),
         ],
       ),
-      body: BlocBuilder<AuthorizationsBloc, AuthorizationsState>(
-        builder: (context, state) {
-          if (state is AuthorizationsLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is AuthorizationsLoaded) {
-            if (state.authorizations.isEmpty) {
-              return _buildEmptyState();
-            }
-            return ListView.builder(
-              padding: const EdgeInsets.all(AppDimensions.spacing4),
-              itemCount: state.authorizations.length,
-              itemBuilder: (context, index) {
-                final auth = state.authorizations[index];
-                return _buildAuthorizationCard(auth);
-              },
-            );
-          } else if (state is AuthorizationsError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 60,
-                    color: AppColors.error,
-                  ),
-                  const SizedBox(height: AppDimensions.spacing4),
-                  Text(state.message, style: AppTypography.bodyLarge),
-                  TextButton(
-                    onPressed: () => context.read<AuthorizationsBloc>().add(
-                      GetAuthorizationsEvent(),
+      body: ShinyBackground(
+        child: BlocBuilder<AuthorizationsBloc, AuthorizationsState>(
+          builder: (context, state) {
+            if (state is AuthorizationsLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is AuthorizationsLoaded) {
+              if (state.authorizations.isEmpty) {
+                return _buildEmptyState();
+              }
+              return ListView.builder(
+                padding: const EdgeInsets.all(AppDimensions.spacing4),
+                itemCount: state.authorizations.length,
+                itemBuilder: (context, index) {
+                  final auth = state.authorizations[index];
+                  return _buildAuthorizationCard(auth);
+                },
+              );
+            } else if (state is AuthorizationsError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 60,
+                      color: AppColors.error,
                     ),
-                    child: const Text('إعادة المحاولة'),
-                  ),
-                ],
-              ),
-            );
-          }
-          return const SizedBox.shrink();
-        },
+                    const SizedBox(height: AppDimensions.spacing4),
+                    Text(state.message, style: AppTypography.bodyLarge),
+                    TextButton(
+                      onPressed: () => context.read<AuthorizationsBloc>().add(
+                        GetAuthorizationsEvent(),
+                      ),
+                      child: const Text('إعادة المحاولة'),
+                    ),
+                  ],
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/request-authorization'),

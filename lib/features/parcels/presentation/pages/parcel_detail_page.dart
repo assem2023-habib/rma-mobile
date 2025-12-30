@@ -7,6 +7,8 @@ import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../domain/entities/parcel.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/widgets/backgrounds/shiny_background.dart';
+import '../../../../core/widgets/headers/custom_app_header.dart';
 import '../widgets/parcel_header_card.dart';
 import '../widgets/parcel_shipping_info_card.dart';
 import '../widgets/parcel_receiver_info_card.dart';
@@ -27,39 +29,41 @@ class ParcelDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('تفاصيل الطرد', style: AppTypography.heading2),
+      appBar: CustomAppHeader(
+        title: 'تفاصيل الطرد',
         actions: [
           IconButton(
-            icon: const Icon(Icons.map_outlined),
+            icon: const Icon(Icons.map_outlined, color: Colors.white),
             onPressed: () => context.push('/map/${parcel.trackingNumber}'),
             tooltip: 'تتبع على الخريطة',
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppDimensions.spacing4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ParcelHeaderCard(parcel: parcel),
-            const SizedBox(height: AppDimensions.spacing4),
-            ParcelShippingInfoCard(parcel: parcel),
-            const SizedBox(height: AppDimensions.spacing6),
-            ParcelReceiverInfoCard(
-              parcel: parcel,
-              onPhoneTap: () => _makePhoneCall(parcel.receiverPhone),
-            ),
-            const SizedBox(height: AppDimensions.spacing6),
-            ParcelAuthorizationCard(
-              onCreateAuth: () {
-                // Ensure Parcels are loaded in the bloc before navigating
-                // so that the dropdown can find the parcelId
-                context.read<ParcelsBloc>().add(GetParcelsEvent());
-                context.push('/request-authorization', extra: parcel.id);
-              },
-            ),
-          ],
+      body: ShinyBackground(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(AppDimensions.spacing4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ParcelHeaderCard(parcel: parcel),
+              const SizedBox(height: AppDimensions.spacing4),
+              ParcelShippingInfoCard(parcel: parcel),
+              const SizedBox(height: AppDimensions.spacing6),
+              ParcelReceiverInfoCard(
+                parcel: parcel,
+                onPhoneTap: () => _makePhoneCall(parcel.receiverPhone),
+              ),
+              const SizedBox(height: AppDimensions.spacing6),
+              ParcelAuthorizationCard(
+                onCreateAuth: () {
+                  // Ensure Parcels are loaded in the bloc before navigating
+                  // so that the dropdown can find the parcelId
+                  context.read<ParcelsBloc>().add(GetParcelsEvent());
+                  context.push('/request-authorization', extra: parcel.id);
+                },
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: Padding(

@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/backgrounds/shiny_background.dart';
+import '../../../../core/widgets/headers/custom_app_header.dart';
 import '../bloc/parcels_bloc.dart';
 import '../bloc/parcels_event.dart';
 import '../bloc/parcels_state.dart';
@@ -54,20 +56,29 @@ class _ParcelsPageState extends State<ParcelsPage> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('طرودي', style: AppTypography.heading2),
+        appBar: CustomAppHeader(
+          title: 'طرودي',
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.filter_list, color: Colors.white),
+            ),
+          ],
           bottom: const TabBar(
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
+            indicatorColor: Colors.white,
+            indicatorWeight: 3,
             tabs: [
               Tab(text: 'الكل'),
               Tab(text: 'المرتجعة'),
             ],
           ),
-          actions: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.filter_list)),
-          ],
         ),
-        body: TabBarView(
-          children: [_buildAllParcelsTab(), _buildReturnedParcelsTab()],
+        body: ShinyBackground(
+          child: TabBarView(
+            children: [_buildAllParcelsTab(), _buildReturnedParcelsTab()],
+          ),
         ),
       ),
     );
