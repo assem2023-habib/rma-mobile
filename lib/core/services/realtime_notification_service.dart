@@ -30,17 +30,22 @@ class RealtimeNotificationService {
     // Check initial state in case the user is already authenticated
     final currentState = authBloc.state;
     if (currentState is Authenticated) {
-      dev.log(
-        'User already authenticated on service init, connecting...',
-        name: 'RealtimeNotification',
+      print(
+        '🛰️ [RealtimeNotificationService] User authenticated on init, connecting...',
       );
       _connect(currentState.user.id);
     }
 
     authBloc.stream.listen((state) {
       if (state is Authenticated) {
+        print(
+          '🛰️ [RealtimeNotificationService] User authenticated via stream, connecting...',
+        );
         _connect(state.user.id);
       } else if (state is Unauthenticated) {
+        print(
+          '🛰️ [RealtimeNotificationService] User logged out, disconnecting...',
+        );
         _disconnect();
       }
     });
@@ -49,16 +54,12 @@ class RealtimeNotificationService {
   void _connect(int userId) {
     final token = tokenManager.getToken();
     if (token == null) {
-      dev.log(
-        'FAILED to connect: Token is null',
-        name: 'RealtimeNotification',
-      );
+      print('❌ [RealtimeNotificationService] FAILED to connect: Token is null');
       return;
     }
 
-    dev.log(
-      'INITIALIZING connection to Reverb for user $userId',
-      name: 'RealtimeNotification',
+    print(
+      '🛰️ [RealtimeNotificationService] INITIALIZING connection to Reverb for user $userId',
     );
 
     PusherOptions options = PusherOptions(
@@ -79,22 +80,22 @@ class RealtimeNotificationService {
     _pusher = PusherClient('z8gmvgvmclvhoezjsfil', options, autoConnect: true);
 
     _pusher!.onConnectionError((error) {
-      dev.log(
-        '🔴 CONNECTION ERROR: ${error?.message}',
-        name: 'RealtimeNotification',
-        error: error?.exception,
+      print(
+        '🔴 [RealtimeNotificationService] CONNECTION ERROR: ${error?.message}',
       );
+      if (error?.exception != null)
+        print(
+          '🔴 [RealtimeNotificationService] Exception: ${error?.exception}',
+        );
     });
 
     _pusher!.onConnectionStateChange((state) {
-      dev.log(
-        '🔵 Connection state changed: from ${state?.previousState} to ${state?.currentState}',
-        name: 'RealtimeNotification',
+      print(
+        '🔵 [RealtimeNotificationService] State: ${state?.previousState} -> ${state?.currentState}',
       );
       if (state?.currentState == 'CONNECTED') {
-        dev.log(
-          '✅ SUCCESS: Socket connected to Reverb server!',
-          name: 'RealtimeNotification',
+        print(
+          '✅ [RealtimeNotificationService] SUCCESS: Socket connected to Reverb server!',
         );
       }
     });
@@ -112,9 +113,8 @@ class RealtimeNotificationService {
     );
 
     final channelName = 'App.Models.User.$userId';
-    dev.log(
-      '🛰️ Subscribing to private channel: $channelName',
-      name: 'RealtimeNotification',
+    print(
+      '🛰️ [RealtimeNotificationService] Subscribing to private channel: $channelName',
     );
 
     final channel = _echo!.private(channelName);
@@ -123,11 +123,9 @@ class RealtimeNotificationService {
     _pusher!.subscribe(channelName); // Ensure subscription is triggered
 
     channel.notification((notification) {
-      dev.log(
-        '📥 NOTIFICATION RECEIVED via .notification()!',
-        name: 'RealtimeNotification',
+      print(
+        '📥 [RealtimeNotificationService] NOTIFICATION RECEIVED via .notification()!',
       );
-      dev.log('Payload: $notification', name: 'RealtimeNotification');
       _handleNotification(notification);
     });
 
@@ -135,27 +133,23 @@ class RealtimeNotificationService {
         'Illuminate\\Notifications\\Events\\BroadcastNotificationCreated';
 
     channel.listen('.$eventName', (event) {
-      dev.log(
-        '📥 EVENT RECEIVED via .listen(.$eventName)!',
-        name: 'RealtimeNotification',
+      print(
+        '📥 [RealtimeNotificationService] EVENT RECEIVED via .listen(.$eventName)!',
       );
-      dev.log('Payload: $event', name: 'RealtimeNotification');
       _handleNotification(event);
     });
 
     channel.listen(eventName, (event) {
-      dev.log(
-        '📥 EVENT RECEIVED via .listen($eventName)!',
-        name: 'RealtimeNotification',
+      print(
+        '📥 [RealtimeNotificationService] EVENT RECEIVED via .listen($eventName)!',
       );
-      dev.log('Payload: $event', name: 'RealtimeNotification');
       _handleNotification(event);
     });
   }
 
   /// Trigger a test notification to verify UI and logs
   void triggerTestNotification() {
-    dev.log('🧪 Triggering Test Notification...', name: 'RealtimeNotification');
+    print('🧪 [RealtimeNotificationService] Triggering Test Notification...');
     final testPayload = {
       'id': 'test-uuid-${DateTime.now().millisecondsSinceEpoch}',
       'type': 'test_notification',
@@ -163,20 +157,21 @@ class RealtimeNotificationService {
       'message': 'هذا إشعار وهمي لاختبار الاتصال والواجهة.',
       'is_read': false,
       'created_at': DateTime.now().toIso8601String(),
-      'data': {'test_key': 'test_value'}
+      'data': {'test_key': 'test_value'},
     };
+    print('🧪 [RealtimeNotificationService] Test Payload: $testPayload');
     _handleNotification(testPayload);
   }
 
   void _handleNotification(dynamic notification) {
     try {
+      print(
+        '📥 [RealtimeNotificationService] Handling incoming notification...',
+      );
+      print('📥 [RealtimeNotificationService] Raw Payload: $notification');
+
       final Map<String, dynamic> rawData = Map<String, dynamic>.from(
         notification,
-      );
-
-      dev.log(
-        'Processing notification payload...',
-        name: 'RealtimeNotification',
       );
 
       // Laravel BroadcastNotificationCreated usually has a 'data' field
@@ -195,7 +190,7 @@ class RealtimeNotificationService {
 
       // Ensure we have an ID for the model
       if (finalJson['id'] == null) {
-        finalJson['id'] = DateTime.now().millisecondsSinceEpoch;
+        finalJson['id'] = 'temp-${DateTime.now().millisecondsSinceEpoch}';
       }
 
       // Ensure created_at exists
@@ -203,18 +198,22 @@ class RealtimeNotificationService {
         finalJson['created_at'] = DateTime.now().toIso8601String();
       }
 
+      print('📥 [RealtimeNotificationService] Final Parsed JSON: $finalJson');
+
       final notificationModel = NotificationModel.fromJson(finalJson);
+      print(
+        '📥 [RealtimeNotificationService] Created Model: ${notificationModel.id}',
+      );
+
       notificationsBloc.add(NewNotificationReceivedEvent(notificationModel));
+      print('📥 [RealtimeNotificationService] Event added to Bloc');
 
       // Show a SnackBar notification
       _showNotificationSnackBar(notificationModel);
+      print('📥 [RealtimeNotificationService] SnackBar triggered');
     } catch (e, stack) {
-      dev.log(
-        'Error parsing notification: $e',
-        name: 'RealtimeNotification',
-        error: e,
-        stackTrace: stack,
-      );
+      print('❌ [RealtimeNotificationService] Error parsing notification: $e');
+      print('❌ [RealtimeNotificationService] StackTrace: $stack');
     }
   }
 

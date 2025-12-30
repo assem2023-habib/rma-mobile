@@ -22,7 +22,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<NotificationsBloc>().add(GetNotificationsEvent());
+    // Only fetch if not already loaded to preserve local/test notifications during session
+    final state = context.read<NotificationsBloc>().state;
+    if (state is! NotificationsLoaded) {
+      context.read<NotificationsBloc>().add(GetNotificationsEvent());
+    }
   }
 
   @override
