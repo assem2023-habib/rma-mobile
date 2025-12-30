@@ -22,10 +22,18 @@ import 'package:rma_customer/features/map/presentation/pages/map_page.dart';
 import 'package:rma_customer/features/profile/presentation/pages/profile_page.dart';
 import 'package:rma_customer/features/notifications/presentation/pages/notification_screen.dart';
 
+import 'package:rma_customer/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:rma_customer/features/onboarding/presentation/pages/splash_screen.dart';
+
 class AppRouter {
   static final router = GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/splash',
     routes: [
+      GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingPage(),
+      ),
       GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       GoRoute(
         path: '/register',
