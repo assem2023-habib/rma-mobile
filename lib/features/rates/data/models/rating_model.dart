@@ -15,10 +15,10 @@ class RatingModel extends RatingEntity {
     return RatingModel(
       id: json['id'],
       rateableId: json['rateable_id'],
-      rateableType: json['rateable_type'] != null 
-          ? RatingForType.fromString(json['rateable_type']) 
+      rateableType: json['rateable_type'] != null
+          ? RatingForType.fromString(json['rateable_type'])
           : null,
-      rating: json['rating'],
+      rating: (json['rating'] as num).toDouble(),
       comment: json['comment'],
       createdAt: DateTime.parse(json['created_at']),
     );

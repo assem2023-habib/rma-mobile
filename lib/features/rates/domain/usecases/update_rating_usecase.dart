@@ -1,23 +1,20 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
-import '../../../../core/enums/rating_type.dart';
 import '../entities/rating.dart';
 import '../repositories/rating_repository.dart';
 
-class CreateRatingUseCase {
+class UpdateRatingUseCase {
   final RatingRepository repository;
 
-  CreateRatingUseCase(this.repository);
+  UpdateRatingUseCase(this.repository);
 
   Future<Either<Failure, RatingEntity>> call({
-    int? rateableId,
-    RatingForType? rateableType,
-    required double rating,
+    required int id,
+    double? rating,
     String? comment,
   }) {
-    return repository.createRating(
-      rateableId: rateableId,
-      rateableType: rateableType,
+    return repository.updateRating(
+      id: id,
       rating: rating,
       comment: comment,
     );

@@ -7,15 +7,17 @@ abstract class RatingRepository {
   Future<Either<Failure, RatingEntity>> createRating({
     int? rateableId,
     RatingForType? rateableType,
-    required int rating,
+    required double rating,
     String? comment,
   });
 
   Future<Either<Failure, RatingEntity>> updateRating({
     required int id,
-    int? rateableId,
-    RatingForType? rateableType,
-    int? rating,
+    double? rating,
     String? comment,
   });
+
+  Future<Either<Failure, void>> deleteRating(int id);
+
+  Future<Either<Failure, List<RatingEntity>>> getMyRatings();
 }

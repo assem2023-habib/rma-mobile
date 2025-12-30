@@ -8,17 +8,19 @@ abstract class RatingRemoteDataSource {
   Future<RatingModel> createRating({
     int? rateableId,
     RatingForType? rateableType,
-    required int rating,
+    required double rating,
     String? comment,
   });
 
   Future<RatingModel> updateRating({
     required int id,
-    int? rateableId,
-    RatingForType? rateableType,
-    int? rating,
+    double? rating,
     String? comment,
   });
+
+  Future<void> deleteRating(int id);
+
+  Future<List<RatingModel>> getMyRatings();
 }
 
 class RatingRemoteDataSourceImpl implements RatingRemoteDataSource {
@@ -30,7 +32,7 @@ class RatingRemoteDataSourceImpl implements RatingRemoteDataSource {
   Future<RatingModel> createRating({
     int? rateableId,
     RatingForType? rateableType,
-    required int rating,
+    required double rating,
     String? comment,
   }) async {
     try {
@@ -56,23 +58,46 @@ class RatingRemoteDataSourceImpl implements RatingRemoteDataSource {
   @override
   Future<RatingModel> updateRating({
     required int id,
-    int? rateableId,
-    RatingForType? rateableType,
-    int? rating,
+    double? rating,
     String? comment,
   }) async {
     try {
       final response = await dioClient.put(
         '${ApiConfig.rates}/$id',
         data: {
-          if (rateableId != null) 'rateable_id': rateableId,
-          if (rateableType != null) 'rateable_type': rateableType.value,
           if (rating != null) 'rating': rating,
           if (comment != null) 'comment': comment,
         },
       );
       if (response.statusCode == 200) {
         return RatingModel.fromJson(response.data['data']['rate']);
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<void> deleteRating(int id) async {
+    try {
+      final response = await dioClient.delete('${ApiConfig.rates}/$id');
+      if (response.statusCode != 200) {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<List<RatingModel>> getMyRatings() async {
+    try {
+      final response = await dioClient.get(ApiConfig.rates);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data']['rates'];
+        return data.map((json) => RatingModel.fromJson(json)).toList();
       } else {
         throw ServerException();
       }

@@ -63,6 +63,9 @@ import 'package:rma_customer/features/rates/data/datasources/rating_remote_datas
 import 'package:rma_customer/features/rates/data/repositories/rating_repository_impl.dart';
 import 'package:rma_customer/features/rates/domain/repositories/rating_repository.dart';
 import 'package:rma_customer/features/rates/domain/usecases/create_rating_usecase.dart';
+import 'package:rma_customer/features/rates/domain/usecases/update_rating_usecase.dart';
+import 'package:rma_customer/features/rates/domain/usecases/delete_rating_usecase.dart';
+import 'package:rma_customer/features/rates/domain/usecases/get_my_ratings_usecase.dart';
 import 'package:rma_customer/features/rates/presentation/bloc/rating_bloc.dart';
 import 'package:rma_customer/features/common/data/datasources/common_remote_datasource.dart';
 import 'package:rma_customer/features/common/data/repositories/common_repository_impl.dart';
@@ -255,9 +258,19 @@ Future<void> init() async {
 
   //! Features - Rates
   // Bloc
-  sl.registerFactory(() => RatingBloc(createRatingUseCase: sl()));
+  sl.registerFactory(
+    () => RatingBloc(
+      createRatingUseCase: sl(),
+      updateRatingUseCase: sl(),
+      deleteRatingUseCase: sl(),
+      getMyRatingsUseCase: sl(),
+    ),
+  );
   // Use cases
   sl.registerLazySingleton(() => CreateRatingUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateRatingUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteRatingUseCase(sl()));
+  sl.registerLazySingleton(() => GetMyRatingsUseCase(sl()));
   // Repository
   sl.registerLazySingleton<RatingRepository>(
     () => RatingRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),

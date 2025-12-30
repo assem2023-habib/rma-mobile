@@ -20,7 +20,7 @@ class RatingRepositoryImpl implements RatingRepository {
   Future<Either<Failure, RatingEntity>> createRating({
     int? rateableId,
     RatingForType? rateableType,
-    required int rating,
+    required double rating,
     String? comment,
   }) async {
     if (await networkInfo.isConnected) {
@@ -45,20 +45,48 @@ class RatingRepositoryImpl implements RatingRepository {
   @override
   Future<Either<Failure, RatingEntity>> updateRating({
     required int id,
-    int? rateableId,
-    RatingForType? rateableType,
-    int? rating,
+    double? rating,
     String? comment,
   }) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.updateRating(
           id: id,
-          rateableId: rateableId,
-          rateableType: rateableType,
           rating: rating,
           comment: comment,
         );
+        return Right(result);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message ?? 'حدث خطأ في الخادم'));
+      } catch (e) {
+        return Left(ServerFailure(e.toString()));
+      }
+    } else {
+      return const Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteRating(int id) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.deleteRating(id);
+        return const Right(null);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message ?? 'حدث خطأ في الخادم'));
+      } catch (e) {
+        return Left(ServerFailure(e.toString()));
+      }
+    } else {
+      return const Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<RatingEntity>>> getMyRatings() async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.getMyRatings();
         return Right(result);
       } on ServerException catch (e) {
         return Left(ServerFailure(e.message ?? 'حدث خطأ في الخادم'));

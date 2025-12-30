@@ -8,18 +8,14 @@ class RatingDialog extends StatefulWidget {
   final int? rateableId;
   final RatingForType rateableType;
 
-  const RatingDialog({
-    super.key,
-    this.rateableId,
-    required this.rateableType,
-  });
+  const RatingDialog({super.key, this.rateableId, required this.rateableType});
 
   @override
   State<RatingDialog> createState() => _RatingDialogState();
 }
 
 class _RatingDialogState extends State<RatingDialog> {
-  int _rating = 0;
+  double _rating = 0;
   final _commentController = TextEditingController();
 
   @override
@@ -34,12 +30,18 @@ class _RatingDialogState extends State<RatingDialog> {
       listener: (context, state) {
         if (state is RatingSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('شكراً لتقييمك!'), backgroundColor: AppColors.success),
+            const SnackBar(
+              content: Text('شكراً لتقييمك!'),
+              backgroundColor: AppColors.success,
+            ),
           );
           Navigator.of(context).pop();
         } else if (state is RatingError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: AppColors.error),
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.error,
+            ),
           );
         }
       },
@@ -63,7 +65,8 @@ class _RatingDialogState extends State<RatingDialog> {
                     color: Colors.amber,
                     size: 40,
                   ),
-                  onPressed: () => setState(() => _rating = index + 1),
+                  onPressed: () =>
+                      setState(() => _rating = (index + 1).toDouble()),
                 );
               }),
             ),
@@ -90,13 +93,13 @@ class _RatingDialogState extends State<RatingDialog> {
                 ? null
                 : () {
                     context.read<RatingBloc>().add(
-                          CreateRatingRequested(
-                            rateableId: widget.rateableId,
-                            rateableType: widget.rateableType,
-                            rating: _rating,
-                            comment: _commentController.text,
-                          ),
-                        );
+                      CreateRatingRequested(
+                        rateableId: widget.rateableId,
+                        rateableType: widget.rateableType,
+                        rating: _rating,
+                        comment: _commentController.text,
+                      ),
+                    );
                   },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryBlue,

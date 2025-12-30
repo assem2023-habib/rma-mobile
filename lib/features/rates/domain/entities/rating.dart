@@ -5,7 +5,7 @@ class RatingEntity extends Equatable {
   final int id;
   final int? rateableId;
   final RatingForType? rateableType;
-  final int rating;
+  final double rating;
   final String? comment;
   final DateTime createdAt;
 
