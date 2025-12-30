@@ -21,8 +21,6 @@ import 'package:rma_customer/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:rma_customer/features/auth/presentation/bloc/auth_state.dart';
 import '../../../../core/widgets/guest_prompt_bottom_sheet.dart';
 
-import 'package:rma_customer/injection_container.dart';
-
 class DashboardHomePage extends StatefulWidget {
   const DashboardHomePage({super.key});
 

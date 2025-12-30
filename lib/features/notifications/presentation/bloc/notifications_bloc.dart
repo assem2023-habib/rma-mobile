@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/notifications_repository.dart';
-import '../../domain/entities/notification_entity.dart';
 import 'notifications_event.dart';
 import 'notifications_state.dart';
 
