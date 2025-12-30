@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_dimensions.dart';
-import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/backgrounds/shiny_background.dart';
 import '../../../../core/widgets/headers/custom_app_header.dart';
 import '../bloc/routes_bloc.dart';

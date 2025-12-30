@@ -10,7 +10,6 @@ import 'package:rma_customer/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:rma_customer/features/auth/presentation/bloc/auth_event.dart';
 import 'package:rma_customer/features/auth/presentation/bloc/auth_state.dart';
 import 'package:rma_customer/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:rma_customer/features/profile/presentation/bloc/profile_event.dart';
 import 'package:rma_customer/features/profile/presentation/bloc/profile_state.dart';
 import '../widgets/profile_image_header.dart';
 import '../widgets/profile_info_form.dart';

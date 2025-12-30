@@ -4,7 +4,6 @@ import '../bloc/parcels_bloc.dart';
 import '../bloc/parcels_event.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_dimensions.dart';
-import '../../../../core/theme/app_typography.dart';
 import '../../domain/entities/parcel.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/backgrounds/shiny_background.dart';

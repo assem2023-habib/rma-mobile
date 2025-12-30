@@ -169,7 +169,7 @@ class ProfileInfoForm extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<int>(
-                value: selectedCityId,
+                initialValue: selectedCityId,
                 decoration: InputDecoration(
                   labelText: 'المدينة',
                   prefixIcon: const Icon(Icons.location_city),
