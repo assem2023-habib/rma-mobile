@@ -38,7 +38,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              context.read<NotificationsBloc>().add(MarkAllAsReadEvent());
+              context.read<NotificationsBloc>().add(
+                MarkAllNotificationsAsReadEvent(),
+              );
             },
             icon: const Icon(Icons.done_all, color: Colors.white),
             tooltip: 'تحديد الكل كمقروء',
