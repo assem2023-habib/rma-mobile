@@ -10,12 +10,12 @@ class AppTheme {
     // =========================
     // TabBar
     // =========================
-    tabBarTheme: const TabBarTheme(
+    tabBarTheme: const TabBarThemeData(
       labelStyle: AppTypography.bodyMedium,
       unselectedLabelStyle: AppTypography.bodyMedium,
       indicatorColor: AppColors.primary,
-      labelColor: AppColors.textOnPrimary,
-      unselectedLabelColor: AppColors.textOnPrimary,
+      labelColor: AppColors.primary,
+      unselectedLabelColor: AppColors.textMuted,
       indicatorSize: TabBarIndicatorSize.tab,
     ),
 
