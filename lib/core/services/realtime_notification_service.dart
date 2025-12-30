@@ -146,8 +146,11 @@ class RealtimeNotificationService {
   void _subscribeToUserChannel(int userId) {
     if (_echo == null || _pusher == null) return;
 
-    // We will listen to both common Laravel channel formats to be safe
-    final channelNames = ['User.$userId', 'App.Models.User.$userId'];
+    // We will listen to the new channel format as requested by Backend
+    final channelNames = [
+      'User.$userId', // Primary: matches the new Morph Map
+      'App.Models.User.$userId', // Fallback for transition
+    ];
 
     for (var channelName in channelNames) {
       if (kDebugMode) {
@@ -266,6 +269,11 @@ class RealtimeNotificationService {
       if (rawData.containsKey('data') && rawData['data'] is Map) {
         final nestedData = Map<String, dynamic>.from(rawData['data']);
         finalJson.addAll(nestedData);
+      }
+
+      // Ensure we have 'message' field even if backend sends 'body'
+      if (finalJson['message'] == null && finalJson['body'] != null) {
+        finalJson['message'] = finalJson['body'];
       }
 
       // Ensure we have an ID for the model
