@@ -77,6 +77,8 @@ class RealtimeNotificationService {
       wsPort: 6001,
       wssPort: 6001,
       encrypted: false,
+      activityTimeout: 30000,
+      pongTimeout: 30000,
       auth: PusherAuth(
         'http://10.43.226.236:8000/api/broadcasting/auth',
         headers: {
@@ -88,11 +90,32 @@ class RealtimeNotificationService {
 
     if (kDebugMode) {
       print(
-        '🛰️ [RealtimeNotificationService] CONNECTING TO LOCAL REVERB: ${options.host}:${options.wsPort}',
+        '🛰️ [RealtimeNotificationService] CONNECTING TO LOCAL REVERB (User ID: $userId): ${options.host}:${options.wsPort}',
       );
     }
 
-    _pusher = PusherClient('z8gmvgvmclvhoezjsfil', options, autoConnect: true);
+    _pusher = PusherClient('z8gmvgvmclvhoezjsfil', options, autoConnect: false);
+
+    _echo = Echo(
+      client: _pusher,
+      broadcaster: EchoBroadcasterType.Pusher,
+      options: {
+        'key': 'z8gmvgvmclvhoezjsfil',
+        'host': '10.43.226.236',
+        'wsPort': 6001,
+        'wssPort': 6001,
+        'encrypted': false,
+        'authEndpoint': 'http://10.43.226.236:8000/api/broadcasting/auth',
+        'auth': {
+          'headers': {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+        },
+        'disableStats': true,
+        'forceTLS': false,
+      },
+    );
 
     _pusher!.onConnectionError((error) {
       if (kDebugMode) {
@@ -108,43 +131,89 @@ class RealtimeNotificationService {
     _pusher!.onConnectionStateChange((state) {
       if (kDebugMode) {
         print(
-          '🔵 [RealtimeNotificationService] Connection State: ${state?.previousState} -> ${state?.currentState}',
+          '🔵 [RealtimeNotificationService] STATE CHANGE: ${state?.previousState} -> ${state?.currentState}',
         );
       }
+
       if (state?.currentState == 'CONNECTED') {
         if (kDebugMode) {
           print(
-            '✅ [RealtimeNotificationService] SUCCESS: Connected to Reverb!',
+            '✅ [RealtimeNotificationService] CONNECTED to Reverb successfully!',
           );
         }
         _subscribeToUserChannel(userId);
+      } else if (state?.currentState == 'CONNECTING') {
+        if (kDebugMode) {
+          print('⏳ [RealtimeNotificationService] Attempting to connect...');
+        }
+      } else if (state?.currentState == 'DISCONNECTED') {
+        if (kDebugMode) {
+          print('🟠 [RealtimeNotificationService] Disconnected.');
+        }
+      } else if (state?.currentState == 'ERROR') {
+        if (kDebugMode) {
+          print('❌ [RealtimeNotificationService] Connection in ERROR state.');
+        }
       }
     });
 
-    _echo = Echo(
-      client: _pusher,
-      broadcaster: EchoBroadcasterType.Pusher,
-      options: {
-        'key': 'z8gmvgvmclvhoezjsfil',
-        'host': 'http://10.43.226.236:6001',
-        'wsPort': 6001,
-        'wssPort': 6001,
-        'encrypted': false,
-        'authEndpoint': 'http://10.43.226.236:8000/api/broadcasting/auth',
-        'auth': {
-          'headers': {
-            'Authorization': 'Bearer $token',
-            'Accept': 'application/json',
-          },
-        },
-        'disableStats': true,
-        'forceTLS': false,
-      },
-    );
+    // Now connect after everything is set up
+    if (kDebugMode) {
+      print(
+        '🛰️ [RealtimeNotificationService] Waiting 500ms before calling connect...',
+      );
+    }
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      try {
+        if (kDebugMode) {
+          print(
+            '🛰️ [RealtimeNotificationService] Calling _pusher.connect() now...',
+          );
+        }
+        _pusher!.connect();
+      } catch (e) {
+        if (kDebugMode) {
+          print(
+            '❌ [RealtimeNotificationService] CRITICAL ERROR during connect(): $e',
+          );
+        }
+      }
+    });
+  }
+
+  void reconnect() {
+    final currentState = authBloc.state;
+    if (currentState is Authenticated) {
+      if (kDebugMode) {
+        print(
+          '🛰️ [RealtimeNotificationService] Manual reconnect triggered...',
+        );
+      }
+      _connect(currentState.user.id);
+    } else {
+      if (kDebugMode) {
+        print(
+          '⚠️ [RealtimeNotificationService] Reconnect failed: User not authenticated',
+        );
+      }
+    }
   }
 
   void _subscribeToUserChannel(int userId) {
-    if (_echo == null || _pusher == null) return;
+    if (kDebugMode) {
+      print(
+        '🛰️ [RealtimeNotificationService] Subscribing for User ID: $userId',
+      );
+    }
+    if (_echo == null || _pusher == null) {
+      if (kDebugMode) {
+        print(
+          '⚠️ [RealtimeNotificationService] Cannot subscribe: Echo or Pusher is null',
+        );
+      }
+      return;
+    }
 
     // We will listen to the new channel format as requested by Backend
     final channelNames = [
@@ -177,8 +246,9 @@ class RealtimeNotificationService {
       _echo!.private(channelName).notification((notification) {
         if (kDebugMode) {
           print(
-            '📥 [RealtimeNotificationService] ECHO NOTIFICATION: $notification',
+            '🔔 [RealtimeNotificationService] !!! NOTIFICATION RECEIVED VIA ECHO !!!',
           );
+          print('📥 [RealtimeNotificationService] Data: $notification');
         }
         _handleNotification(notification);
       });
@@ -194,7 +264,10 @@ class RealtimeNotificationService {
         pusherChannel.bind(event, (eventData) {
           if (kDebugMode) {
             print(
-              '📥 [RealtimeNotificationService] DIRECT EVENT ($event): ${eventData?.data}',
+              '🔔 [RealtimeNotificationService] !!! EVENT RECEIVED DIRECTLY ($event) !!!',
+            );
+            print(
+              '📥 [RealtimeNotificationService] Raw Data: ${eventData?.data}',
             );
           }
           _handleRawEvent(eventData);
