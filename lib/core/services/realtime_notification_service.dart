@@ -139,7 +139,7 @@ class RealtimeNotificationService {
       },
     );
 
-    final channelName = 'App.Models.User.$userId';
+    final channelName = 'User.$userId';
     if (kDebugMode) {
       print(
         '🛰️ [RealtimeNotificationService] Subscribing to private channel: $channelName',
