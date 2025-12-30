@@ -179,7 +179,7 @@ Future<void> init() async {
 
   //! Features - Auth
   // Bloc
-  sl.registerFactory(
+  sl.registerLazySingleton(
     () => AuthBloc(
       loginUseCase: sl(),
       registerUseCase: sl(),

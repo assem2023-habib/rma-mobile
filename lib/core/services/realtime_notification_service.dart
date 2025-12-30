@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:laravel_echo/laravel_echo.dart';
 import 'package:pusher_client_fixed/pusher_client_fixed.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import '../../features/notifications/data/models/notification_model.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/bloc/auth_state.dart';
 import '../../../main.dart';
-import 'dart:developer' as dev;
 
 import 'package:flutter/foundation.dart';
 
@@ -34,7 +34,7 @@ class RealtimeNotificationService {
     if (currentState is Authenticated) {
       if (kDebugMode) {
         print(
-          '🛰️ [RealtimeNotificationService] User authenticated on init, connecting...',
+          '🛰️ [RealtimeNotificationService] User already authenticated, connecting now...',
         );
       }
       _connect(currentState.user.id);
@@ -44,7 +44,7 @@ class RealtimeNotificationService {
       if (state is Authenticated) {
         if (kDebugMode) {
           print(
-            '🛰️ [RealtimeNotificationService] User authenticated via stream, connecting...',
+            '🛰️ [RealtimeNotificationService] User authenticated, connecting...',
           );
         }
         _connect(state.user.id);
@@ -60,6 +60,8 @@ class RealtimeNotificationService {
   }
 
   void _connect(int userId) {
+    _disconnect(); // Ensure any existing connection is closed
+
     final token = tokenManager.getToken();
     if (token == null) {
       if (kDebugMode) {
@@ -70,18 +72,11 @@ class RealtimeNotificationService {
       return;
     }
 
-    if (kDebugMode) {
-      print(
-        '🛰️ [RealtimeNotificationService] INITIALIZING connection to Reverb for user $userId',
-      );
-    }
-
     PusherOptions options = PusherOptions(
       host: '10.43.226.236',
       wsPort: 6001,
       wssPort: 6001,
       encrypted: false,
-      cluster: 'mt1',
       auth: PusherAuth(
         'http://10.43.226.236:8000/api/broadcasting/auth',
         headers: {
@@ -91,6 +86,12 @@ class RealtimeNotificationService {
       ),
     );
 
+    if (kDebugMode) {
+      print(
+        '🛰️ [RealtimeNotificationService] CONNECTING TO LOCAL REVERB: ${options.host}:${options.wsPort}',
+      );
+    }
+
     _pusher = PusherClient('z8gmvgvmclvhoezjsfil', options, autoConnect: true);
 
     _pusher!.onConnectionError((error) {
@@ -98,26 +99,25 @@ class RealtimeNotificationService {
         print(
           '🔴 [RealtimeNotificationService] CONNECTION ERROR: ${error?.message}',
         );
-        if (error?.exception != null) {
-          print(
-            '🔴 [RealtimeNotificationService] Exception: ${error?.exception}',
-          );
-        }
+        print(
+          '🔴 [RealtimeNotificationService] Detailed Error: ${error?.exception}',
+        );
       }
     });
 
     _pusher!.onConnectionStateChange((state) {
       if (kDebugMode) {
         print(
-          '🔵 [RealtimeNotificationService] State: ${state?.previousState} -> ${state?.currentState}',
+          '🔵 [RealtimeNotificationService] Connection State: ${state?.previousState} -> ${state?.currentState}',
         );
       }
       if (state?.currentState == 'CONNECTED') {
         if (kDebugMode) {
           print(
-            '✅ [RealtimeNotificationService] SUCCESS: Socket connected to Reverb server!',
+            '✅ [RealtimeNotificationService] SUCCESS: Connected to Reverb!',
           );
         }
+        _subscribeToUserChannel(userId);
       }
     });
 
@@ -125,7 +125,8 @@ class RealtimeNotificationService {
       client: _pusher,
       broadcaster: EchoBroadcasterType.Pusher,
       options: {
-        'host': '10.43.226.236', // Removed http:// and port for host option
+        'key': 'z8gmvgvmclvhoezjsfil',
+        'host': 'http://10.43.226.236:6001',
         'wsPort': 6001,
         'wssPort': 6001,
         'encrypted': false,
@@ -136,49 +137,67 @@ class RealtimeNotificationService {
             'Accept': 'application/json',
           },
         },
+        'disableStats': true,
+        'forceTLS': false,
       },
     );
+  }
 
-    final channelName = 'User.$userId';
-    if (kDebugMode) {
-      print(
-        '🛰️ [RealtimeNotificationService] Subscribing to private channel: $channelName',
-      );
+  void _subscribeToUserChannel(int userId) {
+    if (_echo == null || _pusher == null) return;
+
+    // We will listen to both common Laravel channel formats to be safe
+    final channelNames = ['User.$userId', 'App.Models.User.$userId'];
+
+    for (var channelName in channelNames) {
+      if (kDebugMode) {
+        print('🛰️ [RealtimeNotificationService] Subscribing to: $channelName');
+      }
+
+      final pusherChannel = _pusher!.subscribe('private-$channelName');
+
+      pusherChannel.bind('pusher:subscription_succeeded', (event) {
+        if (kDebugMode) {
+          print('✅ [RealtimeNotificationService] Subscribed to $channelName');
+        }
+      });
+
+      pusherChannel.bind('pusher:subscription_error', (event) {
+        if (kDebugMode) {
+          print(
+            '❌ [RealtimeNotificationService] Subscription Error ($channelName): ${event?.data}',
+          );
+        }
+      });
+
+      // Listen for the notification event via Echo
+      _echo!.private(channelName).notification((notification) {
+        if (kDebugMode) {
+          print(
+            '📥 [RealtimeNotificationService] ECHO NOTIFICATION: $notification',
+          );
+        }
+        _handleNotification(notification);
+      });
+
+      // Direct bind as backup for common event names
+      const events = [
+        'Illuminate\\Notifications\\Events\\BroadcastNotificationCreated',
+        'BroadcastNotificationCreated',
+        'notification',
+      ];
+
+      for (var event in events) {
+        pusherChannel.bind(event, (eventData) {
+          if (kDebugMode) {
+            print(
+              '📥 [RealtimeNotificationService] DIRECT EVENT ($event): ${eventData?.data}',
+            );
+          }
+          _handleRawEvent(eventData);
+        });
+      }
     }
-
-    final channel = _echo!.private(channelName);
-
-    _pusher!.subscribe(channelName); // Ensure subscription is triggered
-
-    channel.notification((notification) {
-      if (kDebugMode) {
-        print(
-          '📥 [RealtimeNotificationService] NOTIFICATION RECEIVED via .notification()!',
-        );
-      }
-      _handleNotification(notification);
-    });
-
-    const eventName =
-        'Illuminate\\Notifications\\Events\\BroadcastNotificationCreated';
-
-    channel.listen('.$eventName', (event) {
-      if (kDebugMode) {
-        print(
-          '📥 [RealtimeNotificationService] EVENT RECEIVED via .listen(.$eventName)!',
-        );
-      }
-      _handleNotification(event);
-    });
-
-    channel.listen(eventName, (event) {
-      if (kDebugMode) {
-        print(
-          '📥 [RealtimeNotificationService] EVENT RECEIVED via .listen($eventName)!',
-        );
-      }
-      _handleNotification(event);
-    });
   }
 
   void triggerTestNotification() {
@@ -200,6 +219,22 @@ class RealtimeNotificationService {
     _handleNotification(testPayload);
   }
 
+  void _handleRawEvent(PusherEvent? event) {
+    if (event?.data != null) {
+      try {
+        final decoded = json.decode(event!.data!);
+        _handleNotification(decoded);
+      } catch (e) {
+        if (kDebugMode) {
+          print(
+            '⚠️ [RealtimeNotificationService] Could not decode event data as JSON, passing as is.',
+          );
+        }
+        _handleNotification(event?.data);
+      }
+    }
+  }
+
   void _handleNotification(dynamic notification) {
     try {
       if (kDebugMode) {
@@ -207,6 +242,13 @@ class RealtimeNotificationService {
           '📥 [RealtimeNotificationService] Handling incoming notification...',
         );
         print('📥 [RealtimeNotificationService] Raw Payload: $notification');
+      }
+
+      if (notification is! Map) {
+        if (kDebugMode) {
+          print('⚠️ [RealtimeNotificationService] Notification is not a Map');
+        }
+        return;
       }
 
       final Map<String, dynamic> rawData = Map<String, dynamic>.from(
@@ -221,7 +263,6 @@ class RealtimeNotificationService {
       finalJson.addAll(rawData);
 
       // If there's a nested 'data' field, merge its contents into the top level
-      // so NotificationModel.fromJson can find fields like 'title' and 'message'
       if (rawData.containsKey('data') && rawData['data'] is Map) {
         final nestedData = Map<String, dynamic>.from(rawData['data']);
         finalJson.addAll(nestedData);
@@ -307,9 +348,19 @@ class RealtimeNotificationService {
   }
 
   void _disconnect() {
-    dev.log('Disconnecting from Reverb', name: 'RealtimeNotification');
-    _echo?.disconnect();
-    _pusher?.disconnect();
+    if (kDebugMode) {
+      print(
+        '🛰️ [RealtimeNotificationService] Disconnecting and cleaning up...',
+      );
+    }
+    try {
+      _echo?.disconnect();
+      _pusher?.disconnect();
+    } catch (e) {
+      if (kDebugMode) {
+        print('⚠️ [RealtimeNotificationService] Error during disconnect: $e');
+      }
+    }
     _echo = null;
     _pusher = null;
   }
