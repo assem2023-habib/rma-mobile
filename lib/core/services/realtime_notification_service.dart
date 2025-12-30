@@ -104,10 +104,16 @@ class RealtimeNotificationService {
       client: _pusher,
       broadcaster: EchoBroadcasterType.Pusher,
       options: {
-        'host': 'http://10.43.226.236:6001',
+        'host': '10.43.226.236', // Removed http:// and port for host option
+        'wsPort': 6001,
+        'wssPort': 6001,
+        'encrypted': false,
         'authEndpoint': 'http://10.43.226.236:8000/api/broadcasting/auth',
         'auth': {
-          'headers': {'Authorization': 'Bearer $token'},
+          'headers': {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
         },
       },
     );
@@ -120,6 +126,21 @@ class RealtimeNotificationService {
     final channel = _echo!.private(channelName);
 
     // Track subscription success/error
+    _pusher!.onEvent((event) {
+      print(
+        '📡 [RealtimeNotificationService] PUSHER EVENT: ${event?.eventName} on ${event?.channelName}',
+      );
+      if (event?.eventName == 'pusher:subscription_succeeded') {
+        print(
+          '✅ [RealtimeNotificationService] SUBSCRIPTION SUCCESSFUL to $channelName',
+        );
+      } else if (event?.eventName == 'pusher:subscription_error') {
+        print(
+          '❌ [RealtimeNotificationService] SUBSCRIPTION FAILED to $channelName',
+        );
+      }
+    });
+
     _pusher!.subscribe(channelName); // Ensure subscription is triggered
 
     channel.notification((notification) {
