@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/notifications_repository.dart';
+import '../../domain/entities/notification_entity.dart';
 import 'notifications_event.dart';
 import 'notifications_state.dart';
 
@@ -12,6 +13,33 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     on<MarkNotificationAsReadEvent>(_onMarkAsRead);
     on<MarkAllNotificationsAsReadEvent>(_onMarkAllAsRead);
     on<DeleteNotificationEvent>(_onDelete);
+    on<NotificationReceivedEvent>(_onNotificationReceived);
+  }
+
+  Future<void> _onNotificationReceived(
+    NotificationReceivedEvent event,
+    Emitter<NotificationsState> emit,
+  ) async {
+    if (state is NotificationsLoaded) {
+      final currentState = state as NotificationsLoaded;
+      final updatedNotifications = List<NotificationEntity>.from(
+        currentState.notifications,
+      )..insert(0, event.notification);
+
+      emit(
+        NotificationsLoaded(
+          notifications: updatedNotifications,
+          unreadCount: currentState.unreadCount + 1,
+        ),
+      );
+    } else {
+      // If not loaded yet, we could trigger a reload or manually create state.
+      // For simplicity, let's just trigger a reload if we are not in loaded state,
+      // OR we can manually emit loaded state if we want to be fancy.
+      // But usually if not loaded, the next GetNotificationsEvent will fetch it.
+      // Let's at least try to refresh if we are in Initial.
+      add(GetNotificationsEvent());
+    }
   }
 
   Future<void> _onGetNotifications(

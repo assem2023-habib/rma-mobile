@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../domain/entities/notification_entity.dart';
 
 abstract class NotificationsEvent extends Equatable {
   const NotificationsEvent();
@@ -25,4 +26,13 @@ class DeleteNotificationEvent extends NotificationsEvent {
 
   @override
   List<Object?> get props => [id];
+}
+
+class NotificationReceivedEvent extends NotificationsEvent {
+  final NotificationEntity notification;
+
+  const NotificationReceivedEvent(this.notification);
+
+  @override
+  List<Object?> get props => [notification];
 }

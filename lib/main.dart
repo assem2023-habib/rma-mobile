@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/theme/app_theme.dart';
 import 'core/navigation/app_router.dart';
+import 'core/widgets/live_notification_wrapper.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_event.dart';
 import 'features/profile/presentation/bloc/profile_bloc.dart';
@@ -63,9 +64,11 @@ class MyApp extends StatelessWidget {
 
         // Force RTL
         builder: (context, child) {
-          return Directionality(
-            textDirection: TextDirection.rtl,
-            child: child!,
+          return LiveNotificationWrapper(
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: child!,
+            ),
           );
         },
       ),
