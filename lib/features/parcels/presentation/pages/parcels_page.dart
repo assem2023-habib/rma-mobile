@@ -41,9 +41,9 @@ class _ParcelsPageState extends State<ParcelsPage> {
         if (state.parcelsPagination.currentPage <
             state.parcelsPagination.lastPage) {
           _currentPage = state.parcelsPagination.currentPage + 1;
-          context
-              .read<ParcelsBloc>()
-              .add(GetReturnedParcelsEvent(page: _currentPage));
+          context.read<ParcelsBloc>().add(
+            GetReturnedParcelsEvent(page: _currentPage),
+          );
         }
       }
     }
@@ -55,24 +55,21 @@ class _ParcelsPageState extends State<ParcelsPage> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('طرودي', style: AppTypography.heading2),
-          bottom: const TabBar(
+          title: Text('طرودي', style: AppTypography.heading2),
+          bottom: TabBar(
             tabs: [
               Tab(text: 'الكل'),
               Tab(text: 'المرتجعة'),
             ],
             labelStyle: AppTypography.bodyMedium,
-            indicatorColor: AppColors.primary,
+            indicatorColor: const Color.fromRGBO(46, 125, 50, 1),
           ),
           actions: [
             IconButton(onPressed: () {}, icon: const Icon(Icons.filter_list)),
           ],
         ),
         body: TabBarView(
-          children: [
-            _buildAllParcelsTab(),
-            _buildReturnedParcelsTab(),
-          ],
+          children: [_buildAllParcelsTab(), _buildReturnedParcelsTab()],
         ),
       ),
     );
@@ -135,9 +132,12 @@ class _ParcelsPageState extends State<ParcelsPage> {
   Widget _buildReturnedParcelsTab() {
     return BlocBuilder<ParcelsBloc, ParcelsState>(
       builder: (context, state) {
-        if (state is ParcelsInitial || (state is ParcelsLoading && _currentPage == 1)) {
+        if (state is ParcelsInitial ||
+            (state is ParcelsLoading && _currentPage == 1)) {
           // Trigger fetch if initial
-          context.read<ParcelsBloc>().add(const GetReturnedParcelsEvent(page: 1));
+          context.read<ParcelsBloc>().add(
+            const GetReturnedParcelsEvent(page: 1),
+          );
           return const Center(child: CircularProgressIndicator());
         }
 
@@ -156,7 +156,12 @@ class _ParcelsPageState extends State<ParcelsPage> {
               horizontal: AppDimensions.spacing4,
               vertical: AppDimensions.spacing4,
             ),
-            itemCount: parcels.length + (state.parcelsPagination.currentPage < state.parcelsPagination.lastPage ? 1 : 0),
+            itemCount:
+                parcels.length +
+                (state.parcelsPagination.currentPage <
+                        state.parcelsPagination.lastPage
+                    ? 1
+                    : 0),
             itemBuilder: (context, index) {
               if (index < parcels.length) {
                 final parcel = parcels[index];
@@ -177,13 +182,15 @@ class _ParcelsPageState extends State<ParcelsPage> {
             },
           );
         }
-        
+
         // If we are in another state (like ParcelsLoaded), we should still show the fetch trigger or handle it
         return Center(
           child: ElevatedButton(
             onPressed: () {
               _currentPage = 1;
-              context.read<ParcelsBloc>().add(const GetReturnedParcelsEvent(page: 1));
+              context.read<ParcelsBloc>().add(
+                const GetReturnedParcelsEvent(page: 1),
+              );
             },
             child: const Text('تحميل الطرود المرتجعة'),
           ),
@@ -205,9 +212,7 @@ class _ParcelsPageState extends State<ParcelsPage> {
           const SizedBox(height: AppDimensions.spacing4),
           Text(
             'لا توجد طرود حالياً',
-            style: AppTypography.bodyLarge.copyWith(
-              color: AppColors.slate500,
-            ),
+            style: AppTypography.bodyLarge.copyWith(color: AppColors.slate500),
           ),
         ],
       ),
