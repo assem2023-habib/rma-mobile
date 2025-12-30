@@ -1,0 +1,192 @@
+import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_dimensions.dart';
+import '../../../../core/theme/app_typography.dart';
+import '../../domain/entities/parcel.dart';
+
+class ParcelShippingInfoCard extends StatelessWidget {
+  final Parcel parcel;
+
+  const ParcelShippingInfoCard({super.key, required this.parcel});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('معلومات الشحن', style: AppTypography.heading3),
+        const SizedBox(height: AppDimensions.spacing3),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(AppDimensions.spacing4),
+            child: Column(
+              children: [
+                _buildRouteInfo(from: parcel.fromCity, to: parcel.toCity),
+                const Divider(height: AppDimensions.spacing6),
+                _buildDetailRow(
+                  Icons.calendar_today_outlined,
+                  'تاريخ الإنشاء',
+                  '${parcel.createdAt.day}/${parcel.createdAt.month}/${parcel.createdAt.year}',
+                ),
+                const Divider(height: AppDimensions.spacing6),
+                _buildDetailRow(
+                  Icons.fitness_center_outlined,
+                  'الوزن',
+                  '${parcel.weight} كغ',
+                ),
+                const Divider(height: AppDimensions.spacing6),
+                _buildDetailRow(
+                  Icons.payments_outlined,
+                  'التكلفة',
+                  '${parcel.cost} ل.س',
+                ),
+                const Divider(height: AppDimensions.spacing6),
+                _buildDetailRow(
+                  parcel.isPaid
+                      ? Icons.check_circle_outline
+                      : Icons.pending_outlined,
+                  'حالة الدفع',
+                  parcel.isPaid ? 'تم الدفع' : 'قيد الانتظار',
+                  valueColor: parcel.isPaid
+                      ? AppColors.success
+                      : AppColors.error,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRouteInfo({required String from, required String to}) {
+    final fromBranch = parcel.route?.fromBranch;
+    final toBranch = parcel.route?.toBranch;
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('من', style: AppTypography.caption),
+                  Text(
+                    fromBranch?.branchName ?? from,
+                    style: AppTypography.bodyLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (fromBranch != null)
+                    Text(
+                      fromBranch.address,
+                      style: AppTypography.bodySmall.copyWith(
+                        color: AppColors.slate500,
+                        fontSize: 10,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward, color: AppColors.slate300),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const Text('إلى', style: AppTypography.caption),
+                  Text(
+                    toBranch?.branchName ?? to,
+                    style: AppTypography.bodyLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (toBranch != null)
+                    Text(
+                      toBranch.address,
+                      style: AppTypography.bodySmall.copyWith(
+                        color: AppColors.slate500,
+                        fontSize: 10,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.end,
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        if (parcel.route != null) ...[
+          const SizedBox(height: AppDimensions.spacing4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildCompactInfo(
+                Icons.access_time,
+                'وقت الانطلاق المتوقع',
+                parcel.route!.days.isNotEmpty
+                    ? parcel.route!.days.first.estimatedDepartureTime
+                    : 'غير محدد',
+              ),
+              _buildCompactInfo(
+                Icons.access_time_filled,
+                'وقت الوصول المتوقع',
+                parcel.route!.days.isNotEmpty
+                    ? parcel.route!.days.first.estimatedArrivalTime
+                    : 'غير محدد',
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildCompactInfo(IconData icon, String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 12, color: AppColors.slate400),
+            const SizedBox(width: 4),
+            Text(label, style: AppTypography.caption.copyWith(fontSize: 10)),
+          ],
+        ),
+        Text(
+          value,
+          style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.w600),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailRow(
+    IconData icon,
+    String label,
+    String value, {
+    Color? valueColor,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: AppColors.slate500),
+        const SizedBox(width: AppDimensions.spacing3),
+        Text(
+          label,
+          style: AppTypography.bodySmall.copyWith(color: AppColors.slate500),
+        ),
+        const Spacer(),
+        Text(
+          value,
+          style: AppTypography.bodyLarge.copyWith(
+            fontWeight: FontWeight.w500,
+            color: valueColor,
+          ),
+        ),
+      ],
+    );
+  }
+}

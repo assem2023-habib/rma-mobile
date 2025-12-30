@@ -6,9 +6,12 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../core/widgets/badges/status_badge.dart';
 import '../../domain/entities/parcel.dart';
 import 'package:go_router/go_router.dart';
+import '../widgets/parcel_header_card.dart';
+import '../widgets/parcel_shipping_info_card.dart';
+import '../widgets/parcel_receiver_info_card.dart';
+import '../widgets/parcel_authorization_card.dart';
 
 class ParcelDetailPage extends StatelessWidget {
   final Parcel parcel;
@@ -40,177 +43,22 @@ class ParcelDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Tracking Number & Status
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.spacing4),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'رقم التتبع',
-                              style: AppTypography.caption,
-                            ),
-                            Text(
-                              parcel.trackingNumber,
-                              style: AppTypography.heading2.copyWith(
-                                color: AppColors.primaryBlue,
-                              ),
-                            ),
-                          ],
-                        ),
-                        StatusBadge(
-                          label: parcel.status.displayName,
-                          color: parcel.status.color,
-                          backgroundColor: parcel.status.backgroundColor,
-                          icon: parcel.status.icon,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            ParcelHeaderCard(parcel: parcel),
             const SizedBox(height: AppDimensions.spacing4),
-
-            // Route Info
-            const Text('معلومات الشحن', style: AppTypography.heading3),
-            const SizedBox(height: AppDimensions.spacing3),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.spacing4),
-                child: Column(
-                  children: [
-                    _buildRouteInfo(from: parcel.fromCity, to: parcel.toCity),
-                    const Divider(height: AppDimensions.spacing6),
-                    _buildDetailRow(
-                      Icons.calendar_today_outlined,
-                      'تاريخ الإنشاء',
-                      '${parcel.createdAt.day}/${parcel.createdAt.month}/${parcel.createdAt.year}',
-                    ),
-                    const Divider(height: AppDimensions.spacing6),
-                    _buildDetailRow(
-                      Icons.fitness_center_outlined,
-                      'الوزن',
-                      '${parcel.weight} كغ',
-                    ),
-                    const Divider(height: AppDimensions.spacing6),
-                    _buildDetailRow(
-                      Icons.payments_outlined,
-                      'التكلفة',
-                      '${parcel.cost} ل.س',
-                    ),
-                    const Divider(height: AppDimensions.spacing6),
-                    _buildDetailRow(
-                      parcel.isPaid
-                          ? Icons.check_circle_outline
-                          : Icons.pending_outlined,
-                      'حالة الدفع',
-                      parcel.isPaid ? 'تم الدفع' : 'قيد الانتظار',
-                      valueColor: parcel.isPaid
-                          ? AppColors.success
-                          : AppColors.error,
-                    ),
-                  ],
-                ),
-              ),
+            ParcelShippingInfoCard(parcel: parcel),
+            const SizedBox(height: AppDimensions.spacing6),
+            ParcelReceiverInfoCard(
+              parcel: parcel,
+              onPhoneTap: () => _makePhoneCall(parcel.receiverPhone),
             ),
             const SizedBox(height: AppDimensions.spacing6),
-
-            // Receiver Info
-            const Text('معلومات المستلم', style: AppTypography.heading3),
-            const SizedBox(height: AppDimensions.spacing3),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.spacing4),
-                child: Column(
-                  children: [
-                    _buildDetailRow(
-                      Icons.person_outline,
-                      'الاسم',
-                      parcel.receiverName,
-                    ),
-                    const Divider(height: AppDimensions.spacing6),
-                    _buildDetailRow(
-                      Icons.phone_outlined,
-                      'الهاتف',
-                      parcel.receiverPhone,
-                      onTap: () => _makePhoneCall(parcel.receiverPhone),
-                    ),
-                    const Divider(height: AppDimensions.spacing6),
-                    _buildDetailRow(
-                      Icons.location_on_outlined,
-                      'العنوان',
-                      parcel.receiverAddress,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: AppDimensions.spacing6),
-
-            // Authorization Section
-            const Text('التخويلات', style: AppTypography.heading3),
-            const SizedBox(height: AppDimensions.spacing3),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.spacing4),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.security_outlined,
-                          color: AppColors.primaryBlue,
-                          size: 30,
-                        ),
-                        const SizedBox(width: AppDimensions.spacing3),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'تخويل شخص آخر بالاستلام',
-                                style: AppTypography.bodyLarge,
-                              ),
-                              Text(
-                                'يمكنك تخويل شخص آخر لاستلام هذا الطرد بدلاً عنك',
-                                style: AppTypography.caption.copyWith(
-                                  color: AppColors.slate500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppDimensions.spacing4),
-                    OutlinedButton.icon(
-                      onPressed: () {
-                        // Ensure Parcels are loaded in the bloc before navigating
-                        // so that the dropdown can find the parcelId
-                        context.read<ParcelsBloc>().add(GetParcelsEvent());
-                        context.push(
-                          '/request-authorization',
-                          extra: parcel.id,
-                        );
-                      },
-                      icon: const Icon(Icons.add_moderator_outlined),
-                      label: const Text('إنشاء تخويل جديد'),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 45),
-                        foregroundColor: AppColors.primaryBlue,
-                        side: const BorderSide(color: AppColors.primaryBlue),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            ParcelAuthorizationCard(
+              onCreateAuth: () {
+                // Ensure Parcels are loaded in the bloc before navigating
+                // so that the dropdown can find the parcelId
+                context.read<ParcelsBloc>().add(GetParcelsEvent());
+                context.push('/request-authorization', extra: parcel.id);
+              },
             ),
           ],
         ),
@@ -225,142 +73,6 @@ class ParcelDetailPage extends StatelessWidget {
             minimumSize: const Size(double.infinity, 50),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildRouteInfo({required String from, required String to}) {
-    final fromBranch = parcel.route?.fromBranch;
-    final toBranch = parcel.route?.toBranch;
-
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('من', style: AppTypography.caption),
-                  Text(
-                    fromBranch?.branchName ?? from,
-                    style: AppTypography.bodyLarge.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (fromBranch != null)
-                    Text(
-                      fromBranch.address,
-                      style: AppTypography.bodySmall.copyWith(
-                        color: AppColors.slate500,
-                        fontSize: 10,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                ],
-              ),
-            ),
-            const Icon(Icons.arrow_forward, color: AppColors.slate300),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  const Text('إلى', style: AppTypography.caption),
-                  Text(
-                    toBranch?.branchName ?? to,
-                    style: AppTypography.bodyLarge.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (toBranch != null)
-                    Text(
-                      toBranch.address,
-                      style: AppTypography.bodySmall.copyWith(
-                        color: AppColors.slate500,
-                        fontSize: 10,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.end,
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        if (parcel.route != null) ...[
-          const SizedBox(height: AppDimensions.spacing4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildCompactInfo(
-                Icons.access_time,
-                'وقت الانطلاق المتوقع',
-                parcel.route!.days.isNotEmpty
-                    ? parcel.route!.days.first.estimatedDepartureTime
-                    : 'غير محدد',
-              ),
-              _buildCompactInfo(
-                Icons.access_time_filled,
-                'وقت الوصول المتوقع',
-                parcel.route!.days.isNotEmpty
-                    ? parcel.route!.days.first.estimatedArrivalTime
-                    : 'غير محدد',
-              ),
-            ],
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildCompactInfo(IconData icon, String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, size: 12, color: AppColors.slate400),
-            const SizedBox(width: 4),
-            Text(label, style: AppTypography.caption.copyWith(fontSize: 10)),
-          ],
-        ),
-        Text(
-          value,
-          style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.w600),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDetailRow(
-    IconData icon,
-    String label,
-    String value, {
-    Color? valueColor,
-    VoidCallback? onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Row(
-        children: [
-          Icon(icon, size: 20, color: AppColors.slate500),
-          const SizedBox(width: AppDimensions.spacing3),
-          Text(
-            label,
-            style: AppTypography.bodySmall.copyWith(color: AppColors.slate500),
-          ),
-          const Spacer(),
-          Text(
-            value,
-            style: AppTypography.bodyLarge.copyWith(
-              fontWeight: FontWeight.w500,
-              color:
-                  valueColor ?? (onTap != null ? AppColors.primaryBlue : null),
-            ),
-          ),
-        ],
       ),
     );
   }
