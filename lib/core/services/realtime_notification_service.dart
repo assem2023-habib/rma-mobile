@@ -10,6 +10,8 @@ import '../../features/auth/presentation/bloc/auth_state.dart';
 import '../../../main.dart';
 import 'dart:developer' as dev;
 
+import 'package:flutter/foundation.dart';
+
 class RealtimeNotificationService {
   final TokenManager tokenManager;
   final NotificationsBloc notificationsBloc;
@@ -30,22 +32,28 @@ class RealtimeNotificationService {
     // Check initial state in case the user is already authenticated
     final currentState = authBloc.state;
     if (currentState is Authenticated) {
-      print(
-        '🛰️ [RealtimeNotificationService] User authenticated on init, connecting...',
-      );
+      if (kDebugMode) {
+        print(
+          '🛰️ [RealtimeNotificationService] User authenticated on init, connecting...',
+        );
+      }
       _connect(currentState.user.id);
     }
 
     authBloc.stream.listen((state) {
       if (state is Authenticated) {
-        print(
-          '🛰️ [RealtimeNotificationService] User authenticated via stream, connecting...',
-        );
+        if (kDebugMode) {
+          print(
+            '🛰️ [RealtimeNotificationService] User authenticated via stream, connecting...',
+          );
+        }
         _connect(state.user.id);
       } else if (state is Unauthenticated) {
-        print(
-          '🛰️ [RealtimeNotificationService] User logged out, disconnecting...',
-        );
+        if (kDebugMode) {
+          print(
+            '🛰️ [RealtimeNotificationService] User logged out, disconnecting...',
+          );
+        }
         _disconnect();
       }
     });
@@ -54,13 +62,19 @@ class RealtimeNotificationService {
   void _connect(int userId) {
     final token = tokenManager.getToken();
     if (token == null) {
-      print('❌ [RealtimeNotificationService] FAILED to connect: Token is null');
+      if (kDebugMode) {
+        print(
+          '❌ [RealtimeNotificationService] FAILED to connect: Token is null',
+        );
+      }
       return;
     }
 
-    print(
-      '🛰️ [RealtimeNotificationService] INITIALIZING connection to Reverb for user $userId',
-    );
+    if (kDebugMode) {
+      print(
+        '🛰️ [RealtimeNotificationService] INITIALIZING connection to Reverb for user $userId',
+      );
+    }
 
     PusherOptions options = PusherOptions(
       host: '10.43.226.236',
@@ -80,23 +94,30 @@ class RealtimeNotificationService {
     _pusher = PusherClient('z8gmvgvmclvhoezjsfil', options, autoConnect: true);
 
     _pusher!.onConnectionError((error) {
-      print(
-        '🔴 [RealtimeNotificationService] CONNECTION ERROR: ${error?.message}',
-      );
-      if (error?.exception != null)
+      if (kDebugMode) {
         print(
-          '🔴 [RealtimeNotificationService] Exception: ${error?.exception}',
+          '🔴 [RealtimeNotificationService] CONNECTION ERROR: ${error?.message}',
         );
+        if (error?.exception != null) {
+          print(
+            '🔴 [RealtimeNotificationService] Exception: ${error?.exception}',
+          );
+        }
+      }
     });
 
     _pusher!.onConnectionStateChange((state) {
-      print(
-        '🔵 [RealtimeNotificationService] State: ${state?.previousState} -> ${state?.currentState}',
-      );
-      if (state?.currentState == 'CONNECTED') {
+      if (kDebugMode) {
         print(
-          '✅ [RealtimeNotificationService] SUCCESS: Socket connected to Reverb server!',
+          '🔵 [RealtimeNotificationService] State: ${state?.previousState} -> ${state?.currentState}',
         );
+      }
+      if (state?.currentState == 'CONNECTED') {
+        if (kDebugMode) {
+          print(
+            '✅ [RealtimeNotificationService] SUCCESS: Socket connected to Reverb server!',
+          );
+        }
       }
     });
 
@@ -119,34 +140,22 @@ class RealtimeNotificationService {
     );
 
     final channelName = 'App.Models.User.$userId';
-    print(
-      '🛰️ [RealtimeNotificationService] Subscribing to private channel: $channelName',
-    );
+    if (kDebugMode) {
+      print(
+        '🛰️ [RealtimeNotificationService] Subscribing to private channel: $channelName',
+      );
+    }
 
     final channel = _echo!.private(channelName);
-
-    // Track subscription success/error
-    _pusher!.onEvent((event) {
-      print(
-        '📡 [RealtimeNotificationService] PUSHER EVENT: ${event?.eventName} on ${event?.channelName}',
-      );
-      if (event?.eventName == 'pusher:subscription_succeeded') {
-        print(
-          '✅ [RealtimeNotificationService] SUBSCRIPTION SUCCESSFUL to $channelName',
-        );
-      } else if (event?.eventName == 'pusher:subscription_error') {
-        print(
-          '❌ [RealtimeNotificationService] SUBSCRIPTION FAILED to $channelName',
-        );
-      }
-    });
 
     _pusher!.subscribe(channelName); // Ensure subscription is triggered
 
     channel.notification((notification) {
-      print(
-        '📥 [RealtimeNotificationService] NOTIFICATION RECEIVED via .notification()!',
-      );
+      if (kDebugMode) {
+        print(
+          '📥 [RealtimeNotificationService] NOTIFICATION RECEIVED via .notification()!',
+        );
+      }
       _handleNotification(notification);
     });
 
@@ -154,23 +163,28 @@ class RealtimeNotificationService {
         'Illuminate\\Notifications\\Events\\BroadcastNotificationCreated';
 
     channel.listen('.$eventName', (event) {
-      print(
-        '📥 [RealtimeNotificationService] EVENT RECEIVED via .listen(.$eventName)!',
-      );
+      if (kDebugMode) {
+        print(
+          '📥 [RealtimeNotificationService] EVENT RECEIVED via .listen(.$eventName)!',
+        );
+      }
       _handleNotification(event);
     });
 
     channel.listen(eventName, (event) {
-      print(
-        '📥 [RealtimeNotificationService] EVENT RECEIVED via .listen($eventName)!',
-      );
+      if (kDebugMode) {
+        print(
+          '📥 [RealtimeNotificationService] EVENT RECEIVED via .listen($eventName)!',
+        );
+      }
       _handleNotification(event);
     });
   }
 
-  /// Trigger a test notification to verify UI and logs
   void triggerTestNotification() {
-    print('🧪 [RealtimeNotificationService] Triggering Test Notification...');
+    if (kDebugMode) {
+      print('🧪 [RealtimeNotificationService] Triggering Test Notification...');
+    }
     final testPayload = {
       'id': 'test-uuid-${DateTime.now().millisecondsSinceEpoch}',
       'type': 'test_notification',
@@ -180,16 +194,20 @@ class RealtimeNotificationService {
       'created_at': DateTime.now().toIso8601String(),
       'data': {'test_key': 'test_value'},
     };
-    print('🧪 [RealtimeNotificationService] Test Payload: $testPayload');
+    if (kDebugMode) {
+      print('🧪 [RealtimeNotificationService] Test Payload: $testPayload');
+    }
     _handleNotification(testPayload);
   }
 
   void _handleNotification(dynamic notification) {
     try {
-      print(
-        '📥 [RealtimeNotificationService] Handling incoming notification...',
-      );
-      print('📥 [RealtimeNotificationService] Raw Payload: $notification');
+      if (kDebugMode) {
+        print(
+          '📥 [RealtimeNotificationService] Handling incoming notification...',
+        );
+        print('📥 [RealtimeNotificationService] Raw Payload: $notification');
+      }
 
       final Map<String, dynamic> rawData = Map<String, dynamic>.from(
         notification,
@@ -219,22 +237,32 @@ class RealtimeNotificationService {
         finalJson['created_at'] = DateTime.now().toIso8601String();
       }
 
-      print('📥 [RealtimeNotificationService] Final Parsed JSON: $finalJson');
+      if (kDebugMode) {
+        print('📥 [RealtimeNotificationService] Final Parsed JSON: $finalJson');
+      }
 
       final notificationModel = NotificationModel.fromJson(finalJson);
-      print(
-        '📥 [RealtimeNotificationService] Created Model: ${notificationModel.id}',
-      );
+      if (kDebugMode) {
+        print(
+          '📥 [RealtimeNotificationService] Created Model: ${notificationModel.id}',
+        );
+      }
 
       notificationsBloc.add(NewNotificationReceivedEvent(notificationModel));
-      print('📥 [RealtimeNotificationService] Event added to Bloc');
+      if (kDebugMode) {
+        print('📥 [RealtimeNotificationService] Event added to Bloc');
+      }
 
       // Show a SnackBar notification
       _showNotificationSnackBar(notificationModel);
-      print('📥 [RealtimeNotificationService] SnackBar triggered');
+      if (kDebugMode) {
+        print('📥 [RealtimeNotificationService] SnackBar triggered');
+      }
     } catch (e, stack) {
-      print('❌ [RealtimeNotificationService] Error parsing notification: $e');
-      print('❌ [RealtimeNotificationService] StackTrace: $stack');
+      if (kDebugMode) {
+        print('❌ [RealtimeNotificationService] Error parsing notification: $e');
+        print('❌ [RealtimeNotificationService] StackTrace: $stack');
+      }
     }
   }
 
