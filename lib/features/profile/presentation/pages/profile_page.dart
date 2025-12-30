@@ -99,7 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () {
-              context.read<AuthBloc>().add(LogoutEvent());
+              context.read<AuthBloc>().add(LogoutRequested());
               context.go('/login');
             },
           ),
