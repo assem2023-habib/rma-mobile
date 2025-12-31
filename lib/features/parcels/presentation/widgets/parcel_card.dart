@@ -1,3 +1,6 @@
+import '../../../../injection_container.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../rates/presentation/bloc/rating_bloc.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/enums/parcel_status.dart';
 import '../../../../core/enums/rating_type.dart';
@@ -53,9 +56,12 @@ class ParcelCard extends StatelessWidget {
                       onPressed: () {
                         showDialog(
                           context: context,
-                          builder: (context) => RatingDialog(
-                            rateableId: parcel.id,
-                            rateableType: RatingForType.parcel,
+                          builder: (context) => BlocProvider(
+                            create: (context) => sl<RatingBloc>(),
+                            child: RatingDialog(
+                              rateableId: parcel.id,
+                              rateableType: RatingForType.parcel,
+                            ),
                           ),
                         );
                       },
@@ -77,11 +83,15 @@ class ParcelCard extends StatelessWidget {
                 children: [
                   _buildLocationInfo(
                     label: 'من',
-                    city: parcel.fromCity,
+                    city:
+                        parcel.route?.fromBranch?.branchName ?? parcel.fromCity,
                     icon: Icons.location_on_outlined,
                     iconColor: AppColors.primaryBlue,
                   ),
-                  const Expanded(
+                  const Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AppDimensions.spacing2,
+                    ),
                     child: Icon(
                       Icons.arrow_forward,
                       size: 16,
@@ -90,7 +100,7 @@ class ParcelCard extends StatelessWidget {
                   ),
                   _buildLocationInfo(
                     label: 'إلى',
-                    city: parcel.toCity,
+                    city: parcel.route?.toBranch?.branchName ?? parcel.toCity,
                     icon: Icons.location_on,
                     iconColor: AppColors.error,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -129,7 +139,7 @@ class ParcelCard extends StatelessWidget {
     CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start,
   }) {
     return Expanded(
-      flex: 2,
+      flex: 1,
       child: Column(
         crossAxisAlignment: crossAxisAlignment,
         children: [
@@ -145,10 +155,14 @@ class ParcelCard extends StatelessWidget {
                 Icon(icon, size: 16, color: iconColor),
               if (crossAxisAlignment == CrossAxisAlignment.start)
                 const SizedBox(width: 4),
-              Text(
-                city,
-                style: AppTypography.bodyLarge.copyWith(
-                  fontWeight: FontWeight.bold,
+              Flexible(
+                child: Text(
+                  city,
+                  style: AppTypography.bodyLarge.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               if (crossAxisAlignment == CrossAxisAlignment.end)
@@ -163,15 +177,24 @@ class ParcelCard extends StatelessWidget {
   }
 
   Widget _buildInfoItem({required IconData icon, required String text}) {
-    return Row(
-      children: [
-        Icon(icon, size: 16, color: AppColors.slate400),
-        const SizedBox(width: 4),
-        Text(
-          text,
-          style: AppTypography.bodySmall.copyWith(color: AppColors.slate600),
-        ),
-      ],
+    return Flexible(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: AppColors.slate400),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              text,
+              style: AppTypography.bodySmall.copyWith(
+                color: AppColors.slate600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
