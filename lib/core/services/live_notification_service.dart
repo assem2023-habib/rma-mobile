@@ -28,6 +28,8 @@ class LiveNotificationService {
         apiKey: "z8gmvgvmclvhoezjsfil",
         cluster: "mt1",
         useTLS: false,
+        host: "10.43.226.236",
+        port: 6001,
         onEvent: _onEvent,
         onSubscriptionSucceeded: _onSubscriptionSucceeded,
         onSubscriptionError: _onSubscriptionError,
@@ -37,44 +39,7 @@ class LiveNotificationService {
         onConnectionStateChange: _onConnectionStateChange,
         onError: _onError,
         onAuthorizer: _onAuthorizer,
-        // Host and Port are often passed via callbacks or different methods in some plugins
-        // But for pusher_channels_flutter, we often accept them in init if updated,
-        // OR we might need to rely on the underlying native SDK behavior if the dart wrapper is strict.
-        // However, standard Reverb guides often suggest this for Flutter:
-        // If the named args 'host' and 'port' are not in the dart definition,
-        // we might need to pass them in specific ways.
-        // Let's assume the plugin has been updated or supports them.
-        // If this fails to compile, I'll switch to a different approach.
-        //
-        // NOTE: If arguments 'host' and 'port' do not exist, we can use 'args' map if available?
-        // No, usually strict.
-        // Let's try to pass them assuming the library supports it as it is a common requirement.
-        // references from community for Reverb + Flutter Pusher:
-        // "options": PusherOptions(host: '...', port: ...)
       );
-
-      // Since I can't be sure about the library version's exact signature for host/port without seeing it,
-      // I'll try to trigger a connection with specific method if native 'connect' allows it,
-      // but 'init' is the main entry.
-      //
-      // Workaround: Re-initializing with a broader map if supported or just hoping the plugin exposes it.
-      // Actually, looking at the user's request, they gave raw connection details.
-      //
-      // Let's write the code assuming 'options' or direct args.
-      // I will put a comment to the user if compilation fails.
-
-      // Attempting to set host/port via standard mechanism for this lib
-      /*
-      await _pusher.init(
-         ...
-         host: "10.43.226.236",
-         port: 6001,
-      );
-      */
-
-      // To be safe against compile errors, I will use dynamic dispatch for init if I really had to,
-      // but that's bad practice.
-      // Instead, I will implement the Authorizer heavily.
 
       await _pusher.connect();
 
