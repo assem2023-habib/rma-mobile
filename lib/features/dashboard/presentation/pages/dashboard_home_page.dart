@@ -10,6 +10,7 @@ import '../../../../core/widgets/backgrounds/shiny_background.dart';
 import '../../../parcels/presentation/bloc/parcels_bloc.dart';
 import '../../../parcels/presentation/bloc/parcels_event.dart';
 import '../../../parcels/presentation/bloc/parcels_state.dart';
+import '../../../parcels/presentation/widgets/parcel_card.dart';
 import '../bloc/dashboard_bloc.dart';
 import '../bloc/dashboard_state.dart';
 
@@ -125,16 +126,20 @@ class _DashboardHomePageState extends State<DashboardHomePage> {
               ),
             );
           }
-          return SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              final parcel = parcels[index];
-              return ListTile(
-                title: Text(parcel.trackingNumber),
-                subtitle: Text(parcel.receiverName),
-                trailing: const Icon(Icons.chevron_left),
-                onTap: () => context.push('/parcels/${parcel.id}', extra: parcel),
-              );
-            }, childCount: parcels.length),
+          return SliverPadding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.spacing4,
+            ),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final parcel = parcels[index];
+                return ParcelCard(
+                  parcel: parcel,
+                  onTap: () =>
+                      context.push('/parcels/${parcel.id}', extra: parcel),
+                );
+              }, childCount: parcels.length),
+            ),
           );
         }
         return const SliverToBoxAdapter(child: SizedBox.shrink());
