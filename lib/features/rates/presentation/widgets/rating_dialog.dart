@@ -56,19 +56,23 @@ class _RatingDialogState extends State<RatingDialog> {
           children: [
             const Text('كيف كانت تجربتك؟', textAlign: TextAlign.center),
             const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(5, (index) {
-                return IconButton(
-                  icon: Icon(
-                    index < _rating ? Icons.star : Icons.star_border,
-                    color: Colors.amber,
-                    size: 40,
-                  ),
-                  onPressed: () =>
-                      setState(() => _rating = (index + 1).toDouble()),
-                );
-              }),
+            FittedBox(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(5, (index) {
+                  return IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    icon: Icon(
+                      index < _rating ? Icons.star : Icons.star_border,
+                      color: Colors.amber,
+                      size: 40,
+                    ),
+                    onPressed: () =>
+                        setState(() => _rating = (index + 1).toDouble()),
+                  );
+                }),
+              ),
             ),
             const SizedBox(height: 20),
             TextField(
