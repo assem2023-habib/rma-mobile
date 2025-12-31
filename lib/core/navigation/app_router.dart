@@ -78,8 +78,9 @@ class AppRouter {
       GoRoute(
         path: '/parcels/:id',
         builder: (context, state) {
-          final parcel = state.extra as Parcel;
-          return ParcelDetailPage(parcel: parcel);
+          final id = int.parse(state.pathParameters['id']!);
+          final parcel = state.extra as Parcel?;
+          return ParcelDetailPage(parcelId: id, parcel: parcel);
         },
       ),
       GoRoute(path: '/routes', builder: (context, state) => const RoutesPage()),

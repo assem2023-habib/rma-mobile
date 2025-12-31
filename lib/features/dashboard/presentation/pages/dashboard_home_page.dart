@@ -132,7 +132,7 @@ class _DashboardHomePageState extends State<DashboardHomePage> {
                 title: Text(parcel.trackingNumber),
                 subtitle: Text(parcel.receiverName),
                 trailing: const Icon(Icons.chevron_left),
-                onTap: () => context.push('/parcel-detail/${parcel.id}'),
+                onTap: () => context.push('/parcels/${parcel.id}', extra: parcel),
               );
             }, childCount: parcels.length),
           );

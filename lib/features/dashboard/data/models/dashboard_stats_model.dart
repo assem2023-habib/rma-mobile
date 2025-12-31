@@ -19,16 +19,23 @@ class DashboardStatsModel extends DashboardStats {
     final locations = json['locations'] as Map<String, dynamic>?;
 
     return DashboardStatsModel(
-      usersCount: json['users_count'] ?? 0,
-      totalParcels: parcels?['total'] ?? 0,
+      usersCount: int.tryParse(json['users_count']?.toString() ?? '0') ?? 0,
+      totalParcels: int.tryParse(parcels?['total']?.toString() ?? '0') ?? 0,
       parcelsByStatus:
-          byStatus?.map((key, value) => MapEntry(key, value as int)) ?? {},
-      ratesCount: json['rates_count'] ?? 0,
-      branchesCount: json['branches_count'] ?? 0,
-      shipmentsCount: json['shipments_count'] ?? 0,
-      trucksCount: json['trucks_count'] ?? 0,
-      countriesCount: locations?['countries_count'] ?? 0,
-      citiesCount: locations?['cities_count'] ?? 0,
+          byStatus?.map(
+            (key, value) => MapEntry(key, int.tryParse(value.toString()) ?? 0),
+          ) ??
+          {},
+      ratesCount: int.tryParse(json['rates_count']?.toString() ?? '0') ?? 0,
+      branchesCount:
+          int.tryParse(json['branches_count']?.toString() ?? '0') ?? 0,
+      shipmentsCount:
+          int.tryParse(json['shipments_count']?.toString() ?? '0') ?? 0,
+      trucksCount: int.tryParse(json['trucks_count']?.toString() ?? '0') ?? 0,
+      countriesCount:
+          int.tryParse(locations?['countries_count']?.toString() ?? '0') ?? 0,
+      citiesCount:
+          int.tryParse(locations?['cities_count']?.toString() ?? '0') ?? 0,
     );
   }
 

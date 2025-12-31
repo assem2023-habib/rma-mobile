@@ -34,8 +34,12 @@ class ParcelModel extends Parcel {
       receiverName: json['reciver_name'],
       receiverAddress: json['reciver_address'],
       receiverPhone: json['reciver_phone'],
-      weight: (json['weight'] as num).toDouble(),
-      cost: (json['cost'] ?? 0.0 as num).toDouble(),
+      weight: json['weight'] is String
+          ? double.tryParse(json['weight']) ?? 0.0
+          : (json['weight'] as num?)?.toDouble() ?? 0.0,
+      cost: json['cost'] is String
+          ? double.tryParse(json['cost']) ?? 0.0
+          : (json['cost'] as num?)?.toDouble() ?? 0.0,
       isPaid: json['is_paid'] == 1 || json['is_paid'] == true,
       status: _parseStatus(json['parcel_status']),
       trackingNumber: json['tracking_number'],

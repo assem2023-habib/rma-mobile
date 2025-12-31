@@ -22,6 +22,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
         throw ServerException();
       }
     } catch (e) {
+      print('Error in getDashboardStats: $e');
       throw ServerException();
     }
   }

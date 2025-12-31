@@ -32,12 +32,36 @@ class AuthorizationsRemoteDataSourceImpl
     try {
       final response = await dioClient.get(ApiConfig.authorizations);
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data'];
-        return data.map((json) => AuthorizationModel.fromJson(json)).toList();
+        final dynamic rawData = response.data['data'];
+        List<dynamic> dataList;
+        
+        if (rawData is List) {
+          dataList = rawData;
+        } else if (rawData is Map) {
+          if (rawData.containsKey('authorizations')) {
+            final authData = rawData['authorizations'];
+            if (authData is List) {
+              dataList = authData;
+            } else if (authData is Map && authData.containsKey('data')) {
+              dataList = authData['data'];
+            } else {
+              dataList = [];
+            }
+          } else if (rawData.containsKey('data')) {
+            dataList = rawData['data'];
+          } else {
+            dataList = [];
+          }
+        } else {
+          dataList = [];
+        }
+        
+        return dataList.map((json) => AuthorizationModel.fromJson(json)).toList();
       } else {
         throw ServerException();
       }
     } catch (e) {
+      print('Error in getAuthorizations: $e');
       throw ServerException();
     }
   }

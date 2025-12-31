@@ -36,12 +36,21 @@ class ParcelRemoteDataSourceImpl implements ParcelRemoteDataSource {
     try {
       final response = await dioClient.get(ApiConfig.parcels);
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data']['parcels'];
+        final dynamic parcelsData = response.data['data']['parcels'];
+        List<dynamic> data;
+        if (parcelsData is Map && parcelsData.containsKey('data')) {
+          data = parcelsData['data'];
+        } else if (parcelsData is List) {
+          data = parcelsData;
+        } else {
+          data = [];
+        }
         return data.map((json) => ParcelModel.fromJson(json)).toList();
       } else {
         throw ServerException();
       }
     } catch (e) {
+      print('Error in getParcels: $e');
       throw ServerException();
     }
   }
@@ -71,11 +80,14 @@ class ParcelRemoteDataSourceImpl implements ParcelRemoteDataSource {
     try {
       final response = await dioClient.get('${ApiConfig.parcels}/$id');
       if (response.statusCode == 200) {
-        return ParcelModel.fromJson(response.data['data']['parcel']);
+        final dynamic parcelData =
+            response.data['data']['parcel'] ?? response.data['data'];
+        return ParcelModel.fromJson(parcelData);
       } else {
         throw ServerException();
       }
     } catch (e) {
+      print('Error in getParcelById: $e');
       throw ServerException();
     }
   }
