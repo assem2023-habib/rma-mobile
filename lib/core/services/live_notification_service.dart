@@ -28,8 +28,6 @@ class LiveNotificationService {
         apiKey: "z8gmvgvmclvhoezjsfil",
         cluster: "mt1",
         useTLS: false,
-        host: "10.43.226.236",
-        port: 6001,
         onEvent: _onEvent,
         onSubscriptionSucceeded: _onSubscriptionSucceeded,
         onSubscriptionError: _onSubscriptionError,
@@ -120,12 +118,7 @@ class LiveNotificationService {
       final response = await http.post(
         url,
         headers: {
-          "Content-Type":
-              "application/json", // Pusher usually expects form-data or JSON?
-          // User said: Headers: Authorization: Bearer {USER_TOKEN}.
-          // Laravel Echo default is often form-data but here explicitly User said "Result expected is object with auth key".
-          // Let's use standard JSON if that's what Laravel expects, OR standard form-url-encoded.
-          // Standard Pusher auth is x-www-form-urlencoded: socket_id=...&channel_name=...
+          "Content-Type": "application/x-www-form-urlencoded",
           "Authorization": "Bearer $token",
           "Accept": "application/json",
         },
