@@ -6,6 +6,7 @@ import '../../features/notifications/presentation/bloc/notifications_bloc.dart';
 import '../../features/notifications/presentation/bloc/notifications_event.dart';
 import '../../features/notifications/domain/entities/notification_entity.dart';
 import '../../core/services/live_notification_service.dart';
+import '../../core/services/local_notification_service.dart';
 import '../../injection_container.dart';
 
 class LiveNotificationWrapper extends StatefulWidget {
@@ -25,6 +26,7 @@ class _LiveNotificationWrapperState extends State<LiveNotificationWrapper> {
   @override
   void initState() {
     super.initState();
+    sl<LocalNotificationService>().init(); // Initialize local notifications
     _liveNotificationService.eventStream.listen((data) {
       // Convert raw data to NotificationEntity
       // Data format from user:

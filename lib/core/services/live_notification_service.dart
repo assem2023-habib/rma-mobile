@@ -5,9 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
 import '../api/token_manager.dart';
+import 'local_notification_service.dart';
 
 class LiveNotificationService {
   final TokenManager _tokenManager;
+  final LocalNotificationService _localNotificationService;
   final PusherChannelsFlutter _pusher = PusherChannelsFlutter.getInstance();
   final _eventController = StreamController<dynamic>.broadcast();
 
@@ -15,7 +17,7 @@ class LiveNotificationService {
   final StreamController<String> _connectionStatusController =
       StreamController<String>.broadcast();
 
-  LiveNotificationService(this._tokenManager);
+  LiveNotificationService(this._tokenManager, this._localNotificationService);
 
   Stream<dynamic> get eventStream => _eventController.stream;
   Stream<String> get connectionStream => _connectionStatusController.stream;
@@ -95,6 +97,14 @@ class LiveNotificationService {
       try {
         final data = jsonDecode(event.data);
         _eventController.add(data);
+
+        // Show Local Notification
+        _localNotificationService.showNotification(
+          id: DateTime.now().millisecond,
+          title: data['title'] ?? 'تنبيه جديد',
+          body: data['body'] ?? data['message'] ?? '',
+          payload: jsonEncode(data),
+        );
       } catch (e) {
         debugPrint("Error parsing notification data: $e");
       }

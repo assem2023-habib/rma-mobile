@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rma_customer/core/api/dio_client.dart';
 import 'package:rma_customer/core/api/token_manager.dart';
 import 'package:rma_customer/core/services/live_notification_service.dart';
+import 'package:rma_customer/core/services/local_notification_service.dart';
 import 'package:rma_customer/core/network/network_info.dart';
 import 'package:rma_customer/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:rma_customer/features/auth/data/repositories/auth_repository_impl.dart';
@@ -335,8 +336,9 @@ Future<void> init() async {
   sl.registerLazySingleton(() => DioClient(sl(), sl()));
   sl.registerLazySingleton(() => TokenManager(sl()));
   sl.registerLazySingleton(
-    () => LiveNotificationService(sl()),
+    () => LiveNotificationService(sl(), sl()),
   ); // LIVE NOTIFICATIONS
+  sl.registerLazySingleton(() => LocalNotificationService());
 
   //! External
   final sharedPreferences = await SharedPreferences.getInstance();
