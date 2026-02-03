@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class GuestInfoForm extends StatelessWidget {
   final TextEditingController firstNameController;
@@ -41,186 +42,193 @@ class GuestInfoForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: AppDimensions.spacing6),
-        const Text('بيانات الضيف المخول', style: AppTypography.heading3),
-        const SizedBox(height: AppDimensions.spacing2),
+        const SizedBox(height: AppDimensions.spacing4),
         Row(
           children: [
             Expanded(
-              child: TextFormField(
+              child: _buildTextField(
                 controller: firstNameController,
-                decoration: InputDecoration(
-                  hintText: 'الاسم الأول',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                validator: (v) =>
-                    (v == null || v.isEmpty) ? 'يرجى إدخال الاسم الأول' : null,
+                hint: 'الاسم الأول',
+                icon: Icons.person_outline,
+                validator: (v) => (v == null || v.isEmpty) ? 'مطلوب' : null,
               ),
             ),
-            const SizedBox(width: AppDimensions.spacing2),
+            const SizedBox(width: AppDimensions.spacing3),
             Expanded(
-              child: TextFormField(
+              child: _buildTextField(
                 controller: lastNameController,
-                decoration: InputDecoration(
-                  hintText: 'الاسم الأخير',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
+                hint: 'الاسم الأخير',
+                icon: Icons.person_outline,
               ),
             ),
           ],
         ),
         const SizedBox(height: AppDimensions.spacing3),
-        TextFormField(
+        _buildTextField(
           controller: phoneController,
+          hint: 'رقم هاتف الشخص المخول',
+          icon: Icons.phone_outlined,
           keyboardType: TextInputType.phone,
-          decoration: InputDecoration(
-            hintText: 'رقم هاتف الشخص المخول',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-            ),
-            filled: true,
-            fillColor: Colors.white,
-          ),
           validator: (v) {
-            if (v == null || v.isEmpty) {
-              return 'يرجى إدخال رقم الهاتف';
-            }
-            if (!RegExp(r'^\+?\d+$').hasMatch(v)) {
-              return 'رقم هاتف غير صحيح';
-            }
+            if (v == null || v.isEmpty) return 'يرجى إدخال رقم الهاتف';
+            if (!RegExp(r'^\+?\d+$').hasMatch(v)) return 'رقم هاتف غير صحيح';
             return null;
           },
         ),
         const SizedBox(height: AppDimensions.spacing3),
-        TextFormField(
+        _buildTextField(
           controller: nationalNumberController,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            hintText: 'الرقم الوطني للشخص المخول',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-            ),
-            filled: true,
-            fillColor: Colors.white,
-          ),
-          validator: (v) {
-            if (v == null || v.isEmpty) {
-              return 'يرجى إدخال الرقم الوطني';
-            }
-            if (v.length != 11 || !RegExp(r'^\d{11}$').hasMatch(v)) {
-              return 'الرقم الوطني يجب أن يكون 11 رقم';
-            }
-            return null;
-          },
+          hint: 'الرقم الوطني / رقم الهوية',
+          icon: Icons.badge_outlined,
+          validator: (v) =>
+              (v == null || v.isEmpty) ? 'يرجى إدخال الرقم الوطني' : null,
         ),
         const SizedBox(height: AppDimensions.spacing3),
-        TextFormField(
+        _buildTextField(
           controller: addressController,
-          decoration: InputDecoration(
-            hintText: 'عنوان الشخص المخول (اختياري)',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-            ),
-            filled: true,
-            fillColor: Colors.white,
-          ),
+          hint: 'العنوان بالتفصيل',
+          icon: Icons.location_on_outlined,
+          maxLines: 2,
+          validator: (v) =>
+              (v == null || v.isEmpty) ? 'يرجى إدخال العنوان' : null,
         ),
         const SizedBox(height: AppDimensions.spacing3),
-        DropdownButtonFormField<int>(
-          initialValue: selectedCountryId,
-          decoration: InputDecoration(
-            hintText: 'الدولة',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            suffixIcon: isLoadingCountries
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  )
-                : null,
-          ),
-          items: countries.map((country) {
-            return DropdownMenuItem<int>(
-              value: country['id'],
-              child: Text(country['name']),
-            );
-          }).toList(),
-          onChanged: onCountryChanged,
-          validator: (v) => v == null ? 'يرجى اختيار الدولة' : null,
-        ),
-        const SizedBox(height: AppDimensions.spacing3),
-        DropdownButtonFormField<int>(
-          initialValue: selectedCityId,
-          decoration: InputDecoration(
-            hintText: 'المدينة',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            suffixIcon: isLoadingCities
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  )
-                : null,
-          ),
-          items: cities.map((city) {
-            return DropdownMenuItem<int>(
-              value: city['id'],
-              child: Text(city['name']),
-            );
-          }).toList(),
-          onChanged: onCityChanged,
-          validator: (v) => v == null ? 'يرجى اختيار المدينة' : null,
-        ),
-        const SizedBox(height: AppDimensions.spacing3),
-        TextFormField(
+        _buildTextField(
           controller: birthdayController,
+          hint: 'تاريخ الميلاد (YYYY-MM-DD)',
+          icon: Icons.cake_outlined,
           readOnly: true,
           onTap: () async {
-            final picked = await showDatePicker(
+            final date = await showDatePicker(
               context: context,
               initialDate: DateTime.now().subtract(
-                const Duration(days: 365 * 18),
+                const Duration(days: 365 * 20),
               ),
               firstDate: DateTime(1900),
               lastDate: DateTime.now(),
             );
-            if (picked != null) {
-              birthdayController.text = picked.toString().split(' ').first;
+            if (date != null) {
+              birthdayController.text = date.toString().split(' ')[0];
             }
           },
-          decoration: InputDecoration(
-            hintText: 'تاريخ الميلاد (اختياري)',
-            suffixIcon: const Icon(Icons.calendar_today),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+        ),
+        const SizedBox(height: AppDimensions.spacing3),
+        Row(
+          children: [
+            Expanded(
+              child: _buildDropdown<int>(
+                hint: 'البلد',
+                value: selectedCountryId,
+                items: countries
+                    .map(
+                      (c) => DropdownMenuItem<int>(
+                        value: c['id'],
+                        child: Text(c['name']),
+                      ),
+                    )
+                    .toList(),
+                onChanged: onCountryChanged,
+                isLoading: isLoadingCountries,
+              ),
             ),
-            filled: true,
-            fillColor: Colors.white,
-          ),
+            const SizedBox(width: AppDimensions.spacing3),
+            Expanded(
+              child: _buildDropdown<int>(
+                hint: 'المدينة',
+                value: selectedCityId,
+                items: cities
+                    .map(
+                      (c) => DropdownMenuItem<int>(
+                        value: c['id'],
+                        child: Text(c['name']),
+                      ),
+                    )
+                    .toList(),
+                onChanged: onCityChanged,
+                isLoading: isLoadingCities,
+                enabled: selectedCountryId != null,
+              ),
+            ),
+          ],
         ),
       ],
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hint,
+    required IconData icon,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+    int maxLines = 1,
+    bool readOnly = false,
+    VoidCallback? onTap,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      readOnly: readOnly,
+      onTap: onTap,
+      style: AppTypography.bodyMedium,
+      decoration: InputDecoration(
+        hintText: hint,
+        prefixIcon: Icon(icon, color: AppColors.primary, size: 20),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
+          borderSide: const BorderSide(color: AppColors.slate200),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
+          borderSide: const BorderSide(color: AppColors.slate200),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.spacing4,
+          vertical: AppDimensions.spacing4,
+        ),
+      ),
+      validator: validator,
+    );
+  }
+
+  Widget _buildDropdown<T>({
+    required String hint,
+    required T? value,
+    required List<DropdownMenuItem<T>> items,
+    required ValueChanged<T?> onChanged,
+    bool isLoading = false,
+    bool enabled = true,
+  }) {
+    return DropdownButtonFormField<T>(
+      initialValue: value,
+      items: items,
+      onChanged: enabled ? onChanged : null,
+      decoration: InputDecoration(
+        hintText: isLoading ? 'جاري التحميل...' : hint,
+        prefixIcon: Icon(
+          isLoading ? Icons.sync : Icons.map_outlined,
+          color: enabled ? AppColors.primary : AppColors.slate300,
+          size: 20,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
+          borderSide: const BorderSide(color: AppColors.slate200),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
+          borderSide: const BorderSide(color: AppColors.slate200),
+        ),
+        filled: true,
+        fillColor: enabled ? Colors.white : AppColors.slate50,
+      ),
+      validator: (v) => (v == null && enabled) ? 'مطلوب' : null,
     );
   }
 }
