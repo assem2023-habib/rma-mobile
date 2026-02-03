@@ -23,14 +23,14 @@ class NotificationModel extends NotificationEntity {
 
     return NotificationModel(
       id: parseId(json['id']),
-      type: json['type'] as String?,
+      type: (json['notification_type'] ?? json['type']) as String?,
       title: json['title'] as String? ?? 'إشعار جديد',
       message: json['message'] as String? ?? '',
       data: json['data'] is Map ? json['data'] as Map<String, dynamic> : null,
       readAt: isRead
           ? (json['read_at'] != null
-              ? DateTime.tryParse(json['read_at'].toString())
-              : null)
+                ? DateTime.tryParse(json['read_at'].toString())
+                : null)
           : null,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'].toString())

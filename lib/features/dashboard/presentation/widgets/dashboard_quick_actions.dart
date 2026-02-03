@@ -75,6 +75,21 @@ class DashboardQuickActions extends StatelessWidget {
                     gradient: const [AppColors.warning, AppColors.warning],
                     onTap: () => context.push('/routes'),
                   ),
+                  const SizedBox(width: AppDimensions.spacing3),
+                  QuickActionCard(
+                    title: 'الدعم المباشر',
+                    description: 'تحدث مع الدعم الفني',
+                    icon: Icons.support_agent_outlined,
+                    gradient: const [AppColors.info, AppColors.primary],
+                    onTap: () {
+                      final authState = context.read<AuthBloc>().state;
+                      if (authState is GuestAuthenticated) {
+                        GuestPromptBottomSheet.show(context, 'المحادثات');
+                      } else {
+                        context.push('/chat');
+                      }
+                    },
+                  ),
                 ],
               ),
             ),

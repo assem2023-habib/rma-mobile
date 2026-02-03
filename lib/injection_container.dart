@@ -2,8 +2,10 @@ import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import 'package:rma_customer/core/api/dio_client.dart';
 import 'package:rma_customer/core/api/token_manager.dart';
+import 'package:rma_customer/core/api/api_config.dart'; // Added this import
 import 'package:rma_customer/core/services/live_notification_service.dart';
 import 'package:rma_customer/core/services/local_notification_service.dart';
 import 'package:rma_customer/core/network/network_info.dart';
@@ -80,10 +82,6 @@ import 'package:rma_customer/features/appointments/domain/repositories/appointme
 import 'package:rma_customer/features/appointments/domain/usecases/get_available_appointments_usecase.dart';
 import 'package:rma_customer/features/appointments/domain/usecases/book_appointment_usecase.dart';
 import 'package:rma_customer/features/appointments/presentation/bloc/appointment_bloc.dart';
-import 'package:rma_customer/features/notifications/data/datasources/notifications_remote_datasource.dart';
-import 'package:rma_customer/features/notifications/data/repositories/notifications_repository_impl.dart';
-import 'package:rma_customer/features/notifications/domain/repositories/notifications_repository.dart';
-import 'package:rma_customer/features/notifications/presentation/bloc/notifications_bloc.dart';
 
 import 'package:rma_customer/features/parcels/domain/usecases/get_returned_parcels_usecase.dart';
 import 'package:rma_customer/features/users/data/datasources/user_remote_datasource.dart';
@@ -91,6 +89,15 @@ import 'package:rma_customer/features/users/data/repositories/user_repository_im
 import 'package:rma_customer/features/users/domain/repositories/user_repository.dart';
 import 'package:rma_customer/features/users/domain/usecases/search_users_usecase.dart';
 import 'package:rma_customer/features/users/presentation/bloc/users_bloc.dart';
+import 'package:rma_customer/features/chat/data/datasources/chat_remote_data_source.dart';
+import 'package:rma_customer/features/chat/data/repositories/chat_repository_impl.dart';
+import 'package:rma_customer/features/chat/domain/repositories/chat_repository.dart';
+import 'package:rma_customer/features/chat/presentation/bloc/chat_bloc.dart';
+import 'package:rma_customer/features/chat/presentation/bloc/conversation_bloc.dart';
+import 'package:rma_customer/features/notifications/data/repositories/notifications_repository_impl.dart';
+import 'package:rma_customer/features/notifications/domain/repositories/notifications_repository.dart';
+import 'package:rma_customer/features/notifications/presentation/bloc/notifications_bloc.dart';
+import 'package:rma_customer/features/notifications/data/datasources/notifications_remote_datasource.dart';
 
 final sl = GetIt.instance;
 
@@ -318,18 +325,46 @@ Future<void> init() async {
     () => AppointmentRemoteDataSourceImpl(dioClient: sl()),
   );
 
+  sl.registerLazySingleton<NotificationsRemoteDataSource>(
+    () => NotificationsRemoteDataSourceImpl(dioClient: sl()),
+  );
+
   //! Features - Notifications
   // Bloc
-  sl.registerLazySingleton(() => NotificationsBloc(repository: sl()));
+  sl.registerFactory(() => NotificationsBloc(repository: sl()));
   // Repository
   sl.registerLazySingleton<NotificationsRepository>(
     () =>
         NotificationsRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
   );
-  // Data sources
-  sl.registerLazySingleton<NotificationsRemoteDataSource>(
-    () => NotificationsRemoteDataSourceImpl(dioClient: sl()),
+
+  //! Features - Chat
+  // Bloc
+  sl.registerFactory(() => ChatBloc(chatRepository: sl()));
+  sl.registerFactory(
+    () => ConversationBloc(chatRepository: sl(), liveNotificationService: sl()),
   );
+  // Repository
+  sl.registerLazySingleton<ChatRepository>(
+    () => ChatRepositoryImpl(remoteDataSource: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<ChatRemoteDataSource>(
+    () => ChatRemoteDataSourceImpl(
+      client: sl(),
+      tokenManager: sl(),
+    ), // Using 'client' as Dio or Http?
+    // Wait, ChatRemoteDataSourceImpl uses 'http.Client' but existing code uses 'DioClient'.
+    // The implementation of ChatRemoteDataSourceImpl I wrote uses 'http.Client' and 'TokenManager'.
+    // BUT 'DioClient' is registered as 'DioClient' not 'http.Client'.
+    // AND 'Dio' is registered as 'Dio'.
+    // I should probably have used Dio for consistency, or I need to register http.Client.
+    // The existing 'DioClient' wrapper is used everywhere.
+    // However, my implementation of ChatRemoteDataSource uses 'http' package.
+    // See: `final http.Client client;` in `ChatRemoteDataSourceImpl`.
+    // I need to register `http.Client`.
+  );
+  sl.registerLazySingleton(() => http.Client());
 
   //! Core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));

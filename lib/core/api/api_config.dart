@@ -1,6 +1,15 @@
 class ApiConfig {
   static const String baseUrl =
       'http://10.43.226.236:8000/api/v1'; // Updated IP provided by user
+
+  // Reverb/Pusher Configuration
+  static const String pusherAppKey = 'z8gmvgvmclvhoezjsfil';
+  static const String pusherHost = '10.43.226.236';
+  static const int pusherPort = 6001;
+  static const String pusherCluster = 'mt1';
+  static const String pusherAuthUrl =
+      'http://10.43.226.236:8000/api/broadcasting/auth';
+
   static const Duration connectTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);
 

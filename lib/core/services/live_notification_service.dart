@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-// ignore: depend_on_referenced_packages
-import 'package:http/http.dart' as http;
-import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
+import 'package:laravel_echo/laravel_echo.dart';
+import 'package:pusher_client_fixed/pusher_client_fixed.dart';
+import '../api/api_config.dart';
 import '../api/token_manager.dart';
 import 'local_notification_service.dart';
 
 class LiveNotificationService {
   final TokenManager _tokenManager;
   final LocalNotificationService _localNotificationService;
-  final PusherChannelsFlutter _pusher = PusherChannelsFlutter.getInstance();
+
+  PusherClient? _pusher;
+  Echo? _echo;
+
   final _eventController = StreamController<dynamic>.broadcast();
 
   // ignore: close_sinks
@@ -24,115 +27,135 @@ class LiveNotificationService {
 
   Future<void> init(int userId) async {
     try {
-      await _pusher.init(
-        apiKey: "z8gmvgvmclvhoezjsfil",
-        cluster: "mt1",
-        useTLS: false,
-        onEvent: _onEvent,
-        onSubscriptionSucceeded: _onSubscriptionSucceeded,
-        onSubscriptionError: _onSubscriptionError,
-        onDecryptionFailure: _onDecryptionFailure,
-        onMemberAdded: _onMemberAdded,
-        onMemberRemoved: _onMemberRemoved,
-        onConnectionStateChange: _onConnectionStateChange,
-        onError: _onError,
-        onAuthorizer: _onAuthorizer,
+      final token = _tokenManager.getToken();
+      if (token == null) return;
+
+      // Reverb Configuration using PusherClient
+      PusherOptions options = PusherOptions(
+        host: ApiConfig.pusherHost,
+        wsPort: ApiConfig.pusherPort,
+        wssPort: ApiConfig.pusherPort,
+        encrypted: false,
+        cluster: ApiConfig.pusherCluster,
+        auth: PusherAuth(
+          ApiConfig.pusherAuthUrl,
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+        ),
       );
 
-      await _pusher.connect();
+      _pusher = PusherClient(
+        ApiConfig.pusherAppKey,
+        options,
+        autoConnect: true,
+        enableLogging: kDebugMode,
+      );
 
-      final channelName = "private-User.$userId";
-      await _pusher.subscribe(channelName: channelName);
+      _echo = Echo(client: _pusher, broadcaster: EchoBroadcasterType.Pusher);
+
+      _pusher!.onConnectionStateChange((state) {
+        debugPrint(
+          "Connection: ${state?.previousState} -> ${state?.currentState}",
+        );
+        _connectionStatusController.add(state?.currentState ?? 'unknown');
+      });
+
+      _pusher!.onConnectionError((error) {
+        debugPrint("Connection Error: ${error?.message}");
+      });
+
+      // Subscribe to Private User Channel for Notifications
+      _echo!
+          .private('user.$userId')
+          .notification((notification) {
+            debugPrint("Notification Received: $notification");
+            _handleNotificationEvent(notification);
+          })
+          .listen('.notification.sent', (event) {
+            debugPrint("Private Notification Event: $event");
+            _handleNotificationEvent(event);
+          });
+
+      // Subscribe to Public Notification Channel
+      _echo!.channel('notifications').listen('.notification.sent', (event) {
+        debugPrint("Public Notification: $event");
+        _handleNotificationEvent(event);
+      });
     } catch (e) {
       debugPrint("LiveNotificationService ERROR: $e");
     }
   }
 
   Future<void> disconnect() async {
-    await _pusher.disconnect();
+    _echo?.disconnect();
+    _pusher?.disconnect();
   }
 
-  void _onEvent(PusherEvent event) {
-    debugPrint("Pusher Event: ${event.eventName} - ${event.data}");
-    // Filter for the specific notification event
-    if (event.eventName ==
-        "Illuminate\\Notifications\\Events\\BroadcastNotificationCreated") {
-      try {
-        final data = jsonDecode(event.data);
-        _eventController.add(data);
-
-        // Show Local Notification
-        _localNotificationService.showNotification(
-          id: DateTime.now().millisecond,
-          title: data['title'] ?? 'تنبيه جديد',
-          body: data['body'] ?? data['message'] ?? '',
-          payload: jsonEncode(data),
-        );
-      } catch (e) {
-        debugPrint("Error parsing notification data: $e");
-      }
-    }
-  }
-
-  void _onSubscriptionSucceeded(String channelName, dynamic data) {
-    debugPrint("Subscribed to: $channelName");
-  }
-
-  void _onSubscriptionError(String message, dynamic e) {
-    debugPrint("Subscription Error: $message - $e");
-  }
-
-  void _onDecryptionFailure(String channelName, String reason) {
-    debugPrint("Decryption Failure: $channelName - $reason");
-  }
-
-  void _onMemberAdded(String channelName, PusherMember member) {
-    debugPrint("Member Added: $channelName - ${member.userId}");
-  }
-
-  void _onMemberRemoved(String channelName, PusherMember member) {
-    debugPrint("Member Removed: $channelName - ${member.userId}");
-  }
-
-  void _onConnectionStateChange(dynamic currentState, dynamic previousState) {
-    debugPrint("Connection: $previousState -> $currentState");
-    _connectionStatusController.add(currentState.toString());
-  }
-
-  void _onError(String message, int? code, dynamic e) {
-    debugPrint("Error: $message code: $code e: $e");
-  }
-
-  Future<dynamic> _onAuthorizer(
-    String channelName,
-    String socketId,
-    dynamic options,
-  ) async {
+  // Chat Subscription Methods
+  Future<void> subscribeToConversation(int conversationId) async {
     try {
-      final token = _tokenManager.getToken();
-      if (token == null) {
-        throw Exception("No token available for auth");
-      }
-
-      final url = Uri.parse("http://10.43.226.236:8000/api/broadcasting/auth");
-      final response = await http.post(
-        url,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Authorization": "Bearer $token",
-          "Accept": "application/json",
-        },
-        body: {"socket_id": socketId, "channel_name": channelName},
-      );
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        throw Exception("Auth Failed: ${response.statusCode} ${response.body}");
-      }
+      _echo!
+          .private('conversation.$conversationId')
+          .listen('.message.new', (event) {
+            _eventController.add({'type': 'chat_message', 'data': event});
+          })
+          .listen('message.new', (event) {
+            _eventController.add({'type': 'chat_message', 'data': event});
+          })
+          .listen('.conversation.updated', (event) {
+            _eventController.add({
+              'type': 'conversation_updated',
+              'data': event,
+            });
+          })
+          .listen('conversation.updated', (event) {
+            _eventController.add({
+              'type': 'conversation_updated',
+              'data': event,
+            });
+          });
+      debugPrint("Subscribed to conversation: $conversationId");
     } catch (e) {
-      debugPrint("Authorizer Error: $e");
-      rethrow;
+      debugPrint("Failed to subscribe to conversation $conversationId: $e");
     }
+  }
+
+  Future<void> unsubscribeFromConversation(int conversationId) async {
+    try {
+      _echo!.leave('conversation.$conversationId');
+      debugPrint("Unsubscribed from conversation: $conversationId");
+    } catch (e) {
+      debugPrint("Failed to unsubscribe from conversation $conversationId: $e");
+    }
+  }
+
+  void _handleNotificationEvent(dynamic data) {
+    try {
+      final parsedData = _parseEventData(data);
+      _eventController.add({'type': 'notification', 'data': parsedData});
+
+      // Show Local Notification
+      _localNotificationService.showNotification(
+        id: DateTime.now().millisecond,
+        title: parsedData['title'] ?? 'إشعار جديد',
+        body: parsedData['message'] ?? '',
+        payload: jsonEncode(parsedData),
+      );
+    } catch (e) {
+      debugPrint("Error parsing notification data: $e");
+    }
+  }
+
+  dynamic _parseEventData(dynamic data) {
+    if (data is String) {
+      try {
+        return jsonDecode(data);
+      } catch (_) {
+        return data;
+      }
+    }
+    return data;
   }
 }

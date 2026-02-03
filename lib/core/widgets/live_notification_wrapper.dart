@@ -27,35 +27,30 @@ class _LiveNotificationWrapperState extends State<LiveNotificationWrapper> {
   void initState() {
     super.initState();
     sl<LocalNotificationService>().init(); // Initialize local notifications
-    _liveNotificationService.eventStream.listen((data) {
-      // Convert raw data to NotificationEntity
-      // Data format from user:
-      /*
-        {
-          "id": "uuid-notification-id",
-          "title": "...",
-          "body": "...",
-          "type": "...",
-          "data": { ... }
-        }
-       */
-      try {
-        final notification = NotificationEntity(
-          id: data['id'] ?? DateTime.now().toString(),
-          title: data['title'] ?? 'New Notification',
-          message: data['body'] ?? '',
-          type: data['type'],
-          data: data['data'],
-          createdAt: DateTime.now(),
-        );
-
-        if (mounted) {
-          context.read<NotificationsBloc>().add(
-            NotificationReceivedEvent(notification),
+    _liveNotificationService.eventStream.listen((eventData) {
+      // Check for event structure
+      if (eventData is Map && eventData['type'] == 'notification') {
+        final data = eventData['data'];
+        try {
+          final notification = NotificationEntity(
+            id: data['id'] ?? DateTime.now().toString(),
+            title: data['title'] ?? 'إشعار جديد',
+            message: data['message'] ?? '',
+            type: data['notification_type'],
+            data: data['data'], // Nested data
+            createdAt: data['created_at'] != null
+                ? DateTime.parse(data['created_at'])
+                : DateTime.now(),
           );
+
+          if (mounted) {
+            context.read<NotificationsBloc>().add(
+              NotificationReceivedEvent(notification),
+            );
+          }
+        } catch (e) {
+          debugPrint("Error processing notification: $e");
         }
-      } catch (e) {
-        debugPrint("Error processing notification: $e");
       }
     });
   }

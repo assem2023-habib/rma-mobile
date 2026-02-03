@@ -25,6 +25,8 @@ dependencies:
 
   # Live Notifications
   pusher_channels_flutter: ^2.2.0
+  pusher_client_fixed: ^0.0.5
+  laravel_echo: ^1.0.0-beta.1
 
   # Local Storage
   shared_preferences: ^2.2.2

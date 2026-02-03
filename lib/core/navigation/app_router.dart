@@ -21,6 +21,8 @@ import 'package:rma_customer/features/map/presentation/bloc/map_bloc.dart';
 import 'package:rma_customer/features/map/presentation/pages/map_page.dart';
 import 'package:rma_customer/features/profile/presentation/pages/profile_page.dart';
 import 'package:rma_customer/features/notifications/presentation/pages/notification_screen.dart';
+import 'package:rma_customer/features/chat/presentation/pages/chat_list_page.dart';
+import 'package:rma_customer/features/chat/presentation/pages/chat_detail_page.dart';
 
 import 'package:rma_customer/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:rma_customer/features/onboarding/presentation/pages/splash_screen.dart';
@@ -29,7 +31,10 @@ class AppRouter {
   static final router = GoRouter(
     initialLocation: '/splash',
     routes: [
-      GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingPage(),
@@ -125,6 +130,15 @@ class AppRouter {
       GoRoute(
         path: '/notifications',
         builder: (context, state) => const NotificationScreen(),
+      ),
+      GoRoute(path: '/chat', builder: (context, state) => const ChatListPage()),
+      GoRoute(
+        path: '/chat/:id',
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          final subject = state.extra as String? ?? 'المحادثة';
+          return ChatDetailPage(conversationId: id, subject: subject);
+        },
       ),
     ],
   );
