@@ -18,7 +18,7 @@ class ChatRepositoryImpl implements ChatRepository {
       final result = await remoteDataSource.getConversations();
       return Right(result);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     }
   }
 
@@ -36,7 +36,7 @@ class ChatRepositoryImpl implements ChatRepository {
       );
       return Right(result);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     }
   }
 
@@ -46,7 +46,7 @@ class ChatRepositoryImpl implements ChatRepository {
       final result = await remoteDataSource.getConversation(id);
       return Right(result);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     }
   }
 
@@ -62,7 +62,7 @@ class ChatRepositoryImpl implements ChatRepository {
       );
       return Right(result);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     }
   }
 
@@ -80,7 +80,7 @@ class ChatRepositoryImpl implements ChatRepository {
       );
       return Right(result);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     }
   }
 
@@ -90,7 +90,7 @@ class ChatRepositoryImpl implements ChatRepository {
       await remoteDataSource.closeConversation(conversationId);
       return const Right(null);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     }
   }
 }

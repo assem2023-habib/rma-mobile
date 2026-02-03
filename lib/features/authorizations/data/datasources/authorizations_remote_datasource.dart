@@ -61,7 +61,6 @@ class AuthorizationsRemoteDataSourceImpl
         throw ServerException();
       }
     } catch (e) {
-      print('Error in getAuthorizations: $e');
       throw ServerException();
     }
   }

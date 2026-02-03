@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/parcels_bloc.dart';
 import '../bloc/parcels_event.dart';
 import '../bloc/parcels_state.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -34,13 +33,6 @@ class _ParcelDetailPageState extends State<ParcelDetailPage> {
     super.initState();
     if (widget.parcel == null) {
       context.read<ParcelsBloc>().add(GetParcelByIdEvent(widget.parcelId));
-    }
-  }
-
-  Future<void> _makePhoneCall(String phoneNumber) async {
-    final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
-    if (await canLaunchUrl(launchUri)) {
-      await launchUrl(launchUri);
     }
   }
 
@@ -101,8 +93,9 @@ class _ParcelDetailPageState extends State<ParcelDetailPage> {
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppDimensions.radiusLg),
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusLg,
+                        ),
                       ),
                     ),
                   ),
@@ -126,9 +119,9 @@ class _ParcelDetailPageState extends State<ParcelDetailPage> {
             Text(state.message),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => context
-                  .read<ParcelsBloc>()
-                  .add(GetParcelByIdEvent(widget.parcelId)),
+              onPressed: () => context.read<ParcelsBloc>().add(
+                GetParcelByIdEvent(widget.parcelId),
+              ),
               child: const Text('إعادة المحاولة'),
             ),
           ],
@@ -164,10 +157,7 @@ class _ParcelDetailPageState extends State<ParcelDetailPage> {
           const SizedBox(height: AppDimensions.spacing6),
 
           // 3. Tracking Steps
-          const Text(
-            'حالة الشحنة',
-            style: AppTypography.bodyLarge,
-          ),
+          const Text('حالة الشحنة', style: AppTypography.bodyLarge),
           const SizedBox(height: AppDimensions.spacing4),
           ParcelTrackingSteps(
             currentStatus: parcel.status,
@@ -175,8 +165,8 @@ class _ParcelDetailPageState extends State<ParcelDetailPage> {
             currentLocation: parcel.status == ParcelStatus.delivered
                 ? parcel.toCity
                 : parcel.status == ParcelStatus.pending
-                    ? parcel.fromCity
-                    : 'في الطريق إلى ${parcel.toCity}',
+                ? parcel.fromCity
+                : 'في الطريق إلى ${parcel.toCity}',
           ),
           const SizedBox(height: AppDimensions.spacing6),
 

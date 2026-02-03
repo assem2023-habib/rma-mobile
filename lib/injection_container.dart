@@ -1,11 +1,10 @@
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rma_customer/core/api/dio_client.dart';
 import 'package:rma_customer/core/api/token_manager.dart';
-import 'package:rma_customer/core/api/api_config.dart'; // Added this import
 import 'package:rma_customer/core/services/live_notification_service.dart';
 import 'package:rma_customer/core/services/local_notification_service.dart';
 import 'package:rma_customer/core/network/network_info.dart';
