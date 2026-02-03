@@ -21,7 +21,7 @@ class ParcelArrivalCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppDimensions.radius2xl),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1976D2).withOpacity(0.3),
+            color: const Color(0xFF1976D2).withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -34,7 +34,7 @@ class ParcelArrivalCard extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
             ),
             child: ClipRRect(
@@ -59,7 +59,7 @@ class ParcelArrivalCard extends StatelessWidget {
                 Text(
                   'الوصول المتوقع',
                   style: AppTypography.caption.copyWith(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -76,7 +76,7 @@ class ParcelArrivalCard extends StatelessWidget {
                 Text(
                   'سيتم إعلامك عند وصول الطرد',
                   style: AppTypography.caption.copyWith(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 10,
                   ),
                 ),

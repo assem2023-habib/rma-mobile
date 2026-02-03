@@ -78,17 +78,22 @@ class _ParcelProgressBarState extends State<ParcelProgressBar>
                     gradient: const LinearGradient(
                       colors: [AppColors.primary, AppColors.primaryDark],
                     ),
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.radiusFull,
+                    ),
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.radiusFull,
+                    ),
                     child: Stack(
                       children: [
                         AnimatedBuilder(
                           animation: _pulseController,
                           builder: (context, child) {
                             return Positioned(
-                              left: (constraints.maxWidth * widget.progress) *
+                              left:
+                                  (constraints.maxWidth * widget.progress) *
                                       _pulseController.value -
                                   50,
                               child: Container(
@@ -97,9 +102,9 @@ class _ParcelProgressBarState extends State<ParcelProgressBar>
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
-                                      Colors.white.withOpacity(0),
-                                      Colors.white.withOpacity(0.3),
-                                      Colors.white.withOpacity(0),
+                                      Colors.white.withValues(alpha: 0),
+                                      Colors.white.withValues(alpha: 0.3),
+                                      Colors.white.withValues(alpha: 0),
                                     ],
                                   ),
                                 ),

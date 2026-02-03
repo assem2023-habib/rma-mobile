@@ -30,9 +30,12 @@ class ParcelTrackingSteps extends StatelessWidget {
     // Find current step index
     int currentStepIndex = steps.indexOf(currentStatus);
     if (currentStepIndex == -1) {
-        // If status is not in the linear flow (e.g. returned, canceled), map to appropriate step or show all
-        if (currentStatus == ParcelStatus.readyForPickup) currentStepIndex = 3; // Treat as outForDelivery/Ready
-        else currentStepIndex = 0;
+      // If status is not in the linear flow (e.g. returned, canceled), map to appropriate step or show all
+      if (currentStatus == ParcelStatus.readyForPickup) {
+        currentStepIndex = 3; // Treat as outForDelivery/Ready
+      } else {
+        currentStepIndex = 0;
+      }
     }
 
     return Column(
@@ -64,7 +67,9 @@ class ParcelTrackingSteps extends StatelessWidget {
               const SizedBox(width: AppDimensions.spacing4),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: AppDimensions.spacing6),
+                  padding: const EdgeInsets.only(
+                    bottom: AppDimensions.spacing6,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -75,7 +80,9 @@ class ParcelTrackingSteps extends StatelessWidget {
                           color: isCompleted || isCurrent
                               ? AppColors.slate900
                               : AppColors.slate500,
-                          fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+                          fontWeight: isCurrent
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                       ),
                       if (isCurrent) ...[
@@ -130,7 +137,7 @@ class ParcelTrackingSteps extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppDimensions.radiusXl),
           boxShadow: [
             BoxShadow(
-              color: AppColors.success.withOpacity(0.3),
+              color: AppColors.success.withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -158,7 +165,7 @@ class ParcelTrackingSteps extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppDimensions.radiusXl),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.3),
+                    color: AppColors.primary.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -168,7 +175,7 @@ class ParcelTrackingSteps extends StatelessWidget {
             ),
           );
         },
-        onEnd: () {}, 
+        onEnd: () {},
       );
     } else {
       return Container(
