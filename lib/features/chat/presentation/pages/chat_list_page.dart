@@ -35,7 +35,7 @@ class ChatListPage extends StatelessWidget {
                   final conversation = state.conversations[index];
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: Colors.blueAccent.withOpacity(0.1),
+                      backgroundColor: Colors.blueAccent.withValues(alpha: 0.1),
                       child: const Icon(
                         Icons.support_agent,
                         color: Colors.blueAccent,
@@ -174,6 +174,9 @@ class ChatListPageCorrect extends StatelessWidget {
 
   void _createConversation(BuildContext context) {
     final subjectController = TextEditingController();
+    final bool mounted = Navigator.canPop(
+      context,
+    ); // Fallback for StatelessWidget
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -194,6 +197,7 @@ class ChatListPageCorrect extends StatelessWidget {
         ],
       ),
     ).then((subject) {
+      if (!mounted) return;
       if (subject != null && subject.toString().isNotEmpty) {
         context.read<ChatBloc>().add(CreateConversationEvent(subject: subject));
       }
@@ -217,8 +221,12 @@ class ChatListView extends StatelessWidget {
                 subject: state.conversation.subject,
               ),
             ),
-          ).then((_) => context.read<ChatBloc>().add(GetConversationsEvent()));
-        }
+          ).then((_) {
+      if (!context.mounted) return;
+      context.read<ChatBloc>().add(GetConversationsEvent());
+    });
+  }
+}
         if (state is ChatError) {
           ScaffoldMessenger.of(
             context,
@@ -240,7 +248,7 @@ class ChatListView extends StatelessWidget {
                 final conversation = state.conversations[index];
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.blueAccent.withOpacity(0.1),
+                    backgroundColor: Colors.blueAccent.withValues(alpha: 0.1),
                     child: const Icon(
                       Icons.support_agent,
                       color: Colors.blueAccent,
@@ -264,8 +272,10 @@ class ChatListView extends StatelessWidget {
                         ),
                       ),
                     ).then(
-                      (_) =>
-                          context.read<ChatBloc>().add(GetConversationsEvent()),
+                      (_) {
+                        if (!context.mounted) return;
+                        context.read<ChatBloc>().add(GetConversationsEvent());
+                      },
                     );
                   },
                 );
