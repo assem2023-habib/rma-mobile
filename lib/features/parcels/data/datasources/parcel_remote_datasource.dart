@@ -50,7 +50,6 @@ class ParcelRemoteDataSourceImpl implements ParcelRemoteDataSource {
         throw ServerException();
       }
     } catch (e) {
-      print('Error in getParcels: $e');
       throw ServerException();
     }
   }
@@ -87,7 +86,6 @@ class ParcelRemoteDataSourceImpl implements ParcelRemoteDataSource {
         throw ServerException();
       }
     } catch (e) {
-      print('Error in getParcelById: $e');
       throw ServerException();
     }
   }

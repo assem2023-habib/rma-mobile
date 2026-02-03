@@ -35,7 +35,9 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     // If onboarding completed, check auth state
+    if (!mounted) return;
     final authState = context.read<AuthBloc>().state;
+
     if (mounted) {
       if (authState is Authenticated || authState is GuestAuthenticated) {
         context.go('/');
@@ -51,16 +53,12 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
         width: double.infinity,
         decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
-        child: Column(
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.local_shipping,
-              size: 100,
-              color: AppColors.primary,
-            ),
-            const SizedBox(height: 24),
-            const Text(
+            Icon(Icons.local_shipping, size: 100, color: AppColors.primary),
+            SizedBox(height: 24),
+            Text(
               'RMA الشحن السريع',
               style: TextStyle(
                 color: AppColors.primary,
@@ -68,8 +66,8 @@ class _SplashScreenState extends State<SplashScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 48),
-            const CircularProgressIndicator(
+            SizedBox(height: 48),
+            CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
             ),
           ],
