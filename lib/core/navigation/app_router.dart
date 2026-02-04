@@ -5,6 +5,7 @@ import 'package:rma_customer/features/auth/presentation/pages/forgot_password_pa
 import 'package:rma_customer/features/auth/presentation/pages/verify_otp_page.dart';
 import 'package:rma_customer/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:rma_customer/features/dashboard/presentation/pages/dashboard_home_page.dart';
+import 'package:rma_customer/features/dashboard/presentation/pages/admin_placeholder_page.dart';
 import 'package:rma_customer/features/parcels/presentation/pages/parcels_page.dart';
 import 'package:rma_customer/features/parcels/presentation/pages/new_parcel_page.dart';
 import 'package:rma_customer/features/parcels/presentation/pages/parcel_detail_page.dart';
@@ -71,6 +72,33 @@ class AppRouter {
       GoRoute(
         path: '/',
         builder: (context, state) => const DashboardHomePage(),
+      ),
+      // Admin Routes
+      GoRoute(
+        path: '/admin/parcels',
+        builder: (context, state) =>
+            const AdminPlaceholderPage(title: 'إدارة الطرود'),
+      ),
+      GoRoute(
+        path: '/admin/appointments',
+        builder: (context, state) =>
+            const AdminPlaceholderPage(title: 'إدارة المواعيد'),
+      ),
+      GoRoute(
+        path: '/admin/shipments',
+        builder: (context, state) =>
+            const AdminPlaceholderPage(title: 'إدارة الشحنات'),
+      ),
+      // Super Admin Routes
+      GoRoute(
+        path: '/super-admin/branches',
+        builder: (context, state) =>
+            const AdminPlaceholderPage(title: 'إدارة الفروع'),
+      ),
+      GoRoute(
+        path: '/super-admin/employees',
+        builder: (context, state) =>
+            const AdminPlaceholderPage(title: 'إدارة الموظفين'),
       ),
       GoRoute(
         path: '/parcels',
