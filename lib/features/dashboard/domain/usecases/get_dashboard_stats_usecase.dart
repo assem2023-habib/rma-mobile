@@ -8,7 +8,7 @@ class GetDashboardStatsUseCase {
 
   GetDashboardStatsUseCase(this.repository);
 
-  Future<Either<Failure, DashboardStats>> call() async {
-    return await repository.getDashboardStats();
+  Future<Either<Failure, DashboardStats>> call({String? userType}) async {
+    return await repository.getDashboardStats(userType: userType);
   }
 }

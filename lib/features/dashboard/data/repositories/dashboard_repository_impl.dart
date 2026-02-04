@@ -17,10 +17,10 @@ class DashboardRepositoryImpl implements DashboardRepository {
   });
 
   @override
-  Future<Either<Failure, DashboardStats>> getDashboardStats() async {
+  Future<Either<Failure, DashboardStats>> getDashboardStats({String? userType}) async {
     if (await networkInfo.isConnected) {
       try {
-        final stats = await remoteDataSource.getDashboardStats();
+        final stats = await remoteDataSource.getDashboardStats(userType: userType);
         return Right(stats);
       } on ServerException {
         return const Left(ServerFailure('Server Error during dashboard stats fetch'));
