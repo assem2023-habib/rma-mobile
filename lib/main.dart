@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
           create: (_) => di.sl<AuthBloc>()..add(AuthCheckRequested()),
         ),
         BlocProvider(
-          create: (_) => di.sl<DashboardBloc>()..add(GetDashboardStatsEvent()),
+          create: (_) => di.sl<DashboardBloc>()..add(const GetDashboardStatsEvent()),
         ),
         BlocProvider(create: (_) => di.sl<ProfileBloc>()),
         BlocProvider(

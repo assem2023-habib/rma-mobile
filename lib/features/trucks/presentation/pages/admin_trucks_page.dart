@@ -36,9 +36,9 @@ class _AdminTrucksPageState extends State<AdminTrucksPage> {
               );
               context.read<TrucksBloc>().add(GetAllTrucksEvent());
             } else if (state is TrucksError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
           child: BlocBuilder<TrucksBloc, TrucksState>(
@@ -91,7 +91,7 @@ class _TruckCard extends StatelessWidget {
           onChanged: (value) {
             context.read<TrucksBloc>().add(ToggleTruckStatusEvent(truck.id));
           },
-          activeColor: AppColors.success,
+          activeThumbColor: AppColors.success,
         ),
       ),
     );
