@@ -23,7 +23,7 @@ class SuperAdminRepositoryImpl implements SuperAdminRepository {
         final remoteStats = await remoteDataSource.getSuperAdminStats();
         return Right(remoteStats);
       } on ServerException catch (e) {
-        return Left(ServerFailure(e.message));
+        return Left(ServerFailure(e.message ?? 'حدث خطأ في الخادم'));
       }
     } else {
       return const Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));
@@ -37,7 +37,7 @@ class SuperAdminRepositoryImpl implements SuperAdminRepository {
         final remoteParcels = await remoteDataSource.getAllParcels(page);
         return Right(remoteParcels);
       } on ServerException catch (e) {
-        return Left(ServerFailure(e.message));
+        return Left(ServerFailure(e.message ?? 'حدث خطأ في الخادم'));
       }
     } else {
       return const Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));

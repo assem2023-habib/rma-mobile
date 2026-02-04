@@ -1,4 +1,6 @@
-import '../entities/super_admin_stats_entity.dart';
+
+import 'package:rma_customer/features/super_admin/domain/entities/super_admin_stats_entity.dart';
+
 import '../../../parcels/data/models/parcel_model.dart';
 
 class SuperAdminStatsModel extends SuperAdminStatsEntity {
