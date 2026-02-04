@@ -83,6 +83,8 @@ import 'package:rma_customer/features/appointments/data/repositories/appointment
 import 'package:rma_customer/features/appointments/domain/repositories/appointment_repository.dart';
 import 'package:rma_customer/features/appointments/domain/usecases/get_available_appointments_usecase.dart';
 import 'package:rma_customer/features/appointments/domain/usecases/book_appointment_usecase.dart';
+import 'package:rma_customer/features/appointments/domain/usecases/get_admin_appointments_usecase.dart';
+import 'package:rma_customer/features/appointments/domain/usecases/update_appointment_status_usecase.dart';
 import 'package:rma_customer/features/appointments/presentation/bloc/appointment_bloc.dart';
 
 import 'package:rma_customer/features/parcels/domain/usecases/get_returned_parcels_usecase.dart';
@@ -319,11 +321,15 @@ Future<void> init() async {
     () => AppointmentBloc(
       getAvailableAppointmentsUseCase: sl(),
       bookAppointmentUseCase: sl(),
+      getAdminAppointmentsUseCase: sl(),
+      updateAppointmentStatusUseCase: sl(),
     ),
   );
   // Use cases
   sl.registerLazySingleton(() => GetAvailableAppointmentsUseCase(sl()));
   sl.registerLazySingleton(() => BookAppointmentUseCase(sl()));
+  sl.registerLazySingleton(() => GetAdminAppointmentsUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateAppointmentStatusUseCase(sl()));
   // Repository
   sl.registerLazySingleton<AppointmentRepository>(
     () => AppointmentRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),

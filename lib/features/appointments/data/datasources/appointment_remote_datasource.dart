@@ -12,12 +12,44 @@ abstract class AppointmentRemoteDataSource {
     required int appointmentId,
     int? userId,
   });
+  Future<List<AppointmentModel>> getAdminAppointments();
+  Future<void> updateAppointmentStatus(int id, String status);
 }
 
 class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
   final DioClient dioClient;
 
   AppointmentRemoteDataSourceImpl({required this.dioClient});
+
+  @override
+  Future<List<AppointmentModel>> getAdminAppointments() async {
+    try {
+      final response = await dioClient.get(ApiConfig.appointments);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data']['appointments'];
+        return data.map((json) => AppointmentModel.fromJson(json)).toList();
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<void> updateAppointmentStatus(int id, String status) async {
+    try {
+      final response = await dioClient.post(
+        '${ApiConfig.appointments}/$id/status',
+        data: {'status': status},
+      );
+      if (response.statusCode != 200) {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
+  }
 
   @override
   Future<AvailableAppointmentsResponseModel> getAvailableAppointments(

@@ -30,3 +30,15 @@ class BookAppointmentRequested extends AppointmentEvent {
   @override
   List<Object?> get props => [trackingNumber, appointmentId, userId];
 }
+
+class GetAdminAppointmentsEvent extends AppointmentEvent {}
+
+class UpdateAppointmentStatusEvent extends AppointmentEvent {
+  final int id;
+  final String status;
+
+  const UpdateAppointmentStatusEvent({required this.id, required this.status});
+
+  @override
+  List<Object?> get props => [id, status];
+}

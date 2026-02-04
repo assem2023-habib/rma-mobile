@@ -1,13 +1,13 @@
 import 'package:equatable/equatable.dart';
 
-class Appointment extends Equatable {
+class AppointmentEntity extends Equatable {
   final int id;
   final int branchId;
   final String date;
   final String time;
   final bool booked;
 
-  const Appointment({
+  const AppointmentEntity({
     required this.id,
     required this.branchId,
     required this.date,
@@ -22,7 +22,7 @@ class Appointment extends Equatable {
 class AvailableAppointmentsResponse extends Equatable {
   final bool success;
   final AppointmentParcel parcel;
-  final List<Appointment> availableAppointments;
+  final List<AppointmentEntity> availableAppointments;
 
   const AvailableAppointmentsResponse({
     required this.success,

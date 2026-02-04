@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'core/config/app_flavor_config.dart';
 import 'core/theme/app_theme.dart';
 import 'core/navigation/app_router.dart';
 import 'core/widgets/live_notification_wrapper.dart';
@@ -49,7 +50,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         scaffoldMessengerKey: scaffoldMessengerKey,
         debugShowCheckedModeBanner: false,
-        title: 'شحن سريع',
+        title: AppConfig.instance.appTitle,
         theme: AppTheme.lightTheme,
         routerConfig: AppRouter.router,
 

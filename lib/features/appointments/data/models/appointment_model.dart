@@ -1,6 +1,6 @@
 import '../../domain/entities/appointment_entity.dart';
 
-class AppointmentModel extends Appointment {
+class AppointmentModel extends AppointmentEntity {
   const AppointmentModel({
     required super.id,
     required super.branchId,

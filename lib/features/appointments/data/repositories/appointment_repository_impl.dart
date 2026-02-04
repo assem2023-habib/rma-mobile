@@ -35,6 +35,35 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
   }
 
   @override
+  Future<Either<Failure, List<AppointmentEntity>>> getAdminAppointments() async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.getAdminAppointments();
+        return Right(result);
+      } on ServerException {
+        return const Left(ServerFailure());
+      }
+    } else {
+      return const Left(NetworkFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updateAppointmentStatus(
+      int id, String status) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.updateAppointmentStatus(id, status);
+        return const Right(null);
+      } on ServerException {
+        return const Left(ServerFailure());
+      }
+    } else {
+      return const Left(NetworkFailure());
+    }
+  }
+
+  @override
   Future<Either<Failure, dynamic>> bookAppointment({
     required String trackingNumber,
     required int appointmentId,

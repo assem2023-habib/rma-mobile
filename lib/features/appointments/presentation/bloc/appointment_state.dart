@@ -30,6 +30,17 @@ class AppointmentBooked extends AppointmentState {
   List<Object?> get props => [data];
 }
 
+class AdminAppointmentsLoaded extends AppointmentState {
+  final List<AppointmentEntity> appointments;
+
+  const AdminAppointmentsLoaded(this.appointments);
+
+  @override
+  List<Object?> get props => [appointments];
+}
+
+class AppointmentStatusUpdated extends AppointmentState {}
+
 class AppointmentError extends AppointmentState {
   final String message;
 

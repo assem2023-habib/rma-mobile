@@ -6,6 +6,9 @@ import '../models/parcel_model.dart';
 
 abstract class ParcelRemoteDataSource {
   Future<List<ParcelModel>> getParcels();
+  Future<List<ParcelModel>> getAdminParcels();
+  Future<ParcelModel> updateParcelStatus(int id, String status);
+  Future<void> confirmParcelReception(int id);
   Future<PaginationModel<ParcelModel>> getReturnedParcels({int? page});
   Future<ParcelModel> getParcelById(int id);
   Future<ParcelModel> createParcel({
@@ -47,6 +50,50 @@ class ParcelRemoteDataSourceImpl implements ParcelRemoteDataSource {
         }
         return data.map((json) => ParcelModel.fromJson(json)).toList();
       } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<List<ParcelModel>> getAdminParcels() async {
+    try {
+      final response = await dioClient.get(ApiConfig.parcels);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data']['parcels'];
+        return data.map((json) => ParcelModel.fromJson(json)).toList();
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<ParcelModel> updateParcelStatus(int id, String status) async {
+    try {
+      final response = await dioClient.post(
+        '${ApiConfig.parcels}/$id/status',
+        data: {'status': status},
+      );
+      if (response.statusCode == 200) {
+        return ParcelModel.fromJson(response.data['data']['parcel']);
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<void> confirmParcelReception(int id) async {
+    try {
+      final response = await dioClient.post('${ApiConfig.parcels}/$id/confirm');
+      if (response.statusCode != 200) {
         throw ServerException();
       }
     } catch (e) {
