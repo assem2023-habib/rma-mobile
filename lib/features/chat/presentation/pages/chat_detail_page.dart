@@ -71,7 +71,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     } else if (state is ConversationError) {
                       return Center(
                         child: Column(
-                          mainAxisAlignment: MainAxisSize.min,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             const Icon(
                               Icons.error_outline,
@@ -88,7 +88,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                       if (messages.isEmpty) {
                         return Center(
                           child: Column(
-                            mainAxisAlignment: MainAxisSize.min,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
                                 Icons.chat_bubble_outline,
