@@ -37,7 +37,13 @@ class _DashboardHomePageState extends State<DashboardHomePage> {
   }
 
   void _loadData() {
-    context.read<DashboardBloc>().add(GetDashboardStatsEvent());
+    final authState = context.read<AuthBloc>().state;
+    String? userType;
+    if (authState is Authenticated) {
+      userType = authState.user.userType;
+    }
+    
+    context.read<DashboardBloc>().add(GetDashboardStatsEvent(userType: userType));
     context.read<ParcelsBloc>().add(GetParcelsEvent());
     context.read<NotificationsBloc>().add(GetNotificationsEvent());
   }
