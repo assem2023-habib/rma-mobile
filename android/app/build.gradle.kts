@@ -31,6 +31,20 @@ android {
         versionName = flutter.versionName
     }
 
+    flavorDimensions += "app"
+    productFlavors {
+        create("customer") {
+            dimension = "app"
+            applicationId = "com.example.rma_customer"
+            resValue("string", "app_name", "RMA Customer")
+        }
+        create("admin") {
+            dimension = "app"
+            applicationId = "com.example.rma_customer.admin"
+            resValue("string", "app_name", "RMA Admin")
+        }
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
