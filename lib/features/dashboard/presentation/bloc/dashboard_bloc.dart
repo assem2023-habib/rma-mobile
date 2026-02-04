@@ -9,7 +9,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   DashboardBloc({required this.getDashboardStatsUseCase}) : super(DashboardInitial()) {
     on<GetDashboardStatsEvent>((event, emit) async {
       emit(DashboardLoading());
-      final result = await getDashboardStatsUseCase();
+      final result = await getDashboardStatsUseCase(userType: event.userType);
       result.fold(
         (failure) => emit(DashboardError(message: failure.message)),
         (stats) => emit(DashboardLoaded(stats: stats)),

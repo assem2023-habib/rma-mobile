@@ -7,4 +7,11 @@ abstract class DashboardEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class GetDashboardStatsEvent extends DashboardEvent {}
+class GetDashboardStatsEvent extends DashboardEvent {
+  final String? userType;
+
+  const GetDashboardStatsEvent({this.userType});
+
+  @override
+  List<Object> get props => [userType ?? ''];
+}
