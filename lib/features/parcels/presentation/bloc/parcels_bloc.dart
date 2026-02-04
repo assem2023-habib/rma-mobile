@@ -7,11 +7,18 @@ import '../../domain/usecases/get_parcel_by_id_usecase.dart';
 import '../../domain/usecases/create_parcel_usecase.dart';
 import '../../domain/usecases/update_parcel_usecase.dart';
 import '../../domain/usecases/delete_parcel_usecase.dart';
+import '../../domain/usecases/get_admin_parcels_usecase.dart';
+import '../../domain/usecases/update_parcel_status_usecase.dart';
+import '../../domain/usecases/confirm_parcel_reception_usecase.dart';
+import '../../../../core/usecases/usecase.dart';
 import 'parcels_event.dart';
 import 'parcels_state.dart';
 
 class ParcelsBloc extends Bloc<ParcelsEvent, ParcelsState> {
   final GetParcelsUseCase getParcelsUseCase;
+  final GetAdminParcelsUseCase getAdminParcelsUseCase;
+  final UpdateParcelStatusUseCase updateParcelStatusUseCase;
+  final ConfirmParcelReceptionUseCase confirmParcelReceptionUseCase;
   final GetReturnedParcelsUseCase getReturnedParcelsUseCase;
   final GetParcelByIdUseCase getParcelByIdUseCase;
   final CreateParcelUseCase createParcelUseCase;
@@ -20,6 +27,9 @@ class ParcelsBloc extends Bloc<ParcelsEvent, ParcelsState> {
 
   ParcelsBloc({
     required this.getParcelsUseCase,
+    required this.getAdminParcelsUseCase,
+    required this.updateParcelStatusUseCase,
+    required this.confirmParcelReceptionUseCase,
     required this.getReturnedParcelsUseCase,
     required this.getParcelByIdUseCase,
     required this.createParcelUseCase,
@@ -32,6 +42,39 @@ class ParcelsBloc extends Bloc<ParcelsEvent, ParcelsState> {
       result.fold(
         (failure) => emit(ParcelsError(message: failure.message)),
         (parcels) => emit(ParcelsLoaded(parcels: parcels)),
+      );
+    });
+
+    on<GetAdminParcelsEvent>((event, emit) async {
+      emit(ParcelsLoading());
+      final result = await getAdminParcelsUseCase(NoParams());
+      result.fold(
+        (failure) => emit(ParcelsError(message: failure.message)),
+        (parcels) => emit(ParcelsLoaded(parcels: parcels)),
+      );
+    });
+
+    on<UpdateParcelStatusEvent>((event, emit) async {
+      emit(ParcelsLoading());
+      final result = await updateParcelStatusUseCase(
+        UpdateParcelStatusParams(id: event.id, status: event.status),
+      );
+      result.fold(
+        (failure) => emit(ParcelsError(message: failure.message)),
+        (parcel) => emit(
+          const ParcelActionSuccess(message: 'تم تحديث حالة الطرد بنجاح'),
+        ),
+      );
+    });
+
+    on<ConfirmParcelReceptionEvent>((event, emit) async {
+      emit(ParcelsLoading());
+      final result = await confirmParcelReceptionUseCase(event.id);
+      result.fold(
+        (failure) => emit(ParcelsError(message: failure.message)),
+        (_) => emit(
+          const ParcelActionSuccess(message: 'تم تأكيد استلام الطرد بنجاح'),
+        ),
       );
     });
 

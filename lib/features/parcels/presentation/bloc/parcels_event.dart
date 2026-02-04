@@ -93,3 +93,23 @@ class SearchParcelsEvent extends ParcelsEvent {
   @override
   List<Object> get props => [query];
 }
+
+class GetAdminParcelsEvent extends ParcelsEvent {}
+
+class UpdateParcelStatusEvent extends ParcelsEvent {
+  final int id;
+  final String status;
+
+  const UpdateParcelStatusEvent({required this.id, required this.status});
+
+  @override
+  List<Object> get props => [id, status];
+}
+
+class ConfirmParcelReceptionEvent extends ParcelsEvent {
+  final int id;
+  const ConfirmParcelReceptionEvent(this.id);
+
+  @override
+  List<Object> get props => [id];
+}

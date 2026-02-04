@@ -42,6 +42,9 @@ import 'package:rma_customer/features/parcels/domain/usecases/create_parcel_usec
     as parcel_create;
 import 'package:rma_customer/features/parcels/domain/usecases/update_parcel_usecase.dart';
 import 'package:rma_customer/features/parcels/domain/usecases/delete_parcel_usecase.dart';
+import 'package:rma_customer/features/parcels/domain/usecases/get_admin_parcels_usecase.dart';
+import 'package:rma_customer/features/parcels/domain/usecases/update_parcel_status_usecase.dart';
+import 'package:rma_customer/features/parcels/domain/usecases/confirm_parcel_reception_usecase.dart';
 import 'package:rma_customer/features/parcels/presentation/bloc/parcels_bloc.dart';
 import 'package:rma_customer/features/routes/data/datasources/routes_remote_datasource.dart';
 import 'package:rma_customer/features/routes/data/repositories/routes_repository_impl.dart';
@@ -134,6 +137,9 @@ Future<void> init() async {
   sl.registerFactory(
     () => ParcelsBloc(
       getParcelsUseCase: sl(),
+      getAdminParcelsUseCase: sl(),
+      updateParcelStatusUseCase: sl(),
+      confirmParcelReceptionUseCase: sl(),
       getReturnedParcelsUseCase: sl(),
       getParcelByIdUseCase: sl(),
       createParcelUseCase: sl(),
@@ -143,6 +149,9 @@ Future<void> init() async {
   );
   // Use cases
   sl.registerLazySingleton(() => GetParcelsUseCase(sl()));
+  sl.registerLazySingleton(() => GetAdminParcelsUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateParcelStatusUseCase(sl()));
+  sl.registerLazySingleton(() => ConfirmParcelReceptionUseCase(sl()));
   sl.registerLazySingleton(() => GetReturnedParcelsUseCase(sl()));
   sl.registerLazySingleton(() => GetParcelByIdUseCase(sl()));
   sl.registerLazySingleton(() => parcel_create.CreateParcelUseCase(sl()));
