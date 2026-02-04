@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/enums/parcel_status.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/widgets/backgrounds/shiny_background.dart';
@@ -27,98 +28,110 @@ class _AdminParcelsPageState extends State<AdminParcelsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppHeader(
-        title: 'إدارة الطرود',
-      ),
+      appBar: const CustomAppHeader(title: 'إدارة الطرود'),
       body: ShinyBackground(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(AppDimensions.spacing4),
-              child: TextField(
-                onChanged: (value) {
-                  context.read<ParcelsBloc>().add(SearchParcelsEvent(value));
-                },
-                decoration: const InputDecoration(
-                  hintText: 'البحث عن طرد برقم التتبع أو الاسم...',
-                  prefixIcon: Icon(Icons.search),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: AppDimensions.spacing4,
-                    vertical: AppDimensions.spacing3,
+        child: BlocListener<ParcelsBloc, ParcelsState>(
+          listener: (context, state) {
+            if (state is ParcelStatusUpdated) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('تم تحديث حالة الطرد بنجاح')),
+              );
+              context.read<ParcelsBloc>().add(GetAdminParcelsEvent());
+            }
+          },
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(AppDimensions.spacing4),
+                child: TextField(
+                  onChanged: (value) {
+                    context.read<ParcelsBloc>().add(SearchParcelsEvent(value));
+                  },
+                  decoration: const InputDecoration(
+                    hintText: 'البحث عن طرد برقم التتبع أو الاسم...',
+                    prefixIcon: Icon(Icons.search),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: AppDimensions.spacing4,
+                      vertical: AppDimensions.spacing3,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: BlocBuilder<ParcelsBloc, ParcelsState>(
-                builder: (context, state) {
-                  if (state is ParcelsLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is ParcelsError) {
-                    return Center(child: Text(state.message));
-                  } else if (state is ParcelsLoaded) {
-                    if (state.parcels.isEmpty) {
-                      return const Center(
-                        child: Text('لا توجد طرود حالياً'),
+              Expanded(
+                child: BlocBuilder<ParcelsBloc, ParcelsState>(
+                  builder: (context, state) {
+                    if (state is ParcelsLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is ParcelsError) {
+                      return Center(child: Text(state.message));
+                    } else if (state is ParcelsLoaded) {
+                      if (state.parcels.isEmpty) {
+                        return const Center(child: Text('لا توجد طرود حالياً'));
+                      }
+                      return ListView.builder(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppDimensions.spacing4,
+                        ),
+                        itemCount: state.parcels.length,
+                        itemBuilder: (context, index) {
+                          final parcel = state.parcels[index];
+                          return ParcelCard(
+                            parcel: parcel,
+                            onTap: () {
+                              _showStatusUpdateDialog(
+                                context,
+                                parcel.id,
+                                parcel.status,
+                              );
+                            },
+                          );
+                        },
                       );
                     }
-                    return ListView.builder(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppDimensions.spacing4,
-                      ),
-                      itemCount: state.parcels.length,
-                      itemBuilder: (context, index) {
-                        final parcel = state.parcels[index];
-                        return ParcelCard(
-                          parcel: parcel,
-                          onTap: () {
-                            // TODO: Implement admin detail view or status update dialog
-                            _showStatusUpdateDialog(context, parcel.id, parcel.status);
-                          },
-                        );
-                      },
-                    );
-                  }
-                  return const SizedBox();
-                },
+                    return const SizedBox();
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _showStatusUpdateDialog(BuildContext context, int parcelId, String currentStatus) {
-    final List<String> statuses = [
-      'pending',
-      'received',
-      'shipped',
-      'arrived',
-      'delivered',
-      'returned'
-    ];
+  void _showStatusUpdateDialog(
+    BuildContext context,
+    int parcelId,
+    ParcelStatus currentStatus,
+  ) {
+    final List<ParcelStatus> statuses = ParcelStatus.values;
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('تحديث حالة الطرد'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: statuses.map((status) {
-            return ListTile(
-              title: Text(status),
-              trailing: currentStatus == status ? const Icon(Icons.check, color: AppColors.primary) : null,
-              onTap: () {
-                context.read<ParcelsBloc>().add(
-                  UpdateParcelStatusEvent(id: parcelId, status: status),
-                );
-                Navigator.pop(context);
-                // Refresh list
-                context.read<ParcelsBloc>().add(GetAdminParcelsEvent());
-              },
-            );
-          }).toList(),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: statuses.length,
+            itemBuilder: (context, index) {
+              final status = statuses[index];
+              return ListTile(
+                leading: Icon(status.icon, color: status.color),
+                title: Text(status.label),
+                trailing: currentStatus == status
+                    ? const Icon(Icons.check, color: AppColors.primary)
+                    : null,
+                onTap: () {
+                  context.read<ParcelsBloc>().add(
+                    UpdateParcelStatusEvent(id: parcelId, status: status.value),
+                  );
+                  Navigator.pop(context);
+                },
+              );
+            },
+          ),
         ),
       ),
     );

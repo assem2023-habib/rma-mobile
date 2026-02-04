@@ -26,39 +26,49 @@ class _AdminAppointmentsPageState extends State<AdminAppointmentsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppHeader(
-        title: 'إدارة المواعيد',
-      ),
+      appBar: const CustomAppHeader(title: 'إدارة المواعيد'),
       body: ShinyBackground(
-        child: Column(
-          children: [
-            Expanded(
-              child: BlocBuilder<AppointmentBloc, AppointmentState>(
-                builder: (context, state) {
-                  if (state is AppointmentLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is AppointmentError) {
-                    return Center(child: Text(state.message));
-                  } else if (state is AdminAppointmentsLoaded) {
-                    if (state.appointments.isEmpty) {
-                      return const Center(
-                        child: Text('لا توجد مواعيد حالياً'),
+        child: BlocListener<AppointmentBloc, AppointmentState>(
+          listener: (context, state) {
+            if (state is AppointmentStatusUpdated) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('تم تحديث حالة الموعد بنجاح')),
+              );
+              context.read<AppointmentBloc>().add(GetAdminAppointmentsEvent());
+            }
+          },
+          child: Column(
+            children: [
+              Expanded(
+                child: BlocBuilder<AppointmentBloc, AppointmentState>(
+                  builder: (context, state) {
+                    if (state is AppointmentLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is AppointmentError) {
+                      return Center(child: Text(state.message));
+                    } else if (state is AdminAppointmentsLoaded) {
+                      if (state.appointments.isEmpty) {
+                        return const Center(
+                          child: Text('لا توجد مواعيد حالياً'),
+                        );
+                      }
+                      return ListView.builder(
+                        padding: const EdgeInsets.all(AppDimensions.spacing4),
+                        itemCount: state.appointments.length,
+                        itemBuilder: (context, index) {
+                          final appointment = state.appointments[index];
+                          return _AppointmentAdminCard(
+                            appointment: appointment,
+                          );
+                        },
                       );
                     }
-                    return ListView.builder(
-                      padding: const EdgeInsets.all(AppDimensions.spacing4),
-                      itemCount: state.appointments.length,
-                      itemBuilder: (context, index) {
-                        final appointment = state.appointments[index];
-                        return _AppointmentAdminCard(appointment: appointment);
-                      },
-                    );
-                  }
-                  return const SizedBox();
-                },
+                    return const SizedBox();
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -117,11 +127,11 @@ class _AppointmentAdminCard extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               context.read<AppointmentBloc>().add(
-                    UpdateAppointmentStatusEvent(
-                      id: appointment.id,
-                      status: appointment.booked ? 'available' : 'booked',
-                    ),
-                  );
+                UpdateAppointmentStatusEvent(
+                  id: appointment.id,
+                  status: appointment.booked ? 'available' : 'booked',
+                ),
+              );
               Navigator.pop(dialogContext);
             },
             child: Text(appointment.booked ? 'جعله متاحاً' : 'حجزه'),
