@@ -16,7 +16,6 @@ import 'package:rma_customer/features/auth/presentation/pages/forgot_password_pa
 import 'package:rma_customer/features/auth/presentation/pages/verify_otp_page.dart';
 import 'package:rma_customer/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:rma_customer/features/dashboard/presentation/pages/dashboard_home_page.dart';
-import 'package:rma_customer/features/dashboard/presentation/pages/admin_placeholder_page.dart';
 import 'package:rma_customer/features/parcels/presentation/pages/admin_parcels_page.dart';
 import 'package:rma_customer/features/parcels/presentation/pages/parcels_page.dart';
 import 'package:rma_customer/features/parcels/presentation/pages/new_parcel_page.dart';
