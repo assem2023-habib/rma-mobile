@@ -32,6 +32,54 @@ class ParcelRepositoryImpl implements ParcelRepository {
   }
 
   @override
+  Future<Either<Failure, List<Parcel>>> getAdminParcels() async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteParcels = await remoteDataSource.getAdminParcels();
+        return Right(remoteParcels);
+      } on ServerException {
+        return const Left(ServerFailure());
+      }
+    } else {
+      return const Left(NetworkFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, Parcel>> updateParcelStatus(
+    int id,
+    String status,
+  ) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteParcel = await remoteDataSource.updateParcelStatus(
+          id,
+          status,
+        );
+        return Right(remoteParcel);
+      } on ServerException {
+        return const Left(ServerFailure());
+      }
+    } else {
+      return const Left(NetworkFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> confirmParcelReception(int id) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.confirmParcelReception(id);
+        return const Right(null);
+      } on ServerException {
+        return const Left(ServerFailure());
+      }
+    } else {
+      return const Left(NetworkFailure());
+    }
+  }
+
+  @override
   Future<Either<Failure, Pagination<Parcel>>> getReturnedParcels({
     int? page,
   }) async {
