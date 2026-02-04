@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:rma_customer/features/appointments/presentation/pages/admin_appointments_page.dart';
 import 'package:rma_customer/features/auth/presentation/pages/login_page.dart';
 import 'package:rma_customer/features/auth/presentation/pages/register_page.dart';
 import 'package:rma_customer/features/auth/presentation/pages/forgot_password_page.dart';
@@ -81,8 +82,7 @@ class AppRouter {
       ),
       GoRoute(
         path: '/admin/appointments',
-        builder: (context, state) =>
-            const AdminPlaceholderPage(title: 'إدارة المواعيد'),
+        builder: (context, state) => const AdminAppointmentsPage(),
       ),
       GoRoute(
         path: '/admin/shipments',
