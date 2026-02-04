@@ -117,7 +117,14 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: stats.recentParcels.length,
                         itemBuilder: (context, index) {
-                          return ParcelCard(parcel: stats.recentParcels[index]);
+                          final parcel = stats.recentParcels[index];
+                          return ParcelCard(
+                            parcel: parcel,
+                            onTap: () => context.push(
+                              '/parcels/${parcel.id}',
+                              extra: parcel,
+                            ),
+                          );
                         },
                       ),
                     ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/widgets/backgrounds/shiny_background.dart';
 import '../../../../core/widgets/headers/custom_app_header.dart';
@@ -37,7 +38,12 @@ class _SuperAdminParcelsPageState extends State<SuperAdminParcelsPage> {
                 padding: const EdgeInsets.all(AppDimensions.spacing4),
                 itemCount: state.parcels.length,
                 itemBuilder: (context, index) {
-                  return ParcelCard(parcel: state.parcels[index]);
+                  final parcel = state.parcels[index];
+                  return ParcelCard(
+                    parcel: parcel,
+                    onTap: () =>
+                        context.push('/parcels/${parcel.id}', extra: parcel),
+                  );
                 },
               );
             } else if (state is SuperAdminError) {

@@ -52,6 +52,7 @@ class AppColors {
   // Status Backgrounds
   // =========================
   static const Color successBg = Color(0xFFE8F5E9);
+  static const Color infoBg = Color(0xFFE3F2FD);
   static const Color warningBg = Color(0xFFFFFDE7);
   static const Color errorBg = Color(0xFFFDECEA);
 
