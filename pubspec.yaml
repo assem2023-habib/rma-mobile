@@ -22,6 +22,7 @@ dependencies:
   # Networking
   dio: ^5.4.0
   retrofit: ^4.0.3
+  http: ^1.2.1
 
   # Live Notifications
   pusher_channels_flutter: ^2.2.0

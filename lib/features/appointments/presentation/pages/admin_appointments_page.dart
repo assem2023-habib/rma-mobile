@@ -86,22 +86,28 @@ class _AppointmentAdminCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppDimensions.spacing3),
       child: ListTile(
         title: Text('${appointment.date} - ${appointment.time}'),
-        subtitle: Text('رقم الفرع: ${appointment.branchId}'),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('رقم الفرع: ${appointment.branchId}'),
+            if (appointment.status != null)
+              Text('الحالة: ${_getStatusLabel(appointment.status!)}'),
+          ],
+        ),
         trailing: Container(
           padding: const EdgeInsets.symmetric(
             horizontal: AppDimensions.spacing2,
             vertical: AppDimensions.spacing1,
           ),
           decoration: BoxDecoration(
-            color: appointment.booked
-                ? AppColors.error.withValues(alpha: 0.1)
-                : AppColors.success.withValues(alpha: 0.1),
+            color: _getStatusColor(appointment.status ?? (appointment.booked ? 'booked' : 'available'))
+                .withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
           ),
           child: Text(
-            appointment.booked ? 'محجوز' : 'متاح',
+            _getStatusLabel(appointment.status ?? (appointment.booked ? 'booked' : 'available')),
             style: TextStyle(
-              color: appointment.booked ? AppColors.error : AppColors.success,
+              color: _getStatusColor(appointment.status ?? (appointment.booked ? 'booked' : 'available')),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -113,28 +119,73 @@ class _AppointmentAdminCard extends StatelessWidget {
     );
   }
 
+  String _getStatusLabel(String status) {
+    switch (status) {
+      case 'pending':
+        return 'قيد الانتظار';
+      case 'completed':
+        return 'مكتمل';
+      case 'cancelled':
+        return 'ملغى';
+      case 'booked':
+        return 'محجوز';
+      case 'available':
+        return 'متاح';
+      default:
+        return status;
+    }
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'pending':
+        return AppColors.warning;
+      case 'completed':
+        return AppColors.success;
+      case 'cancelled':
+        return AppColors.error;
+      case 'booked':
+        return AppColors.error;
+      case 'available':
+        return AppColors.success;
+      default:
+        return AppColors.textSecondary;
+    }
+  }
+
   void _showStatusUpdateDialog(BuildContext context) {
+    final statuses = ['pending', 'completed', 'cancelled'];
+    
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('تحديث حالة الموعد'),
-        content: const Text('هل تريد تغيير حالة هذا الموعد؟'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: statuses.length,
+            itemBuilder: (context, index) {
+              final status = statuses[index];
+              return ListTile(
+                title: Text(_getStatusLabel(status)),
+                onTap: () {
+                  context.read<AppointmentBloc>().add(
+                    UpdateAppointmentStatusEvent(
+                      id: appointment.id,
+                      status: status,
+                    ),
+                  );
+                  Navigator.pop(dialogContext);
+                },
+              );
+            },
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
             child: const Text('إلغاء'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              context.read<AppointmentBloc>().add(
-                UpdateAppointmentStatusEvent(
-                  id: appointment.id,
-                  status: appointment.booked ? 'available' : 'booked',
-                ),
-              );
-              Navigator.pop(dialogContext);
-            },
-            child: Text(appointment.booked ? 'جعله متاحاً' : 'حجزه'),
           ),
         ],
       ),

@@ -6,6 +6,7 @@ class AppointmentEntity extends Equatable {
   final String date;
   final String time;
   final bool booked;
+  final String? status;
 
   const AppointmentEntity({
     required this.id,
@@ -13,10 +14,11 @@ class AppointmentEntity extends Equatable {
     required this.date,
     required this.time,
     required this.booked,
+    this.status,
   });
 
   @override
-  List<Object?> get props => [id, branchId, date, time, booked];
+  List<Object?> get props => [id, branchId, date, time, booked, status];
 }
 
 class AvailableAppointmentsResponse extends Equatable {

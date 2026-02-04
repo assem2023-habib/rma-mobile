@@ -121,6 +121,18 @@ import 'package:rma_customer/features/branches/domain/repositories/branch_reposi
 import 'package:rma_customer/features/branches/domain/usecases/get_all_branches_usecase.dart';
 import 'package:rma_customer/features/branches/domain/usecases/create_branch_usecase.dart';
 import 'package:rma_customer/features/branches/presentation/bloc/branches_bloc.dart';
+import 'package:rma_customer/features/trucks/data/datasources/truck_remote_datasource.dart';
+import 'package:rma_customer/features/trucks/data/repositories/truck_repository_impl.dart';
+import 'package:rma_customer/features/trucks/domain/repositories/truck_repository.dart';
+import 'package:rma_customer/features/trucks/domain/usecases/get_all_trucks_usecase.dart';
+import 'package:rma_customer/features/trucks/domain/usecases/toggle_truck_status_usecase.dart';
+import 'package:rma_customer/features/trucks/presentation/bloc/trucks_bloc.dart';
+import 'package:rma_customer/features/super_admin/data/datasources/super_admin_remote_datasource.dart';
+import 'package:rma_customer/features/super_admin/data/repositories/super_admin_repository_impl.dart';
+import 'package:rma_customer/features/super_admin/domain/repositories/super_admin_repository.dart';
+import 'package:rma_customer/features/super_admin/domain/usecases/get_super_admin_stats_usecase.dart';
+import 'package:rma_customer/features/super_admin/domain/usecases/get_global_parcels_usecase.dart';
+import 'package:rma_customer/features/super_admin/presentation/bloc/super_admin_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -415,6 +427,43 @@ Future<void> init() async {
   // Data sources
   sl.registerLazySingleton<BranchRemoteDataSource>(
     () => BranchRemoteDataSourceImpl(dioClient: sl()),
+  );
+
+  //! Features - Trucks
+  // Bloc
+  sl.registerFactory(
+    () => TrucksBloc(getAllTrucksUseCase: sl(), toggleTruckStatusUseCase: sl()),
+  );
+  // Use cases
+  sl.registerLazySingleton(() => GetAllTrucksUseCase(sl()));
+  sl.registerLazySingleton(() => ToggleTruckStatusUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<TruckRepository>(
+    () => TruckRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<TruckRemoteDataSource>(
+    () => TruckRemoteDataSourceImpl(sl()),
+  );
+
+  //! Features - Super Admin
+  // Bloc
+  sl.registerFactory(
+    () => SuperAdminBloc(
+      getSuperAdminStatsUseCase: sl(),
+      getGlobalParcelsUseCase: sl(),
+    ),
+  );
+  // Use cases
+  sl.registerLazySingleton(() => GetSuperAdminStatsUseCase(sl()));
+  sl.registerLazySingleton(() => GetGlobalParcelsUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<SuperAdminRepository>(
+    () => SuperAdminRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<SuperAdminRemoteDataSource>(
+    () => SuperAdminRemoteDataSourceImpl(sl()),
   );
 
   sl.registerLazySingleton<NotificationsRemoteDataSource>(

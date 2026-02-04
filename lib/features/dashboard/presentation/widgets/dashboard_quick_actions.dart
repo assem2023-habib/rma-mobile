@@ -140,9 +140,40 @@ class DashboardQuickActions extends StatelessWidget {
         gradient: const [AppColors.warning, AppColors.warning],
         onTap: () => context.push('/admin/shipments'),
       ),
+      const SizedBox(width: AppDimensions.spacing3),
+      QuickActionCard(
+        title: 'الشاحنات',
+        description: 'إدارة شاحنات الفرع',
+        icon: Icons.local_shipping,
+        gradient: const [AppColors.primarySoft, AppColors.info],
+        onTap: () => context.push('/admin/trucks'),
+      ),
     ];
 
     if (userType == 'super_admin') {
+      actions.insert(
+        0,
+        QuickActionCard(
+          title: 'الإحصائيات العامة',
+          description: 'نظرة شاملة على أداء النظام',
+          icon: Icons.analytics_outlined,
+          gradient: const [AppColors.info, AppColors.primary],
+          onTap: () => context.push('/super-admin/stats'),
+        ),
+      );
+      actions.insert(1, const SizedBox(width: AppDimensions.spacing3));
+      actions.insert(
+        2,
+        QuickActionCard(
+          title: 'جميع الطرود',
+          description: 'مراقبة كافة طرود النظام',
+          icon: Icons.inventory_2_outlined,
+          gradient: const [AppColors.success, AppColors.primarySoft],
+          onTap: () => context.push('/super-admin/parcels'),
+        ),
+      );
+      actions.insert(3, const SizedBox(width: AppDimensions.spacing3));
+
       actions.addAll([
         const SizedBox(width: AppDimensions.spacing3),
         QuickActionCard(

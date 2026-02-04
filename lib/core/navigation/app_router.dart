@@ -1,10 +1,15 @@
 import 'package:go_router/go_router.dart';
 import 'package:rma_customer/features/appointments/presentation/pages/admin_appointments_page.dart';
 import 'package:rma_customer/features/shipments/presentation/pages/admin_shipments_page.dart';
+import 'package:rma_customer/features/trucks/presentation/pages/admin_trucks_page.dart';
+import 'package:rma_customer/features/trucks/presentation/bloc/trucks_bloc.dart';
 import 'package:rma_customer/features/employees/presentation/pages/super_admin_employees_page.dart';
 import 'package:rma_customer/features/employees/presentation/bloc/employees_bloc.dart';
 import 'package:rma_customer/features/branches/presentation/pages/super_admin_branches_page.dart';
 import 'package:rma_customer/features/branches/presentation/bloc/branches_bloc.dart';
+import 'package:rma_customer/features/super_admin/presentation/pages/super_admin_dashboard_page.dart';
+import 'package:rma_customer/features/super_admin/presentation/pages/super_admin_parcels_page.dart';
+import 'package:rma_customer/features/super_admin/presentation/bloc/super_admin_bloc.dart';
 import 'package:rma_customer/features/auth/presentation/pages/login_page.dart';
 import 'package:rma_customer/features/auth/presentation/pages/register_page.dart';
 import 'package:rma_customer/features/auth/presentation/pages/forgot_password_page.dart';
@@ -93,7 +98,28 @@ class AppRouter {
         path: '/admin/shipments',
         builder: (context, state) => const AdminShipmentsPage(),
       ),
+      GoRoute(
+        path: '/admin/trucks',
+        builder: (context, state) => BlocProvider(
+          create: (context) => sl<TrucksBloc>(),
+          child: const AdminTrucksPage(),
+        ),
+      ),
       // Super Admin Routes
+      GoRoute(
+        path: '/super-admin/stats',
+        builder: (context, state) => BlocProvider(
+          create: (context) => sl<SuperAdminBloc>(),
+          child: const SuperAdminDashboardPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/super-admin/parcels',
+        builder: (context, state) => BlocProvider(
+          create: (context) => sl<SuperAdminBloc>(),
+          child: const SuperAdminParcelsPage(),
+        ),
+      ),
       GoRoute(
         path: '/super-admin/branches',
         builder: (context, state) => BlocProvider(

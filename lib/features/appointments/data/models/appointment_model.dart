@@ -7,6 +7,7 @@ class AppointmentModel extends AppointmentEntity {
     required super.date,
     required super.time,
     required super.booked,
+    super.status,
   });
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
@@ -15,7 +16,8 @@ class AppointmentModel extends AppointmentEntity {
       branchId: json['branch_id'],
       date: json['date'],
       time: json['time'],
-      booked: json['booked'],
+      booked: json['booked'] ?? false,
+      status: json['status'],
     );
   }
 
@@ -26,6 +28,7 @@ class AppointmentModel extends AppointmentEntity {
       'date': date,
       'time': time,
       'booked': booked,
+      'status': status,
     };
   }
 }
