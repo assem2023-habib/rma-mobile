@@ -46,6 +46,7 @@ class ApiConfig {
   static const String superAdminStats = '/super-admin/stats';
   static const String superAdminBranches = '/super-admin/branches';
   static const String superAdminEmployees = '/super-admin/employees';
+  static const String superAdminAssignEmployee = '/super-admin/assign-employee';
   static const String superAdminAllParcels = '/super-admin/all-parcels';
 
   static const String parcels = '/parcel';

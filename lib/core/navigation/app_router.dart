@@ -1,6 +1,10 @@
 import 'package:go_router/go_router.dart';
 import 'package:rma_customer/features/appointments/presentation/pages/admin_appointments_page.dart';
 import 'package:rma_customer/features/shipments/presentation/pages/admin_shipments_page.dart';
+import 'package:rma_customer/features/employees/presentation/pages/super_admin_employees_page.dart';
+import 'package:rma_customer/features/employees/presentation/bloc/employees_bloc.dart';
+import 'package:rma_customer/features/branches/presentation/pages/super_admin_branches_page.dart';
+import 'package:rma_customer/features/branches/presentation/bloc/branches_bloc.dart';
 import 'package:rma_customer/features/auth/presentation/pages/login_page.dart';
 import 'package:rma_customer/features/auth/presentation/pages/register_page.dart';
 import 'package:rma_customer/features/auth/presentation/pages/forgot_password_page.dart';
@@ -92,13 +96,17 @@ class AppRouter {
       // Super Admin Routes
       GoRoute(
         path: '/super-admin/branches',
-        builder: (context, state) =>
-            const AdminPlaceholderPage(title: 'إدارة الفروع'),
+        builder: (context, state) => BlocProvider(
+          create: (context) => sl<BranchesBloc>(),
+          child: const SuperAdminBranchesPage(),
+        ),
       ),
       GoRoute(
         path: '/super-admin/employees',
-        builder: (context, state) =>
-            const AdminPlaceholderPage(title: 'إدارة الموظفين'),
+        builder: (context, state) => BlocProvider(
+          create: (context) => sl<EmployeesBloc>(),
+          child: const SuperAdminEmployeesPage(),
+        ),
       ),
       GoRoute(
         path: '/parcels',

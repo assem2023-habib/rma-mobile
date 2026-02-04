@@ -109,6 +109,18 @@ import 'package:rma_customer/features/shipments/domain/usecases/get_admin_shipme
 import 'package:rma_customer/features/shipments/domain/usecases/depart_shipment_usecase.dart';
 import 'package:rma_customer/features/shipments/domain/usecases/arrive_shipment_usecase.dart';
 import 'package:rma_customer/features/shipments/presentation/bloc/shipments_bloc.dart';
+import 'package:rma_customer/features/employees/data/datasources/employee_remote_datasource.dart';
+import 'package:rma_customer/features/employees/data/repositories/employee_repository_impl.dart';
+import 'package:rma_customer/features/employees/domain/repositories/employee_repository.dart';
+import 'package:rma_customer/features/employees/domain/usecases/get_all_employees_usecase.dart';
+import 'package:rma_customer/features/employees/domain/usecases/assign_employee_usecase.dart';
+import 'package:rma_customer/features/employees/presentation/bloc/employees_bloc.dart';
+import 'package:rma_customer/features/branches/data/datasources/branch_remote_datasource.dart';
+import 'package:rma_customer/features/branches/data/repositories/branch_repository_impl.dart';
+import 'package:rma_customer/features/branches/domain/repositories/branch_repository.dart';
+import 'package:rma_customer/features/branches/domain/usecases/get_all_branches_usecase.dart';
+import 'package:rma_customer/features/branches/domain/usecases/create_branch_usecase.dart';
+import 'package:rma_customer/features/branches/presentation/bloc/branches_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -366,6 +378,43 @@ Future<void> init() async {
   // Data sources
   sl.registerLazySingleton<ShipmentRemoteDataSource>(
     () => ShipmentRemoteDataSourceImpl(dioClient: sl()),
+  );
+
+  //! Features - Employees
+  // Bloc
+  sl.registerFactory(
+    () => EmployeesBloc(
+      getAllEmployeesUseCase: sl(),
+      assignEmployeeUseCase: sl(),
+    ),
+  );
+  // Use cases
+  sl.registerLazySingleton(() => GetAllEmployeesUseCase(sl()));
+  sl.registerLazySingleton(() => AssignEmployeeUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<EmployeeRepository>(
+    () => EmployeeRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<EmployeeRemoteDataSource>(
+    () => EmployeeRemoteDataSourceImpl(dioClient: sl()),
+  );
+
+  //! Features - Branches
+  // Bloc
+  sl.registerFactory(
+    () => BranchesBloc(getAllBranchesUseCase: sl(), createBranchUseCase: sl()),
+  );
+  // Use cases
+  sl.registerLazySingleton(() => GetAllBranchesUseCase(sl()));
+  sl.registerLazySingleton(() => CreateBranchUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<BranchRepository>(
+    () => BranchRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<BranchRemoteDataSource>(
+    () => BranchRemoteDataSourceImpl(dioClient: sl()),
   );
 
   sl.registerLazySingleton<NotificationsRemoteDataSource>(
