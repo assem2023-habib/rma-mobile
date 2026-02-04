@@ -4,7 +4,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/widgets/backgrounds/shiny_background.dart';
 import '../../../../core/widgets/headers/custom_app_header.dart';
-import '../../../branches/domain/entities/branch_entity.dart';
 import '../bloc/employees_bloc.dart';
 import '../bloc/employees_event.dart';
 import '../bloc/employees_state.dart';

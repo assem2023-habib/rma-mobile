@@ -22,7 +22,7 @@ class TruckRepositoryImpl implements TruckRepository {
         final remoteTrucks = await remoteDataSource.getAllTrucks();
         return Right(remoteTrucks);
       } on ServerException catch (e) {
-        return Left(ServerFailure(e.message));
+        return Left(ServerFailure(e.message ?? 'حدث خطأ في الخادم'));
       }
     } else {
       return const Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));
@@ -36,7 +36,7 @@ class TruckRepositoryImpl implements TruckRepository {
         final remoteTruck = await remoteDataSource.getTruckDetails(id);
         return Right(remoteTruck);
       } on ServerException catch (e) {
-        return Left(ServerFailure(e.message));
+        return Left(ServerFailure(e.message ?? 'حدث خطأ في الخادم'));
       }
     } else {
       return const Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));
@@ -50,7 +50,7 @@ class TruckRepositoryImpl implements TruckRepository {
         final remoteTruck = await remoteDataSource.toggleTruckStatus(id);
         return Right(remoteTruck);
       } on ServerException catch (e) {
-        return Left(ServerFailure(e.message));
+        return Left(ServerFailure(e.message ?? 'حدث خطأ في الخادم'));
       }
     } else {
       return const Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));

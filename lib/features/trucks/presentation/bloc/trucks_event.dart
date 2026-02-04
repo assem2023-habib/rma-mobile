@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/entities/truck_entity.dart';
 
 abstract class TrucksEvent extends Equatable {
   const TrucksEvent();
