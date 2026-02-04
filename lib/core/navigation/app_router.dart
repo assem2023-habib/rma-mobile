@@ -6,6 +6,7 @@ import 'package:rma_customer/features/auth/presentation/pages/verify_otp_page.da
 import 'package:rma_customer/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:rma_customer/features/dashboard/presentation/pages/dashboard_home_page.dart';
 import 'package:rma_customer/features/dashboard/presentation/pages/admin_placeholder_page.dart';
+import 'package:rma_customer/features/parcels/presentation/pages/admin_parcels_page.dart';
 import 'package:rma_customer/features/parcels/presentation/pages/parcels_page.dart';
 import 'package:rma_customer/features/parcels/presentation/pages/new_parcel_page.dart';
 import 'package:rma_customer/features/parcels/presentation/pages/parcel_detail_page.dart';
@@ -76,8 +77,7 @@ class AppRouter {
       // Admin Routes
       GoRoute(
         path: '/admin/parcels',
-        builder: (context, state) =>
-            const AdminPlaceholderPage(title: 'إدارة الطرود'),
+        builder: (context, state) => const AdminParcelsPage(),
       ),
       GoRoute(
         path: '/admin/appointments',
