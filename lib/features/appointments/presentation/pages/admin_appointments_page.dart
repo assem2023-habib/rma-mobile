@@ -94,9 +94,9 @@ class _AppointmentAdminCard extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: appointment.booked
-                ? AppColors.error.withOpacity(0.1)
-                : AppColors.success.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
+                ? AppColors.error.withValues(alpha: 0.1)
+                : AppColors.success.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
           ),
           child: Text(
             appointment.booked ? 'محجوز' : 'متاح',

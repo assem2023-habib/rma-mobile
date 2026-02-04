@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/enums/parcel_status.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimensions.dart';
@@ -32,10 +31,10 @@ class _AdminParcelsPageState extends State<AdminParcelsPage> {
       body: ShinyBackground(
         child: BlocListener<ParcelsBloc, ParcelsState>(
           listener: (context, state) {
-            if (state is ParcelStatusUpdated) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('تم تحديث حالة الطرد بنجاح')),
-              );
+            if (state is ParcelActionSuccess) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
               context.read<ParcelsBloc>().add(GetAdminParcelsEvent());
             }
           },
@@ -104,7 +103,7 @@ class _AdminParcelsPageState extends State<AdminParcelsPage> {
     int parcelId,
     ParcelStatus currentStatus,
   ) {
-    final List<ParcelStatus> statuses = ParcelStatus.values;
+    const List<ParcelStatus> statuses = ParcelStatus.values;
 
     showDialog(
       context: context,

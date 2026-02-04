@@ -102,6 +102,13 @@ import 'package:rma_customer/features/notifications/data/repositories/notificati
 import 'package:rma_customer/features/notifications/domain/repositories/notifications_repository.dart';
 import 'package:rma_customer/features/notifications/presentation/bloc/notifications_bloc.dart';
 import 'package:rma_customer/features/notifications/data/datasources/notifications_remote_datasource.dart';
+import 'package:rma_customer/features/shipments/data/datasources/shipment_remote_datasource.dart';
+import 'package:rma_customer/features/shipments/data/repositories/shipment_repository_impl.dart';
+import 'package:rma_customer/features/shipments/domain/repositories/shipment_repository.dart';
+import 'package:rma_customer/features/shipments/domain/usecases/get_admin_shipments_usecase.dart';
+import 'package:rma_customer/features/shipments/domain/usecases/depart_shipment_usecase.dart';
+import 'package:rma_customer/features/shipments/domain/usecases/arrive_shipment_usecase.dart';
+import 'package:rma_customer/features/shipments/presentation/bloc/shipments_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -337,6 +344,28 @@ Future<void> init() async {
   // Data sources
   sl.registerLazySingleton<AppointmentRemoteDataSource>(
     () => AppointmentRemoteDataSourceImpl(dioClient: sl()),
+  );
+
+  //! Features - Shipments
+  // Bloc
+  sl.registerFactory(
+    () => ShipmentsBloc(
+      getAdminShipmentsUseCase: sl(),
+      departShipmentUseCase: sl(),
+      arriveShipmentUseCase: sl(),
+    ),
+  );
+  // Use cases
+  sl.registerLazySingleton(() => GetAdminShipmentsUseCase(sl()));
+  sl.registerLazySingleton(() => DepartShipmentUseCase(sl()));
+  sl.registerLazySingleton(() => ArriveShipmentUseCase(sl()));
+  // Repository
+  sl.registerLazySingleton<ShipmentRepository>(
+    () => ShipmentRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+  );
+  // Data sources
+  sl.registerLazySingleton<ShipmentRemoteDataSource>(
+    () => ShipmentRemoteDataSourceImpl(dioClient: sl()),
   );
 
   sl.registerLazySingleton<NotificationsRemoteDataSource>(
