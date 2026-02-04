@@ -8,6 +8,7 @@ class DashboardStats extends Equatable {
   final int branchesCount;
   final int shipmentsCount;
   final int trucksCount;
+  final int employeesCount;
   final int countriesCount;
   final int citiesCount;
 
@@ -19,20 +20,22 @@ class DashboardStats extends Equatable {
     required this.branchesCount,
     required this.shipmentsCount,
     required this.trucksCount,
+    required this.employeesCount,
     required this.countriesCount,
     required this.citiesCount,
   });
 
   @override
   List<Object?> get props => [
-        usersCount,
-        totalParcels,
-        parcelsByStatus,
-        ratesCount,
-        branchesCount,
-        shipmentsCount,
-        trucksCount,
-        countriesCount,
-        citiesCount,
-      ];
+    usersCount,
+    totalParcels,
+    parcelsByStatus,
+    ratesCount,
+    branchesCount,
+    shipmentsCount,
+    trucksCount,
+    employeesCount,
+    countriesCount,
+    citiesCount,
+  ];
 }

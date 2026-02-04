@@ -4,7 +4,7 @@ import '../../../../core/error/exceptions.dart';
 import '../models/dashboard_stats_model.dart';
 
 abstract class DashboardRemoteDataSource {
-  Future<DashboardStatsModel> getDashboardStats();
+  Future<DashboardStatsModel> getDashboardStats({String? userType});
 }
 
 class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
@@ -13,9 +13,14 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   DashboardRemoteDataSourceImpl({required this.dioClient});
 
   @override
-  Future<DashboardStatsModel> getDashboardStats() async {
+  Future<DashboardStatsModel> getDashboardStats({String? userType}) async {
     try {
-      final response = await dioClient.get(ApiConfig.dashboardStats);
+      String endpoint = ApiConfig.dashboardStats;
+      if (userType == 'super_admin') {
+        endpoint = ApiConfig.superAdminStats;
+      }
+      
+      final response = await dioClient.get(endpoint);
       if (response.statusCode == 200) {
         return DashboardStatsModel.fromJson(response.data['data']);
       } else {

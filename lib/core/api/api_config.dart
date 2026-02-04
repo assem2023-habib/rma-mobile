@@ -1,6 +1,7 @@
+import '../config/app_flavor_config.dart';
+
 class ApiConfig {
-  static const String baseUrl =
-      'http://10.43.226.236:8000/api/v1'; // Updated IP provided by user
+  static String get baseUrl => AppConfig.instance.baseUrl;
 
   // Reverb/Pusher Configuration
   static const String pusherAppKey = 'z8gmvgvmclvhoezjsfil';
@@ -33,6 +34,20 @@ class ApiConfig {
   static const String changePassword = '/change-password';
 
   static const String dashboardStats = '/statistics';
+
+  // Admin Endpoints
+  static const String adminBranch = '/admin/my-branch';
+  static const String adminParcels = '/admin/parcels';
+  static const String adminAppointments = '/admin/appointments';
+  static const String adminShipments = '/admin/shipments';
+  static const String adminTrucks = '/admin/trucks';
+
+  // Super Admin Endpoints
+  static const String superAdminStats = '/super-admin/stats';
+  static const String superAdminBranches = '/super-admin/branches';
+  static const String superAdminEmployees = '/super-admin/employees';
+  static const String superAdminAllParcels = '/super-admin/all-parcels';
+
   static const String parcels = '/parcel';
   static const String returnedParcels = '/parcel/returned';
   static const String users = '/users';
