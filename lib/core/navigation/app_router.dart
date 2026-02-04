@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rma_customer/features/appointments/presentation/pages/admin_appointments_page.dart';
 import 'package:rma_customer/features/shipments/presentation/pages/admin_shipments_page.dart';
@@ -40,165 +41,320 @@ import 'package:rma_customer/features/onboarding/presentation/pages/onboarding_p
 import 'package:rma_customer/features/onboarding/presentation/pages/splash_screen.dart';
 
 class AppRouter {
+  static CustomTransitionPage _fadeTransition(
+      BuildContext context, GoRouterState state, Widget child) {
+    return CustomTransitionPage(
+      key: state.pageKey,
+      child: child,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: CurveTween(curve: Curves.easeInOut).animate(animation),
+          child: child,
+        );
+      },
+    );
+  }
+
+  static CustomTransitionPage _slideTransition(
+      BuildContext context, GoRouterState state, Widget child) {
+    return CustomTransitionPage(
+      key: state.pageKey,
+      child: child,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1.0, 0.0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          )),
+          child: child,
+        );
+      },
+    );
+  }
+
   static final router = GoRouter(
     initialLocation: '/splash',
     routes: [
       GoRoute(
         path: '/splash',
-        builder: (context, state) => const SplashScreen(),
+        pageBuilder: (context, state) => _fadeTransition(
+          context,
+          state,
+          const SplashScreen(),
+        ),
       ),
       GoRoute(
         path: '/onboarding',
-        builder: (context, state) => const OnboardingPage(),
+        pageBuilder: (context, state) => _fadeTransition(
+          context,
+          state,
+          const OnboardingPage(),
+        ),
       ),
-      GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+      GoRoute(
+        path: '/login',
+        pageBuilder: (context, state) => _fadeTransition(
+          context,
+          state,
+          const LoginPage(),
+        ),
+      ),
       GoRoute(
         path: '/register',
-        builder: (context, state) => const RegisterPage(),
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          const RegisterPage(),
+        ),
       ),
       GoRoute(
         path: '/forgot-password',
-        builder: (context, state) => const ForgotPasswordPage(),
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          const ForgotPasswordPage(),
+        ),
       ),
       GoRoute(
         path: '/verify-otp',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final data = state.extra as Map<String, dynamic>;
-          return VerifyOtpPage(
-            email: data['email'] as String,
-            isTelegram: data['isTelegram'] as bool? ?? false,
+          return _slideTransition(
+            context,
+            state,
+            VerifyOtpPage(
+              email: data['email'] as String,
+              isTelegram: data['isTelegram'] as bool? ?? false,
+            ),
           );
         },
       ),
       GoRoute(
         path: '/reset-password',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final data = state.extra as Map<String, dynamic>;
-          return ResetPasswordPage(
-            email: data['email'] as String,
-            otp: data['otp'] as String,
+          return _slideTransition(
+            context,
+            state,
+            ResetPasswordPage(
+              email: data['email'] as String,
+              otp: data['otp'] as String,
+            ),
           );
         },
       ),
       GoRoute(
         path: '/',
-        builder: (context, state) => const DashboardHomePage(),
+        pageBuilder: (context, state) => _fadeTransition(
+          context,
+          state,
+          const DashboardHomePage(),
+        ),
       ),
       // Admin Routes
       GoRoute(
         path: '/admin/parcels',
-        builder: (context, state) => const AdminParcelsPage(),
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          const AdminParcelsPage(),
+        ),
       ),
       GoRoute(
         path: '/admin/appointments',
-        builder: (context, state) => const AdminAppointmentsPage(),
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          const AdminAppointmentsPage(),
+        ),
       ),
       GoRoute(
         path: '/admin/shipments',
-        builder: (context, state) => const AdminShipmentsPage(),
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          const AdminShipmentsPage(),
+        ),
       ),
       GoRoute(
         path: '/admin/trucks',
-        builder: (context, state) => BlocProvider(
-          create: (context) => sl<TrucksBloc>(),
-          child: const AdminTrucksPage(),
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          BlocProvider(
+            create: (context) => sl<TrucksBloc>(),
+            child: const AdminTrucksPage(),
+          ),
         ),
       ),
       // Super Admin Routes
       GoRoute(
         path: '/super-admin/stats',
-        builder: (context, state) => BlocProvider(
-          create: (context) => sl<SuperAdminBloc>(),
-          child: const SuperAdminDashboardPage(),
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          BlocProvider(
+            create: (context) => sl<SuperAdminBloc>(),
+            child: const SuperAdminDashboardPage(),
+          ),
         ),
       ),
       GoRoute(
         path: '/super-admin/parcels',
-        builder: (context, state) => BlocProvider(
-          create: (context) => sl<SuperAdminBloc>(),
-          child: const SuperAdminParcelsPage(),
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          BlocProvider(
+            create: (context) => sl<SuperAdminBloc>(),
+            child: const SuperAdminParcelsPage(),
+          ),
         ),
       ),
       GoRoute(
         path: '/super-admin/branches',
-        builder: (context, state) => BlocProvider(
-          create: (context) => sl<BranchesBloc>(),
-          child: const SuperAdminBranchesPage(),
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          BlocProvider(
+            create: (context) => sl<BranchesBloc>(),
+            child: const SuperAdminBranchesPage(),
+          ),
         ),
       ),
       GoRoute(
         path: '/super-admin/employees',
-        builder: (context, state) => BlocProvider(
-          create: (context) => sl<EmployeesBloc>(),
-          child: const SuperAdminEmployeesPage(),
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          BlocProvider(
+            create: (context) => sl<EmployeesBloc>(),
+            child: const SuperAdminEmployeesPage(),
+          ),
         ),
       ),
       GoRoute(
         path: '/parcels',
-        builder: (context, state) => const ParcelsPage(),
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          const ParcelsPage(),
+        ),
       ),
       GoRoute(
         path: '/new-parcel',
-        builder: (context, state) => const NewParcelPage(),
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          const NewParcelPage(),
+        ),
       ),
       GoRoute(
         path: '/parcels/:id',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final id = int.parse(state.pathParameters['id']!);
           final parcel = state.extra as Parcel?;
-          return ParcelDetailPage(parcelId: id, parcel: parcel);
+          return _slideTransition(
+            context,
+            state,
+            ParcelDetailPage(parcelId: id, parcel: parcel),
+          );
         },
       ),
-      GoRoute(path: '/routes', builder: (context, state) => const RoutesPage()),
+      GoRoute(
+        path: '/routes',
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          const RoutesPage(),
+        ),
+      ),
       GoRoute(
         path: '/route-detail',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final route = state.extra as RouteEntity;
-          return RouteDetailPage(route: route);
+          return _slideTransition(
+            context,
+            state,
+            RouteDetailPage(route: route),
+          );
         },
       ),
       GoRoute(
         path: '/authorizations',
-        builder: (context, state) => BlocProvider(
-          create: (context) => sl<AuthorizationsBloc>(),
-          child: const AuthorizationsPage(),
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          BlocProvider(
+            create: (context) => sl<AuthorizationsBloc>(),
+            child: const AuthorizationsPage(),
+          ),
         ),
       ),
       GoRoute(
         path: '/request-authorization',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final parcelId = state.extra as int?;
-          return BlocProvider(
-            create: (context) => sl<AuthorizationsBloc>(),
-            child: RequestAuthorizationPage(parcelId: parcelId),
+          return _slideTransition(
+            context,
+            state,
+            BlocProvider(
+              create: (context) => sl<AuthorizationsBloc>(),
+              child: RequestAuthorizationPage(parcelId: parcelId),
+            ),
           );
         },
       ),
       GoRoute(
         path: '/map/:parcelId',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final parcelId = state.pathParameters['parcelId'] ?? '';
-          return BlocProvider(
-            create: (context) => sl<MapBloc>(),
-            child: MapPage(parcelId: parcelId),
+          return _slideTransition(
+            context,
+            state,
+            BlocProvider(
+              create: (context) => sl<MapBloc>(),
+              child: MapPage(parcelId: parcelId),
+            ),
           );
         },
       ),
       GoRoute(
         path: '/profile',
-        builder: (context, state) => const ProfilePage(),
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          const ProfilePage(),
+        ),
       ),
       GoRoute(
         path: '/notifications',
-        builder: (context, state) => const NotificationScreen(),
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          const NotificationScreen(),
+        ),
       ),
-      GoRoute(path: '/chat', builder: (context, state) => const ChatListPage()),
+      GoRoute(
+        path: '/chat',
+        pageBuilder: (context, state) => _slideTransition(
+          context,
+          state,
+          const ChatListPage(),
+        ),
+      ),
       GoRoute(
         path: '/chat/:id',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final id = int.parse(state.pathParameters['id']!);
           final subject = state.extra as String? ?? 'المحادثة';
-          return ChatDetailPage(conversationId: id, subject: subject);
+          return _slideTransition(
+            context,
+            state,
+            ChatDetailPage(conversationId: id, subject: subject),
+          );
         },
       ),
     ],
