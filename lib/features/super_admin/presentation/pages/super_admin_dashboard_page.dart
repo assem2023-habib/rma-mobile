@@ -10,6 +10,9 @@ import '../../../../core/widgets/headers/custom_app_header.dart';
 import '../bloc/super_admin_bloc.dart';
 import '../../../parcels/presentation/widgets/parcel_card.dart';
 
+import '../widgets/charts/branch_performance_chart.dart';
+import '../widgets/charts/parcel_growth_chart.dart';
+
 class SuperAdminDashboardPage extends StatefulWidget {
   const SuperAdminDashboardPage({super.key});
 
@@ -96,6 +99,10 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
                           ),
                         ],
                       ),
+                      const SizedBox(height: AppDimensions.spacing6),
+                      ParcelGrowthChart(data: stats.parcelGrowth),
+                      const SizedBox(height: AppDimensions.spacing4),
+                      BranchPerformanceChart(data: stats.branchPerformance),
                       const SizedBox(height: AppDimensions.spacing6),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
