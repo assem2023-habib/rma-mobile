@@ -16,7 +16,7 @@ class ParcelGrowthChart extends StatelessWidget {
       padding: const EdgeInsets.all(AppDimensions.spacing4),
       decoration: BoxDecoration(
         color: AppColors.backgroundCard,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusL),
+        borderRadius: BorderRadius.circular(AppDimensions.radius2xl),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -28,10 +28,7 @@ class ParcelGrowthChart extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'نمو الطرود شهرياً',
-            style: AppTypography.heading4,
-          ),
+          const Text('نمو الطرود شهرياً', style: AppTypography.heading3),
           const SizedBox(height: AppDimensions.spacing6),
           SizedBox(
             height: 200,

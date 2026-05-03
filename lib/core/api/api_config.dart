@@ -5,11 +5,11 @@ class ApiConfig {
 
   // Reverb/Pusher Configuration
   static const String pusherAppKey = 'z8gmvgvmclvhoezjsfil';
-  static const String pusherHost = '10.43.226.236';
+  static const String pusherHost = '10.246.59.236';
   static const int pusherPort = 6001;
   static const String pusherCluster = 'mt1';
   static const String pusherAuthUrl =
-      'http://10.43.226.236:8000/api/broadcasting/auth';
+      'http://10.246.59.236:8000/api/broadcasting/auth';
 
   static const Duration connectTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);

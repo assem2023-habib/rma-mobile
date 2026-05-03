@@ -11,6 +11,8 @@ import 'package:rma_customer/features/auth/presentation/bloc/auth_state.dart';
 import 'package:rma_customer/features/common/presentation/bloc/common_bloc.dart';
 import 'package:rma_customer/features/common/presentation/bloc/common_event.dart';
 import 'package:rma_customer/features/common/presentation/bloc/common_state.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:rma_customer/injection_container.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -80,6 +82,84 @@ class _RegisterViewState extends State<RegisterView> {
         _birthdayController.text = picked.toIso8601String().split('T')[0];
       });
     }
+  }
+
+  void _showOtpDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('التحقق من رقم الهاتف', textAlign: TextAlign.center),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'أدخل الرمز المرسل إلى ${_phoneController.text}',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 14, color: AppColors.slate600),
+            ),
+            const SizedBox(height: 24),
+            PinCodeTextField(
+              appContext: context,
+              length: 6,
+              obscureText: false,
+              animationType: AnimationType.fade,
+              pinTheme: PinTheme(
+                shape: PinCodeFieldShape.box,
+                borderRadius: BorderRadius.circular(8),
+                fieldHeight: 50,
+                fieldWidth: 40,
+                activeFillColor: Colors.white,
+                inactiveFillColor: AppColors.slate50,
+                selectedFillColor: Colors.white,
+                activeColor: AppColors.primaryBlue,
+                inactiveColor: AppColors.slate300,
+                selectedColor: AppColors.primaryBlue,
+              ),
+              animationDuration: const Duration(milliseconds: 300),
+              backgroundColor: Colors.transparent,
+              enableActiveFill: true,
+              keyboardType: TextInputType.number,
+              onCompleted: (v) {
+                // Here we would call the verification logic
+                Navigator.pop(context);
+                _performRegistration();
+              },
+              onChanged: (value) {},
+            ),
+            TextButton(
+              onPressed: () {
+                // Resend OTP logic
+              },
+              child: const Text('إعادة إرسال الرمز'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إلغاء'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _performRegistration() {
+    context.read<AuthBloc>().add(
+      RegisterRequested(
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        email: _emailController.text,
+        phone: _phoneController.text,
+        password: _passwordController.text,
+        passwordConfirmation: _passwordConfirmationController.text,
+        birthday: _birthdayController.text,
+        cityId: _selectedCityId!,
+        nationalNumber: _nationalNumberController.text,
+      ),
+    );
   }
 
   @override
@@ -225,21 +305,20 @@ class _RegisterViewState extends State<RegisterView> {
                           },
                         ),
                         const SizedBox(height: 20),
-                        TextFormField(
+                        IntlPhoneField(
                           controller: _phoneController,
                           decoration: InputDecoration(
                             labelText: 'رقم الهاتف',
-                            prefixIcon: const Icon(Icons.phone_outlined),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
+                            counterText: '',
                           ),
-                          keyboardType: TextInputType.phone,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'رقم الهاتف مطلوب';
-                            }
-                            return null;
+                          initialCountryCode: 'SY',
+                          languageCode: 'ar',
+                          textAlign: TextAlign.left,
+                          onChanged: (phone) {
+                            // You can access phone.completeNumber
                           },
                         ),
                         const SizedBox(height: 20),
@@ -312,7 +391,7 @@ class _RegisterViewState extends State<RegisterView> {
                           items: _countries.map((country) {
                             return DropdownMenuItem<int>(
                               value: country['id'],
-                              child: Text(country['name']),
+                              child: Text(country['ar_name'] ?? country['en_name'] ?? 'بدون اسم'),
                             );
                           }).toList(),
                           onChanged: (value) {
@@ -361,7 +440,7 @@ class _RegisterViewState extends State<RegisterView> {
                           items: _cities.map((city) {
                             return DropdownMenuItem<int>(
                               value: city['id'],
-                              child: Text(city['name']),
+                              child: Text(city['ar_name'] ?? city['en_name'] ?? 'بدون اسم'),
                             );
                           }).toList(),
                           onChanged: (value) {
@@ -424,21 +503,14 @@ class _RegisterViewState extends State<RegisterView> {
                             return GradientButton(
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  context.read<AuthBloc>().add(
-                                    RegisterRequested(
-                                      firstName: _firstNameController.text,
-                                      lastName: _lastNameController.text,
-                                      email: _emailController.text,
-                                      phone: _phoneController.text,
-                                      password: _passwordController.text,
-                                      passwordConfirmation:
-                                          _passwordConfirmationController.text,
-                                      birthday: _birthdayController.text,
-                                      cityId: _selectedCityId!,
-                                      nationalNumber:
-                                          _nationalNumberController.text,
-                                    ),
-                                  );
+                                  if (_selectedCityId == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('يرجى اختيار المدينة')),
+                                    );
+                                    return;
+                                  }
+                                  // _showOtpDialog(); // Disabled for now
+                                  _performRegistration();
                                 }
                               },
                               text: 'إنشاء الحساب',

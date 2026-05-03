@@ -4,11 +4,13 @@ class AppConfig {
   final String appTitle;
   final String baseUrl;
   final AppFlavor flavor;
+  final bool useMockData;
 
   AppConfig({
     required this.appTitle,
     required this.baseUrl,
     required this.flavor,
+    this.useMockData = false,
   });
 
   static AppConfig? _instance;
@@ -17,11 +19,13 @@ class AppConfig {
     required String appTitle,
     required String baseUrl,
     required AppFlavor flavor,
+    bool useMockData = false,
   }) {
     _instance = AppConfig(
       appTitle: appTitle,
       baseUrl: baseUrl,
       flavor: flavor,
+      useMockData: useMockData,
     );
   }
 

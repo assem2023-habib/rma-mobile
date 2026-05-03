@@ -134,6 +134,13 @@ import 'package:rma_customer/features/super_admin/domain/usecases/get_super_admi
 import 'package:rma_customer/features/super_admin/domain/usecases/get_global_parcels_usecase.dart';
 import 'package:rma_customer/features/super_admin/presentation/bloc/super_admin_bloc.dart';
 
+import 'package:rma_customer/features/auth/data/datasources/mock_auth_remote_datasource.dart';
+import 'package:rma_customer/features/dashboard/data/datasources/mock_dashboard_remote_datasource.dart';
+import 'package:rma_customer/features/parcels/data/datasources/mock_parcel_remote_datasource.dart';
+import 'package:rma_customer/features/chat/data/datasources/mock_chat_remote_data_source.dart';
+import 'package:rma_customer/features/notifications/data/datasources/mock_notifications_remote_datasource.dart';
+import 'package:rma_customer/core/config/app_flavor_config.dart';
+
 final sl = GetIt.instance;
 
 Future<void> init() async {
@@ -162,7 +169,12 @@ Future<void> init() async {
   );
   // Data sources
   sl.registerLazySingleton<DashboardRemoteDataSource>(
-    () => DashboardRemoteDataSourceImpl(dioClient: sl()),
+    () {
+      if (AppConfig.instance.useMockData) {
+        return MockDashboardRemoteDataSource();
+      }
+      return DashboardRemoteDataSourceImpl(dioClient: sl());
+    },
   );
 
   //! Features - Parcels
@@ -196,7 +208,12 @@ Future<void> init() async {
   );
   // Data sources
   sl.registerLazySingleton<ParcelRemoteDataSource>(
-    () => ParcelRemoteDataSourceImpl(dioClient: sl()),
+    () {
+      if (AppConfig.instance.useMockData) {
+        return MockParcelRemoteDataSource();
+      }
+      return ParcelRemoteDataSourceImpl(dioClient: sl());
+    },
   );
 
   //! Features - Routes
@@ -285,7 +302,12 @@ Future<void> init() async {
   );
   // Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(dioClient: sl(), tokenManager: sl()),
+    () {
+      if (AppConfig.instance.useMockData) {
+        return MockAuthRemoteDataSource(tokenManager: sl());
+      }
+      return AuthRemoteDataSourceImpl(dioClient: sl(), tokenManager: sl());
+    },
   );
 
   //! Features - Profile
@@ -467,7 +489,12 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton<NotificationsRemoteDataSource>(
-    () => NotificationsRemoteDataSourceImpl(dioClient: sl()),
+    () {
+      if (AppConfig.instance.useMockData) {
+        return MockNotificationsRemoteDataSource();
+      }
+      return NotificationsRemoteDataSourceImpl(dioClient: sl());
+    },
   );
 
   //! Features - Notifications
@@ -491,19 +518,15 @@ Future<void> init() async {
   );
   // Data sources
   sl.registerLazySingleton<ChatRemoteDataSource>(
-    () => ChatRemoteDataSourceImpl(
-      client: sl(),
-      tokenManager: sl(),
-    ), // Using 'client' as Dio or Http?
-    // Wait, ChatRemoteDataSourceImpl uses 'http.Client' but existing code uses 'DioClient'.
-    // The implementation of ChatRemoteDataSourceImpl I wrote uses 'http.Client' and 'TokenManager'.
-    // BUT 'DioClient' is registered as 'DioClient' not 'http.Client'.
-    // AND 'Dio' is registered as 'Dio'.
-    // I should probably have used Dio for consistency, or I need to register http.Client.
-    // The existing 'DioClient' wrapper is used everywhere.
-    // However, my implementation of ChatRemoteDataSource uses 'http' package.
-    // See: `final http.Client client;` in `ChatRemoteDataSourceImpl`.
-    // I need to register `http.Client`.
+    () {
+      if (AppConfig.instance.useMockData) {
+        return MockChatRemoteDataSource();
+      }
+      return ChatRemoteDataSourceImpl(
+        client: sl(),
+        tokenManager: sl(),
+      );
+    },
   );
   sl.registerLazySingleton(() => http.Client());
 

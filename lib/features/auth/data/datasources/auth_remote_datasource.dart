@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import '../../../../core/api/api_config.dart';
 import '../../../../core/api/dio_client.dart';
 import '../../../../core/api/token_manager.dart';
@@ -65,8 +66,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
         return UserModel.fromJson(userData);
       } else {
-        throw ServerException();
+        throw ServerException(message: 'خطأ غير معروف');
       }
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.data != null) {
+        final data = e.response?.data;
+        if (data is Map && data.containsKey('errors')) {
+          final errors = data['errors'] as Map;
+          final firstError = errors.values.first;
+          if (firstError is List && firstError.isNotEmpty) {
+            throw ServerException(message: firstError.first.toString());
+          }
+        }
+        throw ServerException(message: data['message'] ?? 'خطأ في السيرفر');
+      }
+      throw ServerException(message: 'خطأ في الاتصال');
     } catch (e) {
       throw ServerException();
     }
@@ -113,8 +127,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
         return UserModel.fromJson(userData);
       } else {
-        throw ServerException();
+        throw ServerException(message: 'خطأ في عملية التسجيل');
       }
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.data != null) {
+        final data = e.response?.data;
+        if (data is Map && data.containsKey('errors')) {
+          final errors = data['errors'] as Map;
+          final firstError = errors.values.first;
+          if (firstError is List && firstError.isNotEmpty) {
+            throw ServerException(message: firstError.first.toString());
+          }
+        }
+        throw ServerException(message: data['message'] ?? 'خطأ في السيرفر');
+      }
+      throw ServerException(message: 'خطأ في الاتصال');
     } catch (e) {
       throw ServerException();
     }

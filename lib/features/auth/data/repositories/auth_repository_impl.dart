@@ -24,8 +24,8 @@ class AuthRepositoryImpl implements AuthRepository {
       try {
         final remoteUser = await remoteDataSource.login(email, password);
         return Right(remoteUser);
-      } on ServerException {
-        return const Left(ServerFailure('Server Error during login'));
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message ?? 'Server Error during login'));
       }
     } else {
       return const Left(NetworkFailure('No Internet Connection'));

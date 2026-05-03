@@ -16,7 +16,7 @@ class BranchPerformanceChart extends StatelessWidget {
       padding: const EdgeInsets.all(AppDimensions.spacing4),
       decoration: BoxDecoration(
         color: AppColors.backgroundCard,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusL),
+        borderRadius: BorderRadius.circular(AppDimensions.radius2xl),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -28,17 +28,19 @@ class BranchPerformanceChart extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'أداء الفروع (عدد الطرود)',
-            style: AppTypography.heading4,
-          ),
+          const Text('أداء الفروع (عدد الطرود)', style: AppTypography.heading3),
           const SizedBox(height: AppDimensions.spacing6),
           SizedBox(
             height: 250,
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
-                maxY: (data.map((e) => e.parcelsCount).reduce((a, b) => a > b ? a : b) * 1.2).toDouble(),
+                maxY:
+                    (data
+                                .map((e) => e.parcelsCount)
+                                .reduce((a, b) => a > b ? a : b) *
+                            1.2)
+                        .toDouble(),
                 barTouchData: BarTouchData(enabled: true),
                 titlesData: FlTitlesData(
                   show: true,

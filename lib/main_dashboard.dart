@@ -8,8 +8,9 @@ void main() async {
 
   AppConfig.init(
     appTitle: 'لوحة تحكم RMA',
-    baseUrl: 'http://10.43.226.236:8000/api/v1',
+    baseUrl: 'http://10.246.59.236:8000/api/v1',
     flavor: AppFlavor.dashboard,
+    useMockData: false,
   );
 
   await di.init();
